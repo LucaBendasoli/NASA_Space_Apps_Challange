@@ -7,3 +7,28 @@
 /* Isola layout/pintura do mapa e dos indicadores sem reduzir resolução do canvas. */
 .sky-workspace,.telemetry{contain:layout paint}
 .telemetry strong{font-variant-numeric:tabular-nums;white-space:nowrap}
+/* Theme tokens also cover native form controls and the about dialog. */
+:root{--muted:#56655d;--surface:#fff;--control-ink:#2c3e33;--accent-surface:#dcebdc;--accent-ink:#284b33;--focus:#427b5c;--soft:#e4e8e2;--soft-purple:#e9e3ed;--soft-blue:#e0e8ef;--notice-bg:#f3f6ec;--notice-ink:#253e2d;--switch:#aebbae}
+:root[data-theme="dark"]{color-scheme:dark;--paper:#111b25;--ink:#e6eee9;--muted:#b0c0b7;--line:#3e514b;--surface:#1b2b35;--control-ink:#e6eee9;--accent-surface:#304e3c;--accent-ink:#d3f5d7;--focus:#b8efbd;--soft:#2a3b33;--soft-purple:#3b3043;--soft-blue:#293d4c;--notice-bg:#20382a;--notice-ink:#e1f1e4;--switch:#60756a}
+body,.sidebar,.topbar,.telemetry,dialog,.search-box,select,.quiet-button,.telemetry button,.notice,.object-art,.switch{transition:background-color .25s ease,color .25s ease,border-color .25s ease}
+button,input,select{color:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,.toggle-row input:focus-visible+.switch{outline-color:var(--focus)}
+.tiny-orbit,.search-box,select,.telemetry button,dialog{border-color:var(--line)}
+label:not(.toggle-row),.edition,.section-number,.arrow,.sidebar-footer,.powered,.breadcrumb,.breadcrumb strong,.metric-label,.telemetry .telemetry-status,dialog p,dialog small,dialog .eyebrow,.dialog-close,.search-box>span{color:var(--muted)}
+.search-box,select{background:var(--surface);color:var(--control-ink)}
+.search-box input::placeholder{color:var(--muted);opacity:1}
+.search-box button{background:var(--accent-surface);color:var(--accent-ink)}
+.switch{background:var(--switch)}
+.object-art{background:var(--soft);color:var(--muted)}
+.nebula{background:var(--soft-purple)}
+.cluster{background:var(--soft-blue)}
+.quiet-button,.telemetry button{color:var(--ink);border-color:var(--line)}
+.notice{background:var(--notice-bg);color:var(--notice-ink);border-color:var(--line)}
+noscript{background:var(--paper);color:var(--ink)}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.theme-toggle{display:grid;place-items:center;width:36px;height:36px;padding:8px;flex-shrink:0}
+.theme-toggle svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.theme-toggle .theme-sun{display:none}
+:root[data-theme="dark"] .theme-toggle .theme-sun{display:block}
+:root[data-theme="dark"] .theme-toggle .theme-moon{display:none}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}

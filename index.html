@@ -7,6 +7,7 @@
   <meta name="description" content="Explore imagens reais do céu com o motor oficial Aladin Lite e uma interface de estudo independente.">
   <title>Órbita — Atlas celeste</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23111b25'/%3E%3Ccircle cx='20' cy='20' r='9' fill='none' stroke='%23b5edbd' stroke-width='2'/%3E%3Cpath d='M5 25L35 15' stroke='%23b5edbd' stroke-width='2'/%3E%3C/svg%3E">
+  <script src="./src/theme.js"></script>
   <link rel="stylesheet" href="./src/style.css">
   <script type="module" src="./src/app.js"></script>
 </head>
@@ -44,7 +45,7 @@
     <div class="sidebar-footer"><span class="live-dot"></span> Imagens astronômicas reais<br><span class="powered">Motor <a href="https://aladin.cds.unistra.fr/AladinLite/" target="_blank" rel="noreferrer">Aladin Lite · CDS ↗</a></span></div>
   </aside>
   <main>
-    <header class="topbar"><div class="breadcrumb">EXPLORAR <span>/</span> <strong>O céu, em todas as direções</strong></div><button id="about-open" class="quiet-button" type="button">Sobre o projeto <span>↗</span></button></header>
+    <header class="topbar"><div class="breadcrumb">EXPLORAR <span>/</span> <strong>O céu, em todas as direções</strong></div><div class="topbar-actions"><button id="theme-toggle" class="quiet-button theme-toggle" type="button" aria-label="Ativar tema escuro" title="Ativar tema escuro"><svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 13A8.5 8.5 0 0 1 11 3.5 8.5 8.5 0 1 0 20.5 13Z"/></svg><svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg></button><button id="about-open" class="quiet-button" type="button">Sobre o projeto <span>↗</span></button></div></header>
     <section class="sky-workspace" aria-label="Visualizador interativo do céu">
       <div id="aladin" aria-label="Mapa celeste Aladin Lite"></div>
       <div class="view-title"><span class="eyebrow">VOCÊ ESTÁ EXPLORANDO</span><h1 id="view-name">Galáxia de Andrômeda</h1><span id="view-layer">DSS2 · Luz visível</span></div>
