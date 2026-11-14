@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111b25">
+  <meta name="description" content="Explore imagens reais do céu com o motor oficial Aladin Lite e uma interface de estudo independente.">
+  <title>Órbita — Atlas celeste</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23111b25'/%3E%3Ccircle cx='20' cy='20' r='9' fill='none' stroke='%23b5edbd' stroke-width='2'/%3E%3Cpath d='M5 25L35 15' stroke='%23b5edbd' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./src/style.css">
+  <script type="module" src="./src/app.js"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="./" aria-label="Órbita, início"><span class="brand-icon">◎</span> órbita<span class="brand-dot">.</span></a>
+    <div class="workspace-label">UM OBSERVATÓRIO NO NAVEGADOR</div>
+    <div class="sidebar-heading"><span class="tiny-orbit">✧</span><div><strong>Atlas celeste</strong><span>Explore além do visível</span></div><span class="edition">01</span></div>
+    <form id="search-form">
+      <label for="target">PARA ONDE VAMOS?</label>
+      <div class="search-box"><span aria-hidden="true">⌕</span><input id="target" name="target" autocomplete="off" placeholder="M31, Sirius ou 10.68, 41.27" required maxlength="120"><button id="search-button" type="submit" aria-label="Buscar objeto" disabled>↗</button></div>
+      <p class="field-hint">Nome do objeto ou RA, Dec em graus (ICRS).</p>
+    </form>
+    <fieldset id="controls" disabled>
+      <section class="control-section">
+        <div class="section-title"><h2>Camada do céu</h2><span class="section-number">01</span></div>
+        <label for="survey">LEVANTAMENTO</label><select id="survey"><option value="dss">DSS2 · Óptico / colorido</option><option value="2mass">2MASS · Infravermelho próximo</option><option value="wise">AllWISE · Infravermelho</option><option value="sdss">SDSS9 · Óptico / parcial</option></select>
+        <label for="mirror" class="spaced-label">SERVIDOR DE IMAGENS</label><select id="mirror"><option value="esa">ESA · Espanha</option><option value="china">China-VO · Espelho alternativo</option></select>
+        <p id="survey-description" class="field-hint">Uma visão do céu em luz visível, composta por placas fotográficas digitalizadas.</p>
+        <a id="survey-credit" class="text-link" href="https://skies.esac.esa.int/DSSColor/properties" target="_blank" rel="noreferrer">Origem e créditos dos dados ↗</a>
+      </section>
+      <section class="control-section">
+        <div class="section-title"><h2>Seu ponto de vista</h2><span class="section-number">02</span></div>
+        <label for="projection">PROJEÇÃO</label><select id="projection"><option value="SIN">Ortográfica · SIN</option><option value="AIT">Céu completo · Aitoff</option><option value="MOL">Mollweide · MOL</option></select>
+        <label class="toggle-row" for="grid"><span>Grade de coordenadas</span><input id="grid" type="checkbox"><span class="switch" aria-hidden="true"></span></label>
+        <label class="toggle-row" for="catalog"><span>Objetos de referência <small>8 objetos</small></span><input id="catalog" type="checkbox"><span class="switch" aria-hidden="true"></span></label>
+      </section>
+      <section class="control-section destinations">
+        <div class="section-title"><h2>Comece uma viagem</h2><span class="section-number">03</span></div>
+        <button type="button" class="destination" data-target="m31"><span class="object-art galaxy">✺</span><span><strong>Galáxia de Andrômeda</strong><small>M31 · A 2,5 milhões de anos-luz</small></span><span class="arrow">↗</span></button>
+        <button type="button" class="destination" data-target="m42"><span class="object-art nebula">✧</span><span><strong>Nebulosa de Órion</strong><small>M42 · Um berçário de estrelas</small></span><span class="arrow">↗</span></button>
+        <button type="button" class="destination" data-target="pleiades"><span class="object-art cluster">⁙</span><span><strong>As Plêiades</strong><small>M45 · Um encontro de estrelas</small></span><span class="arrow">↗</span></button>
+      </section>
+    </fieldset>
+    <div class="sidebar-footer"><span class="live-dot"></span> Imagens astronômicas reais<br><span class="powered">Motor <a href="https://aladin.cds.unistra.fr/AladinLite/" target="_blank" rel="noreferrer">Aladin Lite · CDS ↗</a></span></div>
+  </aside>
+  <main>
+    <header class="topbar"><div class="breadcrumb">EXPLORAR <span>/</span> <strong>O céu, em todas as direções</strong></div><button id="about-open" class="quiet-button" type="button">Sobre o projeto <span>↗</span></button></header>
+    <section class="sky-workspace" aria-label="Visualizador interativo do céu">
+      <div id="aladin" aria-label="Mapa celeste Aladin Lite"></div>
+      <div class="view-title"><span class="eyebrow">VOCÊ ESTÁ EXPLORANDO</span><h1 id="view-name">Galáxia de Andrômeda</h1><span id="view-layer">DSS2 · Luz visível</span></div>
+      <div class="view-tag"><span class="live-dot"></span> ICRS / J2000</div>
+      <div id="loading" class="loading-panel" role="status"><span class="loader"></span><strong>Preparando o observatório</strong><p>Carregando o motor oficial Aladin Lite…</p></div>
+      <div id="failure" class="failure-panel" role="alert" hidden><span class="failure-icon">↯</span><h2>O céu está fora de alcance</h2><p id="failure-message"></p><button id="retry" class="primary-button" type="button">Tentar novamente ↗</button><small>A interface é local. O motor e as imagens precisam de conexão HTTPS.</small></div>
+      <div class="map-actions"><button id="zoom-in" title="Aproximar" aria-label="Aproximar" disabled>+</button><button id="zoom-out" title="Afastar" aria-label="Afastar" disabled>−</button><span></span><button id="home" title="Voltar a Andrômeda" aria-label="Voltar a Andrômeda" disabled>⌂</button></div>
+      <div class="map-caption"><span>↔ Arraste para explorar</span><span>⊕ Role para aproximar</span></div>
+      <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+    </section>
+    <footer class="telemetry"><div><span class="metric-label">ASCENSÃO RETA</span><strong id="ra">—</strong></div><div><span class="metric-label">DECLINAÇÃO</span><strong id="dec">—</strong></div><div><span class="metric-label">CAMPO DE VISÃO</span><strong id="fov">—</strong></div><div class="telemetry-status"><span id="engine-dot" class="status-dot"></span><span id="engine-status">Conectando</span></div><button id="share" type="button" disabled>Copiar posição ↗</button></footer>
+  </main>
+  <dialog id="about"><button id="about-close" class="dialog-close" aria-label="Fechar">×</button><span class="eyebrow">UM PROJETO PARA ENTENDER O CÉU</span><h2>Uma interface nossa.<br>Um motor científico aberto.</h2><p>Órbita é uma demonstração independente que integra o Aladin Lite, desenvolvido pelo CDS em Estrasburgo. A renderização, as projeções e a navegação astronômica são da biblioteca oficial.</p><p>A interface, os atalhos, a validação de coordenadas e o compartilhamento foram criados para este estudo. Os fontes originais estão separados em <code>upstream/aladin-lite/</code>, com licenças preservadas.</p><p>Os oito objetos de referência formam uma lista didática local com posições aproximadas. A busca por outros nomes consulta o serviço Sesame. A disponibilidade das imagens depende dos provedores e da cobertura do levantamento.</p><div class="dialog-links"><a href="https://github.com/cds-astro/aladin-lite" target="_blank" rel="noreferrer">Repositório oficial ↗</a><a href="./docs/arquitetura.md" target="_blank">Ler a análise técnica ↗</a><a href="./upstream/aladin-lite/LICENSE" target="_blank">Licença da biblioteca ↗</a></div><small>Aladin Lite 3.9.0-beta · LGPL-3.0-or-later · Créditos das imagens nos metadados de cada levantamento.</small></dialog>
+  <noscript>Ative JavaScript para carregar o visualizador astronômico.</noscript>
+</body>
+</html>

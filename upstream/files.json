@@ -1,0 +1,2147 @@
+[
+  {
+    "path": ".gitignore",
+    "sha": "5e824e1f9846da567c1b66cf0a4946292f603e87",
+    "bytes": 953
+  },
+  {
+    "path": ".zenodo.json",
+    "sha": "1c5d70e1e071b1050cc2a83ee1507073060049fd",
+    "bytes": 1178
+  },
+  {
+    "path": "aladin-logo.png",
+    "sha": "0e7d95a3957c286d2077b05897d9e1beed241f25",
+    "bytes": 16818
+  },
+  {
+    "path": "assets/aladin-logo.gif",
+    "sha": "d0412e3e67adab93056788c622a8b5f03c8296be",
+    "bytes": 251
+  },
+  {
+    "path": "assets/check.png",
+    "sha": "c77822ab996ac53f5bdd58b1e579d79f5e9b4138",
+    "bytes": 656
+  },
+  {
+    "path": "assets/check.xcf",
+    "sha": "0659f57639b7557e80fa13005f234a2d2ea263f8",
+    "bytes": 8059
+  },
+  {
+    "path": "assets/chevron-down.svg",
+    "sha": "bab0480f3e8275c39f654a5cc348c096d716a2ab",
+    "bytes": 737
+  },
+  {
+    "path": "assets/goto.png",
+    "sha": "6708a567263618f3159ed81cfd8e309301957189",
+    "bytes": 388
+  },
+  {
+    "path": "assets/icons/add.svg",
+    "sha": "92c79aa44de9d1122fde42dd3f0edbbcdcc517b6",
+    "bytes": 811
+  },
+  {
+    "path": "assets/icons/brightness.svg",
+    "sha": "e76c0ea9de15e7e3e5b500cb08281f749558dd3e",
+    "bytes": 1476
+  },
+  {
+    "path": "assets/icons/camera.svg",
+    "sha": "a5036b9f79d1c69141f0add91f6f70a01382cf55",
+    "bytes": 1528
+  },
+  {
+    "path": "assets/icons/color-picker.svg",
+    "sha": "cca670c1dc4ab195ef6dec263072e92887049f5a",
+    "bytes": 529
+  },
+  {
+    "path": "assets/icons/color.svg",
+    "sha": "5502e1e8965864774cf7c09ea17da20d0bbe88d1",
+    "bytes": 1566
+  },
+  {
+    "path": "assets/icons/copy.svg",
+    "sha": "29c2289711258c67d8c725a67d52344d1c9ed3ca",
+    "bytes": 1276
+  },
+  {
+    "path": "assets/icons/download.svg",
+    "sha": "af8902a2c9a4108073a16a9ddca53e4f526dfae0",
+    "bytes": 834
+  },
+  {
+    "path": "assets/icons/edge_selection-arrow.svg",
+    "sha": "e4c4aafd4a56d6985a12ed6009d71e9123979f32",
+    "bytes": 453
+  },
+  {
+    "path": "assets/icons/edge_selection.svg",
+    "sha": "e5285e63ef87b66bcca20238141e81bef0394610",
+    "bytes": 395
+  },
+  {
+    "path": "assets/icons/edit.svg",
+    "sha": "f0e21be550c5d40ab8da4cbbf45e3f7f3c42957e",
+    "bytes": 617
+  },
+  {
+    "path": "assets/icons/enlarge.svg",
+    "sha": "2036d4903c381465fa1dd87b6b1ae9e3f0be97c8",
+    "bytes": 1466
+  },
+  {
+    "path": "assets/icons/filter-off.svg",
+    "sha": "bb4c46c82289e3dc795fb04d60d1ba4c335e39a0",
+    "bytes": 1012
+  },
+  {
+    "path": "assets/icons/filter-on.svg",
+    "sha": "e5584d4b2f7cca6d3c56059d181b59fea00245e7",
+    "bytes": 1137
+  },
+  {
+    "path": "assets/icons/finish.svg",
+    "sha": "711ed70da2e616731c5dc59f25574cbb1fd92c9d",
+    "bytes": 929
+  },
+  {
+    "path": "assets/icons/folder.svg",
+    "sha": "198ba4aa6c5d958873a2063a39c70433e7ef0eb0",
+    "bytes": 322
+  },
+  {
+    "path": "assets/icons/font-size.svg",
+    "sha": "31764824e6c4ae76fd093c1df7676ff4f981ab25",
+    "bytes": 373
+  },
+  {
+    "path": "assets/icons/freq.svg",
+    "sha": "e8f9fc84c912e784abb5917b977c2f8369082f9c",
+    "bytes": 623
+  },
+  {
+    "path": "assets/icons/function.svg",
+    "sha": "0585b64647e361226185ee13edcf236d1ebb895b",
+    "bytes": 1678
+  },
+  {
+    "path": "assets/icons/grid.svg",
+    "sha": "79b38637e55e7626b88e9cf3f32bf4543d1e35fa",
+    "bytes": 3419
+  },
+  {
+    "path": "assets/icons/help.svg",
+    "sha": "83d83794fd19604fba8801ed5b02c8e965640fc4",
+    "bytes": 834
+  },
+  {
+    "path": "assets/icons/hide.svg",
+    "sha": "e283a029e546fab85b0bf364c5e87bf244144414",
+    "bytes": 937
+  },
+  {
+    "path": "assets/icons/hips.svg",
+    "sha": "50526a670cc7c37be0e687dff510e8e3a02da419",
+    "bytes": 1249
+  },
+  {
+    "path": "assets/icons/info.svg",
+    "sha": "bfc9e20d9c13ea565c35dbce0d406354c6634c52",
+    "bytes": 2284
+  },
+  {
+    "path": "assets/icons/inside.svg",
+    "sha": "86f204f2400b5530bf5c880912344516aaa77fd4",
+    "bytes": 555
+  },
+  {
+    "path": "assets/icons/jupyter.svg",
+    "sha": "bc690087492b5b88e8f291d41f20241ab6fb7a22",
+    "bytes": 836
+  },
+  {
+    "path": "assets/icons/link.svg",
+    "sha": "b0c14bb0b5ab1a8b4046f6d1e7db53b0de68e7e5",
+    "bytes": 776
+  },
+  {
+    "path": "assets/icons/loading.svg",
+    "sha": "ae475d1a2f5e93c91ee38d7a4d27f8f8bccb2083",
+    "bytes": 1014
+  },
+  {
+    "path": "assets/icons/map.svg",
+    "sha": "f7d54bb04b5405201a93faf58a2daa294ec0dcf7",
+    "bytes": 510
+  },
+  {
+    "path": "assets/icons/maximize.svg",
+    "sha": "b334f2dfc461798d7b4e8b398751c024f8fb4d9c",
+    "bytes": 477
+  },
+  {
+    "path": "assets/icons/minus.svg",
+    "sha": "bc96d610341a1b4d26e1cc651300b44a7c69cdf3",
+    "bytes": 335
+  },
+  {
+    "path": "assets/icons/move.svg",
+    "sha": "be7aa16ba49fbdcc67b29cfa6982a500536d9a11",
+    "bytes": 5335
+  },
+  {
+    "path": "assets/icons/next.svg",
+    "sha": "5c54b0253b40129c0aefbc14baf74350c18f8c34",
+    "bytes": 323
+  },
+  {
+    "path": "assets/icons/opacity.svg",
+    "sha": "4a64379ca23e3934930cf65cdccfd706e127d824",
+    "bytes": 1291
+  },
+  {
+    "path": "assets/icons/pixel_histogram.svg",
+    "sha": "2363bb7b26adde4c014822b59fdc7979302d2028",
+    "bytes": 1131
+  },
+  {
+    "path": "assets/icons/plus.svg",
+    "sha": "637f5d9f03b8aa8483831533eb568da6aa8cfed1",
+    "bytes": 340
+  },
+  {
+    "path": "assets/icons/projection.svg",
+    "sha": "4255c3bcc01bd21bf230e74a9a61d44c73af3313",
+    "bytes": 1434
+  },
+  {
+    "path": "assets/icons/remove.svg",
+    "sha": "8b63983ea24fc8fde5e4ff054a448c47f458972b",
+    "bytes": 1154
+  },
+  {
+    "path": "assets/icons/restore.svg",
+    "sha": "8e2aad9d76f54daf4a6511ace76e660665bd54a0",
+    "bytes": 487
+  },
+  {
+    "path": "assets/icons/reticle.svg",
+    "sha": "82427adf95609ff3ae62c78d928a02d937c7325d",
+    "bytes": 423
+  },
+  {
+    "path": "assets/icons/search-dark.svg",
+    "sha": "e0423e9e42d75243d938c30cb8378d1e60c11966",
+    "bytes": 393
+  },
+  {
+    "path": "assets/icons/search.svg",
+    "sha": "b7c185a990a97433847c3cdc2baf6fd77d9df090",
+    "bytes": 393
+  },
+  {
+    "path": "assets/icons/select.svg",
+    "sha": "bbd5f4a6d875e8823fbddd51d52282ebc24fc75e",
+    "bytes": 4002
+  },
+  {
+    "path": "assets/icons/settings.svg",
+    "sha": "ba0aa439834861ce7d51cfa5378d78f98e56b57c",
+    "bytes": 1044
+  },
+  {
+    "path": "assets/icons/share.svg",
+    "sha": "e25e1d111a989eff55ebf96e4e28395e2311cbe3",
+    "bytes": 1221
+  },
+  {
+    "path": "assets/icons/show.svg",
+    "sha": "2a00ea56c2b1bb6433b51455afd545f7187e5f90",
+    "bytes": 464
+  },
+  {
+    "path": "assets/icons/skewer_selection_black.svg",
+    "sha": "9cc1d2007db9fe70fa689bdce75fdc46612fe499",
+    "bytes": 655
+  },
+  {
+    "path": "assets/icons/skewer_selection-arrow.svg",
+    "sha": "75695d0c2735caf314fc15fc6b0164deb38e4857",
+    "bytes": 685
+  },
+  {
+    "path": "assets/icons/stack.svg",
+    "sha": "dec2c15bc3920dc4689ba2518b71983635a217fe",
+    "bytes": 437
+  },
+  {
+    "path": "assets/icons/swap.svg",
+    "sha": "4299c40ba34fcff3d9a9802d8cd1f704f8486a19",
+    "bytes": 948
+  },
+  {
+    "path": "assets/icons/target.svg",
+    "sha": "090311884426e572a4a4b06507dac7284357ecaf",
+    "bytes": 410
+  },
+  {
+    "path": "assets/icons/telescope.svg",
+    "sha": "9d3ce13198c7cf9170ff7c7c3ebce3e0d2a2fc46",
+    "bytes": 2363
+  },
+  {
+    "path": "assets/icons/thickness.svg",
+    "sha": "6c5e85125a9acb03765b31019c1bbc24cf513352",
+    "bytes": 722
+  },
+  {
+    "path": "assets/icons/tooltip.svg",
+    "sha": "1ec8347099659bc00d9b97bd2269542461a7bc45",
+    "bytes": 625
+  },
+  {
+    "path": "assets/icons/tree.svg",
+    "sha": "2179f3645aba618676b8d7ccfded6ddcc8ba199f",
+    "bytes": 1142
+  },
+  {
+    "path": "assets/icons/upload.svg",
+    "sha": "f387c575f425e45a045a418d2352c63b0c711e0f",
+    "bytes": 622
+  },
+  {
+    "path": "assets/icons/wave-off.svg",
+    "sha": "76d8038df68f6987df5d112c5b7abbc91139cf60",
+    "bytes": 2197
+  },
+  {
+    "path": "assets/icons/wave-on.svg",
+    "sha": "17b3b8b2e5f7f80fccd5c21c04de6216d1c9b076",
+    "bytes": 2054
+  },
+  {
+    "path": "assets/link-icon.png",
+    "sha": "6e3e07e8927300b0f221967607a69cf01051ffea",
+    "bytes": 953
+  },
+  {
+    "path": "assets/logo-stack-catalog.svg",
+    "sha": "bab0480f3e8275c39f654a5cc348c096d716a2ab",
+    "bytes": 737
+  },
+  {
+    "path": "assets/logo-stack-moc.svg",
+    "sha": "e1fe3b65a7f16b5ea0ceac594d8b55e90b69538c",
+    "bytes": 715
+  },
+  {
+    "path": "assets/logo-stack-overlay.svg",
+    "sha": "94ffc9a95f5d2656d379b59b92490e9d025af6ea",
+    "bytes": 267
+  },
+  {
+    "path": "assets/maximize.gif",
+    "sha": "5072817337a61acd729e3736ec7a6c7a0a4595f7",
+    "bytes": 185
+  },
+  {
+    "path": "assets/new-aladin-logo.png",
+    "sha": "e8cca61b4b2a7ac912ee1ea8cb4928f1adad909b",
+    "bytes": 3286
+  },
+  {
+    "path": "assets/restore.gif",
+    "sha": "ee2185a951a318ca019d2ee11b57578b3d16fdb5",
+    "bytes": 183
+  },
+  {
+    "path": "assets/simbad-pointer-icon.png",
+    "sha": "9dadbd2b0745d8bc515c067454e162d3e0112221",
+    "bytes": 1601
+  },
+  {
+    "path": "assets/stack-logo-small.gif",
+    "sha": "6a65afcd0e870f1b706210068d469692d714753c",
+    "bytes": 162
+  },
+  {
+    "path": "assets/stack-logo.gif",
+    "sha": "5f4c61e97752b5b237b2052769294ede49ebfe3c",
+    "bytes": 175
+  },
+  {
+    "path": "assets/vignettes/American Astronomical Society 225 demonstration.png",
+    "sha": "67f112ce4821304872cf1f709a746144aa293715",
+    "bytes": 61577
+  },
+  {
+    "path": "assets/vignettes/Basic Aladin Lite instanciation.png",
+    "sha": "21e6591f0da2d6c3937dabddd989d5a9ca0ba321",
+    "bytes": 63535
+  },
+  {
+    "path": "assets/vignettes/Display proper motions.png",
+    "sha": "c09323cbef4f74b984eb0f2124ddc1fe089f7fd3",
+    "bytes": 89728
+  },
+  {
+    "path": "assets/vignettes/Load a FITS image.png",
+    "sha": "7041d23b0f80558f11926ed2f429c81d126798b2",
+    "bytes": 44827
+  },
+  {
+    "path": "assets/vignettes/Load SIMBAD & NED catalogs data.png",
+    "sha": "59b2e4e654c8950773203ede664029deb920edd5",
+    "bytes": 96209
+  },
+  {
+    "path": "assets/vignettes/Visualization of Mars.png",
+    "sha": "c83b03a36d876b52aa8f2750450d28c3184e1c35",
+    "bytes": 70648
+  },
+  {
+    "path": "AUTHORS",
+    "sha": "24715ff4b75f27097c2667093069b52c375826ef",
+    "bytes": 683
+  },
+  {
+    "path": "CHANGELOG.md",
+    "sha": "73253010520304566c64b048eb1830f4b68ff49c",
+    "bytes": 29013
+  },
+  {
+    "path": "codemeta.json",
+    "sha": "e5dbc9feea1c14ea89b033aa7dd75f48fa95377f",
+    "bytes": 3160
+  },
+  {
+    "path": "COPYING",
+    "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2",
+    "bytes": 35147
+  },
+  {
+    "path": "jsdoc-custom-style.css",
+    "sha": "d3d1ed68925fe30fc4a657bfcebd9b425cac3dce",
+    "bytes": 98
+  },
+  {
+    "path": "jsdoc-make-responsive.js",
+    "sha": "e5a4d53b638407498e745539c0d2411e59b878b9",
+    "bytes": 216
+  },
+  {
+    "path": "jsdoc.json",
+    "sha": "43f9a36c11d1b94d28c5619680df99e6fb4f6f61",
+    "bytes": 2850
+  },
+  {
+    "path": "LICENSE",
+    "sha": "153d416dc8d2d60076698ec3cbfce34d91436a03",
+    "bytes": 7651
+  },
+  {
+    "path": "package.json",
+    "sha": "e453bf5869c094ae14edbe5b679668369ef91b70",
+    "bytes": 2560
+  },
+  {
+    "path": "playwright.config.ts",
+    "sha": "7624680a8d3dd967d4bd3c0768b660727023753c",
+    "bytes": 1634
+  },
+  {
+    "path": "README.md",
+    "sha": "6c2e477136b16e6ea3827ecb8c5d28a2cf535121",
+    "bytes": 10161
+  },
+  {
+    "path": "release-notes.txt",
+    "sha": "844efa87069198cbebad9034bfb1e73cfb07304f",
+    "bytes": 6435
+  },
+  {
+    "path": "scripts/build.sh",
+    "sha": "708c202b1f05f4eec3df30ccd79300e52fbe56fa",
+    "bytes": 2925
+  },
+  {
+    "path": "scripts/minimal_build.sh",
+    "sha": "024d57edb8cf30879ba6ea59d2e0c64baeb354a7",
+    "bytes": 1562
+  },
+  {
+    "path": "scripts/testRelease.sh",
+    "sha": "72541bdf2fddbc7aeb6e1b1a3bb3d14bcdfeafdd",
+    "bytes": 228
+  },
+  {
+    "path": "src/core/.cargo/config.toml",
+    "sha": "de3fa28ddbc575d1e140125c93807424185f8acd",
+    "bytes": 164
+  },
+  {
+    "path": "src/core/al-api/Cargo.toml",
+    "sha": "3776fa9decde8adcc4287f079de6531c2cefd583",
+    "bytes": 1539
+  },
+  {
+    "path": "src/core/al-api/src/angle.rs",
+    "sha": "1cd9fee0d51b3edfacd86a2e0bbda848553ff903",
+    "bytes": 1364
+  },
+  {
+    "path": "src/core/al-api/src/blend.rs",
+    "sha": "9f464cd8b3d21d3b06a4a0256d804105a263dc33",
+    "bytes": 3677
+  },
+  {
+    "path": "src/core/al-api/src/catalog.rs",
+    "sha": "ade5c7a6648af6b88982efa4f5894677d9a32fbd",
+    "bytes": 757
+  },
+  {
+    "path": "src/core/al-api/src/cell.rs",
+    "sha": "48d50e70149acfd639e7d4ffac1808bba52de375",
+    "bytes": 184
+  },
+  {
+    "path": "src/core/al-api/src/color.rs",
+    "sha": "9d40aaf90c48c6c902b04fdefd0ff7d838eb0026",
+    "bytes": 2180
+  },
+  {
+    "path": "src/core/al-api/src/colormap.rs",
+    "sha": "7d3abe5e21dd36b36af22e42b59506262748d3fd",
+    "bytes": 232
+  },
+  {
+    "path": "src/core/al-api/src/coo_system.rs",
+    "sha": "eb62398001f6b9159fd597b468e3fc4ce627e33c",
+    "bytes": 1253
+  },
+  {
+    "path": "src/core/al-api/src/fov.rs",
+    "sha": "9b00e26d78ebb62bf9ebeae16ec974cac1d3547c",
+    "bytes": 269
+  },
+  {
+    "path": "src/core/al-api/src/grid.rs",
+    "sha": "f87a0c4d2724cc7885cfd75cc0ab9f5ea1a501a6",
+    "bytes": 976
+  },
+  {
+    "path": "src/core/al-api/src/hips.rs",
+    "sha": "e2e584401ec895ffa1533dd34272eb747ad2318c",
+    "bytes": 6237
+  },
+  {
+    "path": "src/core/al-api/src/image.rs",
+    "sha": "9075b00e0835e7330a3007833cb77b966e0589ba",
+    "bytes": 308
+  },
+  {
+    "path": "src/core/al-api/src/lib.rs",
+    "sha": "681a7011ada6ced787c66e14af29d424367c4487",
+    "bytes": 930
+  },
+  {
+    "path": "src/core/al-api/src/moc.rs",
+    "sha": "ce055970fc8a4ae53d54362eaf1188b7ca628ccd",
+    "bytes": 2054
+  },
+  {
+    "path": "src/core/al-api/src/resources.rs",
+    "sha": "68b60bccaffed1a0a74a8cc538bffad0d8c31886",
+    "bytes": 248
+  },
+  {
+    "path": "src/core/al-core/Cargo.toml",
+    "sha": "e7887fef3be82fab32866b0af580cd35e750b9ae",
+    "bytes": 1865
+  },
+  {
+    "path": "src/core/al-core/resources/arial.ttf",
+    "sha": "12cc15c8d871b54a7d6af9d1d2f656975a3b0913",
+    "bytes": 296712
+  },
+  {
+    "path": "src/core/al-core/resources/Roboto-Regular.ttf",
+    "sha": "7d9a6c4c32d7e920b549caf531e390733496b6e0",
+    "bytes": 158604
+  },
+  {
+    "path": "src/core/al-core/src/colormap.rs",
+    "sha": "d471ca062a44b60283f9abb5f91f35152f9cc589",
+    "bytes": 9660
+  },
+  {
+    "path": "src/core/al-core/src/convert.rs",
+    "sha": "9cce9185a1b2aeaff12fbfb14093114c4854ea2c",
+    "bytes": 456
+  },
+  {
+    "path": "src/core/al-core/src/image/bitmap.rs",
+    "sha": "33f2a0f79db01490330d8cb92acb0181108b98ed",
+    "bytes": 910
+  },
+  {
+    "path": "src/core/al-core/src/image/canvas.rs",
+    "sha": "9d771b820c649d7053fc189ed25fd0a096b38f31",
+    "bytes": 1126
+  },
+  {
+    "path": "src/core/al-core/src/image/fits.rs",
+    "sha": "f63ebb7c16f064e8ea1257b41cea8481e00e3547",
+    "bytes": 9999
+  },
+  {
+    "path": "src/core/al-core/src/image/format.rs",
+    "sha": "0141cc2cb395691a8327f0a433c7c9c5cd6dda54",
+    "bytes": 456
+  },
+  {
+    "path": "src/core/al-core/src/image/html.rs",
+    "sha": "6e473f081135616de69b2f50e886e4f22da42ab6",
+    "bytes": 1215
+  },
+  {
+    "path": "src/core/al-core/src/image/mod.rs",
+    "sha": "c0bd5ee65c69c9bf63f47c82773946721c4da2dc",
+    "bytes": 9308
+  },
+  {
+    "path": "src/core/al-core/src/image/raw.rs",
+    "sha": "7fc94e7dbffaf1a8ae1bdb7ebec04bed44034d86",
+    "bytes": 5046
+  },
+  {
+    "path": "src/core/al-core/src/lib.rs",
+    "sha": "7207e471b90405c64a8c3cd7d74e2b83c8ee2773",
+    "bytes": 1551
+  },
+  {
+    "path": "src/core/al-core/src/log.rs",
+    "sha": "25f2a82ebd47232ed5a71d9b6e9662dd5b16ee60",
+    "bytes": 854
+  },
+  {
+    "path": "src/core/al-core/src/object/array_buffer_instanced.rs",
+    "sha": "5a40afd03ad4f5caa4025efb27fc9b9da029838c",
+    "bytes": 7563
+  },
+  {
+    "path": "src/core/al-core/src/object/array_buffer.rs",
+    "sha": "84f0126d890d4f638f6c6168aeacace54886f7e6",
+    "bytes": 14109
+  },
+  {
+    "path": "src/core/al-core/src/object/buffer_data.rs",
+    "sha": "552e2a9e2f07f7bc1fcebdd33eca1dc79a4b4525",
+    "bytes": 1222
+  },
+  {
+    "path": "src/core/al-core/src/object/element_array_buffer.rs",
+    "sha": "102227b5da8257e8d9bc4a42213cdcecf94fbcd1",
+    "bytes": 2626
+  },
+  {
+    "path": "src/core/al-core/src/object/framebuffer.rs",
+    "sha": "101c9a7f8e7112d3bf857300b9b4b02831ab278e",
+    "bytes": 4349
+  },
+  {
+    "path": "src/core/al-core/src/object/mod.rs",
+    "sha": "b9b0f9972d29fbffeffda2c816fc72dba59059e6",
+    "bytes": 282
+  },
+  {
+    "path": "src/core/al-core/src/object/vertex_array_object.rs",
+    "sha": "7d215715baa0cbcc63b612e13ad43422df8b4776",
+    "bytes": 11450
+  },
+  {
+    "path": "src/core/al-core/src/shader.rs",
+    "sha": "d258b276abb1ab054d77410f2b53b6084383338a",
+    "bytes": 13203
+  },
+  {
+    "path": "src/core/al-core/src/texture/3d.rs",
+    "sha": "a4290ba98f6b17c03de4d5d0d14c2e570847e031",
+    "bytes": 6855
+  },
+  {
+    "path": "src/core/al-core/src/texture/array.rs",
+    "sha": "f964d9ff47e7bc057797d8de04e0d97cf64937b2",
+    "bytes": 9758
+  },
+  {
+    "path": "src/core/al-core/src/texture/format.rs",
+    "sha": "ae54b5c50b33033fddafe4a927a0d7a319274317",
+    "bytes": 6070
+  },
+  {
+    "path": "src/core/al-core/src/texture/mod.rs",
+    "sha": "2b2e0739f42936be989569b29590ea3765fd88e5",
+    "bytes": 19458
+  },
+  {
+    "path": "src/core/al-core/src/texture/pixel.rs",
+    "sha": "68cde5be3a79a7233573dc148a326392efc5fd97",
+    "bytes": 4808
+  },
+  {
+    "path": "src/core/al-core/src/webgl_ctx.rs",
+    "sha": "34f5a3cb8d81281a66ae73338323d1d5c31c8bcf",
+    "bytes": 4786
+  },
+  {
+    "path": "src/core/build.rs",
+    "sha": "ce4e07e6a62e9d5c88e11981a2c96d26bb952510",
+    "bytes": 5352
+  },
+  {
+    "path": "src/core/Cargo.toml",
+    "sha": "6c5dfe570754085353ec76a6914d3c63c89899e6",
+    "bytes": 2721
+  },
+  {
+    "path": "src/core/src/app.rs",
+    "sha": "a46c67bef66fe9cd9d6bbe2a11159165984fbb00",
+    "bytes": 73014
+  },
+  {
+    "path": "src/core/src/async_task.rs",
+    "sha": "32283a5de07137a4b3413bded9f5cfd7835de1b3",
+    "bytes": 11214
+  },
+  {
+    "path": "src/core/src/browser_support.rs",
+    "sha": "0d081a26d6c8fef5c26e6e76bd514b6d9905195f",
+    "bytes": 560
+  },
+  {
+    "path": "src/core/src/camera/fov.rs",
+    "sha": "b39afb7168db481081a1096466243d20375382ac",
+    "bytes": 6827
+  },
+  {
+    "path": "src/core/src/camera/mod.rs",
+    "sha": "41c35dbb27733bfabd9f50adc06f1e9c431bd878",
+    "bytes": 2414
+  },
+  {
+    "path": "src/core/src/camera/view_hpx_cells.rs",
+    "sha": "0b587dbc979d985f44232b07b950509621d5d3df",
+    "bytes": 7442
+  },
+  {
+    "path": "src/core/src/camera/viewport.rs",
+    "sha": "e70be68290ca7af3fdf4fdbb0fd59220e4bbad2a",
+    "bytes": 27859
+  },
+  {
+    "path": "src/core/src/coosys.rs",
+    "sha": "ee1797efe4ffb1a4668b77b74daf2f5365f07625",
+    "bytes": 2525
+  },
+  {
+    "path": "src/core/src/downloader/mod.rs",
+    "sha": "cebfe994484ae7a1801371920633557d48e6b461",
+    "bytes": 2528
+  },
+  {
+    "path": "src/core/src/downloader/query.rs",
+    "sha": "002baa2e14c364fcadb91f95155927d56ba7cf09",
+    "bytes": 9148
+  },
+  {
+    "path": "src/core/src/downloader/request/allsky.rs",
+    "sha": "b23cfb3baae1c38e6835e7a489795e40034d5f3f",
+    "bytes": 11966
+  },
+  {
+    "path": "src/core/src/downloader/request/moc.rs",
+    "sha": "702583d51857f60724fae5185d28ac66db8cd741",
+    "bytes": 2462
+  },
+  {
+    "path": "src/core/src/downloader/request/mod.rs",
+    "sha": "c7331c02c436ad8269893a6d96c7bc12ce983347",
+    "bytes": 5518
+  },
+  {
+    "path": "src/core/src/downloader/request/tile.rs",
+    "sha": "6119431fb38d79c031b3afe6ff58a16e2b685d93",
+    "bytes": 5545
+  },
+  {
+    "path": "src/core/src/event.rs",
+    "sha": "005ab5c98f14b437eedc4cf152b337f8564fc8d8",
+    "bytes": 613
+  },
+  {
+    "path": "src/core/src/fifo_cache.rs",
+    "sha": "aa035ce4a5f52d4585035d90fde2dae5d2a8a081",
+    "bytes": 1024
+  },
+  {
+    "path": "src/core/src/healpix/cell.rs",
+    "sha": "e9a70412980c2ca2e14964dafe0a3d52888b97a8",
+    "bytes": 20156
+  },
+  {
+    "path": "src/core/src/healpix/index_vector.rs",
+    "sha": "e2c093f44119bd88cf4718bfccb80ee1e19eabba",
+    "bytes": 5133
+  },
+  {
+    "path": "src/core/src/healpix/moc/freq_space.rs",
+    "sha": "9066a077933b0aa891cbdaf5fba02244d31be3e0",
+    "bytes": 3730
+  },
+  {
+    "path": "src/core/src/healpix/moc/mod.rs",
+    "sha": "09b01524d2dfa143b4c6ff1b3c990e9c2335279f",
+    "bytes": 155
+  },
+  {
+    "path": "src/core/src/healpix/moc/space.rs",
+    "sha": "a57b61ed1d1520dbfecb4d1a71ef301235974d15",
+    "bytes": 5320
+  },
+  {
+    "path": "src/core/src/healpix/mod.rs",
+    "sha": "a91792986f3c2262cbfc0906b40380503cfd5291",
+    "bytes": 64
+  },
+  {
+    "path": "src/core/src/healpix/utils.rs",
+    "sha": "0e3f39e70af2a959047c1bac04b4a63be993603a",
+    "bytes": 2555
+  },
+  {
+    "path": "src/core/src/inertia.rs",
+    "sha": "08af08e22e9d4141dd9c22ee0b7c3ea351bea048",
+    "bytes": 2546
+  },
+  {
+    "path": "src/core/src/lib.rs",
+    "sha": "ad4dc860102b3dcce88aa528da9be9c3834c910d",
+    "bytes": 39672
+  },
+  {
+    "path": "src/core/src/math/angle.rs",
+    "sha": "a234c7178207e79a381e6543a8d40c24fd00a413",
+    "bytes": 12657
+  },
+  {
+    "path": "src/core/src/math/lonlat.rs",
+    "sha": "25dd6e7b83fea9adaccc1f5331f07d570659cb38",
+    "bytes": 5218
+  },
+  {
+    "path": "src/core/src/math/mod.rs",
+    "sha": "5087e2563f64c64eb396927b6a6aeff8e2348e14",
+    "bytes": 468
+  },
+  {
+    "path": "src/core/src/math/projection/coo_space.rs",
+    "sha": "3b098332309a7902855019983c7e252ef222dd52",
+    "bytes": 291
+  },
+  {
+    "path": "src/core/src/math/projection/domain/basic/disk.rs",
+    "sha": "be64bfccf8aefb653885c5fb25ee2b0ed12d263c",
+    "bytes": 262
+  },
+  {
+    "path": "src/core/src/math/projection/domain/basic/ellipse.rs",
+    "sha": "a58ccc450e8edcee4a4a69c11ed63f49e87a7957",
+    "bytes": 2078
+  },
+  {
+    "path": "src/core/src/math/projection/domain/basic/mod.rs",
+    "sha": "0c46828b96b6bbdf28b8f2f01b95f10158963335",
+    "bytes": 81
+  },
+  {
+    "path": "src/core/src/math/projection/domain/basic/parabola.rs",
+    "sha": "3a66cfdf6e2f3fd1d6f02a9c7ea58612feab965c",
+    "bytes": 1045
+  },
+  {
+    "path": "src/core/src/math/projection/domain/basic/rect.rs",
+    "sha": "97c946a0d683dc941b78d42b288fcbceeccdadb2",
+    "bytes": 459
+  },
+  {
+    "path": "src/core/src/math/projection/domain/basic/triangle.rs",
+    "sha": "ece8c3fc32d4d4f4a33dd375f406c6b9e884ac3e",
+    "bytes": 1126
+  },
+  {
+    "path": "src/core/src/math/projection/domain/cod.rs",
+    "sha": "76119779a921f28b1ffc32b19bf76ed25fd2314d",
+    "bytes": 2511
+  },
+  {
+    "path": "src/core/src/math/projection/domain/full.rs",
+    "sha": "2dc4cd67bfe0909fa1a738843ec8c6c58c994694",
+    "bytes": 306
+  },
+  {
+    "path": "src/core/src/math/projection/domain/hpx.rs",
+    "sha": "df755ebef6191117134e3d96fd189ef9f2ae34fc",
+    "bytes": 1920
+  },
+  {
+    "path": "src/core/src/math/projection/domain/mod.rs",
+    "sha": "92d8607eb01387d8ff3fafc67cfea542772275eb",
+    "bytes": 95
+  },
+  {
+    "path": "src/core/src/math/projection/domain/op.rs",
+    "sha": "79fd11eae82518310abe4109e5ab7b5c09ca7c2d",
+    "bytes": 2421
+  },
+  {
+    "path": "src/core/src/math/projection/domain/par.rs",
+    "sha": "9b89f741e101e297e228f5a05bc6795066313d32",
+    "bytes": 577
+  },
+  {
+    "path": "src/core/src/math/projection/domain/sdf.rs",
+    "sha": "2e96c16bf1b916afc38b1f2c346acc47ba190e0d",
+    "bytes": 1583
+  },
+  {
+    "path": "src/core/src/math/projection/mod.rs",
+    "sha": "e7fe22b0517c71d5b0e3225a24c9757d9dd64138",
+    "bytes": 33622
+  },
+  {
+    "path": "src/core/src/math/rotation.rs",
+    "sha": "5700fcba07f29c34c9648736929181685dcfd386",
+    "bytes": 5541
+  },
+  {
+    "path": "src/core/src/math/spectra.rs",
+    "sha": "201452c9f507a6358d4948b2d3e001e6e1786dd6",
+    "bytes": 2487
+  },
+  {
+    "path": "src/core/src/math/sph_geom/bbox.rs",
+    "sha": "fbf567ec32bb52fe6c53e1acfeafbe5a5f8cf6bd",
+    "bytes": 5651
+  },
+  {
+    "path": "src/core/src/math/sph_geom/great_circle_arc.rs",
+    "sha": "803e023f44f919c635c25942b5a4dac87767dbe2",
+    "bytes": 1908
+  },
+  {
+    "path": "src/core/src/math/sph_geom/mod.rs",
+    "sha": "949a3df77471f40c3f8662e5b2e778f99ea706c6",
+    "bytes": 1961
+  },
+  {
+    "path": "src/core/src/math/sph_geom/region.rs",
+    "sha": "388157d8b39e30b77bf68474ec7b65918bcae883",
+    "bytes": 10346
+  },
+  {
+    "path": "src/core/src/math/utils.rs",
+    "sha": "cc718ca64e1b4560531d57b62b06d439b10ed9ec",
+    "bytes": 4300
+  },
+  {
+    "path": "src/core/src/math/vector.rs",
+    "sha": "65a50690df261c9e689b2f56573cae348c5c5c8b",
+    "bytes": 2059
+  },
+  {
+    "path": "src/core/src/renderable/catalog/manager.rs",
+    "sha": "560ea4cf5042be2cc3bd5d991e63e4aef9d6a13c",
+    "bytes": 19729
+  },
+  {
+    "path": "src/core/src/renderable/catalog/mod.rs",
+    "sha": "f6bf27b2cbc3d7f34c8257abe071e86f3c8f23e6",
+    "bytes": 50
+  },
+  {
+    "path": "src/core/src/renderable/final_pass.rs",
+    "sha": "eb9c83526ab6a31ad6570095d0b60795cef75a48",
+    "bytes": 2628
+  },
+  {
+    "path": "src/core/src/renderable/grid/label.rs",
+    "sha": "609fae995915a3ad65bff354827ef9d3d11a0f62",
+    "bytes": 5349
+  },
+  {
+    "path": "src/core/src/renderable/grid/meridian.rs",
+    "sha": "d6729b7dad5e7f66c3b0a76cef9e1011b135f938",
+    "bytes": 5356
+  },
+  {
+    "path": "src/core/src/renderable/grid/mod.rs",
+    "sha": "3dd2dfebcb782f9f8f4fe69f9f493d464b8b687d",
+    "bytes": 11014
+  },
+  {
+    "path": "src/core/src/renderable/grid/parallel.rs",
+    "sha": "979a65af416b8c3ce40bb49cdf88d681b7c547d0",
+    "bytes": 4794
+  },
+  {
+    "path": "src/core/src/renderable/hips/config.rs",
+    "sha": "b8c33e2236677d91c92010c5e4dbb2836c6ed76e",
+    "bytes": 8783
+  },
+  {
+    "path": "src/core/src/renderable/hips/d2/buffer.rs",
+    "sha": "8d270b155b12c7f16a01392e011aa6f0e8345f0f",
+    "bytes": 17435
+  },
+  {
+    "path": "src/core/src/renderable/hips/d2/mod.rs",
+    "sha": "6a7bcddbb348e2be5eb2244dead7fd9aa3263d73",
+    "bytes": 30507
+  },
+  {
+    "path": "src/core/src/renderable/hips/d2/texture.rs",
+    "sha": "10d078b2cb1e85d6f89c39e035e56118d15bfa3f",
+    "bytes": 4943
+  },
+  {
+    "path": "src/core/src/renderable/hips/d3/cube.rs",
+    "sha": "5fea29ca3872433ce390004dc023f21ecf70e016",
+    "bytes": 7492
+  },
+  {
+    "path": "src/core/src/renderable/hips/d3/mod.rs",
+    "sha": "cfacbc2cf7d6d9e7e5f3d37559b045853127fb98",
+    "bytes": 41755
+  },
+  {
+    "path": "src/core/src/renderable/hips/d3/texture.rs",
+    "sha": "985647e7f746365ae354b3725cac55597821d5ca",
+    "bytes": 14274
+  },
+  {
+    "path": "src/core/src/renderable/hips/mod.rs",
+    "sha": "bf798b1577507bd20ba5ce93c25e0420114b1f78",
+    "bytes": 3721
+  },
+  {
+    "path": "src/core/src/renderable/hips/raytracing.rs",
+    "sha": "201887f6983dd826acc49cfdd0faf349528a5dee",
+    "bytes": 5726
+  },
+  {
+    "path": "src/core/src/renderable/hips/subdivide.rs",
+    "sha": "c887bffce8a1b1a3d4c78a7c85cce8acd70d21a6",
+    "bytes": 5335
+  },
+  {
+    "path": "src/core/src/renderable/hips/tile_heap.rs",
+    "sha": "34c5ca7f6138a26792d575fef0d9c7e4f8236c9c",
+    "bytes": 2890
+  },
+  {
+    "path": "src/core/src/renderable/hips/triangulation.rs",
+    "sha": "9b3e52170018b9ab3304ca070958187b310ed678",
+    "bytes": 14957
+  },
+  {
+    "path": "src/core/src/renderable/hips/uv.rs",
+    "sha": "6189fd6a6cf8b268ca6ddc1b23b34050d64eb4c1",
+    "bytes": 2255
+  },
+  {
+    "path": "src/core/src/renderable/image/cuts.rs",
+    "sha": "805f08720464c5bd7e6cd2bf3f7e85f24b811c75",
+    "bytes": 844
+  },
+  {
+    "path": "src/core/src/renderable/image/grid.rs",
+    "sha": "c7f58ba811ab8b1cbef28e605d0d0f30a9bcefaf",
+    "bytes": 9660
+  },
+  {
+    "path": "src/core/src/renderable/image/mod.rs",
+    "sha": "97c27b0de1c474729eee5fe321ddd39a13458605",
+    "bytes": 27384
+  },
+  {
+    "path": "src/core/src/renderable/image/subdivide_texture.rs",
+    "sha": "1fad64b91b8e63dbe08b0e7355dde4c888b66f35",
+    "bytes": 7542
+  },
+  {
+    "path": "src/core/src/renderable/line/great_circle_arc.rs",
+    "sha": "869725f0f6ceab7831d577879c41a58a3df6674c",
+    "bytes": 5959
+  },
+  {
+    "path": "src/core/src/renderable/line/mod.rs",
+    "sha": "f0a3159b835d36c9b300e32ff8c4195168e57806",
+    "bytes": 14646
+  },
+  {
+    "path": "src/core/src/renderable/line/parallel_arc.rs",
+    "sha": "4dbe6a3357fe1994ba3aed8b7964cc9ac3c98e24",
+    "bytes": 6562
+  },
+  {
+    "path": "src/core/src/renderable/moc/hierarchy.rs",
+    "sha": "bdf539ad990e311315e19557b089884d1786c43c",
+    "bytes": 2161
+  },
+  {
+    "path": "src/core/src/renderable/moc/mod.rs",
+    "sha": "ae452444a628960c772f85a90c0625b0c1e6647d",
+    "bytes": 16426
+  },
+  {
+    "path": "src/core/src/renderable/moc/renderer.rs",
+    "sha": "2e5ba3f530f24d091b9a75764fbd3090e6fd7073",
+    "bytes": 3991
+  },
+  {
+    "path": "src/core/src/renderable/mod.rs",
+    "sha": "d35dca92d5cb167fb5935c86329c2bbfe73b1993",
+    "bytes": 17531
+  },
+  {
+    "path": "src/core/src/renderable/shape/box.rs",
+    "sha": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+    "bytes": 1
+  },
+  {
+    "path": "src/core/src/renderable/shape/circle.rs",
+    "sha": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+    "bytes": 1
+  },
+  {
+    "path": "src/core/src/renderable/shape/ellipsis.rs",
+    "sha": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+    "bytes": 1
+  },
+  {
+    "path": "src/core/src/renderable/shape/image.rs",
+    "sha": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+    "bytes": 1
+  },
+  {
+    "path": "src/core/src/renderable/shape/mod.rs",
+    "sha": "92c2d63df83417171314548f0db27e0a2f75de5c",
+    "bytes": 1430
+  },
+  {
+    "path": "src/core/src/renderable/shape/polyline.rs",
+    "sha": "d02b0f6bcb274b81bb27fee9c5676978c4b7767b",
+    "bytes": 6599
+  },
+  {
+    "path": "src/core/src/renderable/text.rs",
+    "sha": "e6cd85f1d0888fb36a74d3e935acea633cc67c1b",
+    "bytes": 2622
+  },
+  {
+    "path": "src/core/src/renderable/utils/index_patch.rs",
+    "sha": "c8ef408d31d89848f8367b6bc4e4ed0600244663",
+    "bytes": 4742
+  },
+  {
+    "path": "src/core/src/renderable/utils/mod.rs",
+    "sha": "8ed98ef7cba09474f7f8f8c7eb2b6f89f8c0ad0c",
+    "bytes": 39
+  },
+  {
+    "path": "src/core/src/renderable/utils/triangle.rs",
+    "sha": "5786f0959dab04261c048b7e32dfe106a4d4be79",
+    "bytes": 1261
+  },
+  {
+    "path": "src/core/src/shader.rs",
+    "sha": "c9ff2c577061ce140f9dd0e3e0874a3de304f38e",
+    "bytes": 3802
+  },
+  {
+    "path": "src/core/src/shaders.rs",
+    "sha": "3e75f00ceedf2953134b7889514f7a6cc1064b76",
+    "bytes": 196258
+  },
+  {
+    "path": "src/core/src/tile_fetcher.rs",
+    "sha": "4c5f61820a0fad2f1421adc68c3f79b047cc7147",
+    "bytes": 7488
+  },
+  {
+    "path": "src/core/src/time.rs",
+    "sha": "e00215472506de52557805f0148093bed2b60578",
+    "bytes": 2091
+  },
+  {
+    "path": "src/core/src/utils.rs",
+    "sha": "a12170b249d61025cf9b9d0eb5f5bda13ae2bf53",
+    "bytes": 4404
+  },
+  {
+    "path": "src/css/aladin.css",
+    "sha": "d07c1a6d5bc3e32746ad36bb5c499281d993e3ca",
+    "bytes": 35120
+  },
+  {
+    "path": "src/glsl/webgl2/catalogs/aitoff.vert",
+    "sha": "091068d885a5038c3f369e4387fa0e829fd99546",
+    "bytes": 674
+  },
+  {
+    "path": "src/glsl/webgl2/catalogs/arc.vert",
+    "sha": "4bcd955c75faa0fe0a08b45ee4cc114e37a6700f",
+    "bytes": 671
+  },
+  {
+    "path": "src/glsl/webgl2/catalogs/catalog.frag",
+    "sha": "86d773424ae36dd0c91aae31c7ed2291aa58fa38",
+    "bytes": 383
+  },
+  {
+    "path": "src/glsl/webgl2/catalogs/healpix.vert",
+    "sha": "c26b6f8ade2973c855e0c486504d86a9023582bc",
+    "bytes": 677
+  },
+  {
+    "path": "src/glsl/webgl2/catalogs/mercator.vert",
+    "sha": "70cc07f2288dbc46dbc676333c778146e9b55e80",
+    "bytes": 677
+  },
+  {
+    "path": "src/glsl/webgl2/catalogs/mollweide.vert",
+    "sha": "c7c5d79bc2cb1760b29e13e235b03a6ca4fb537d",
+    "bytes": 678
+  },
+  {
+    "path": "src/glsl/webgl2/catalogs/ortho.frag",
+    "sha": "96f711c2d55f53859abff74a8af7c7a02d499d01",
+    "bytes": 432
+  },
+  {
+    "path": "src/glsl/webgl2/catalogs/ortho.vert",
+    "sha": "c12ba3485a0a8d52896a68fd4e01bd6095d1c3fe",
+    "bytes": 681
+  },
+  {
+    "path": "src/glsl/webgl2/catalogs/tan.vert",
+    "sha": "9240118fc30f35ac80c508ebaabe82ef7c084984",
+    "bytes": 678
+  },
+  {
+    "path": "src/glsl/webgl2/colormaps/colormap.frag",
+    "sha": "848dbd7f9f47b0971d10a8d90deb3bf200ac2243",
+    "bytes": 352
+  },
+  {
+    "path": "src/glsl/webgl2/colormaps/colormap.glsl",
+    "sha": "fbd84a6ecc1bdd4b34670919951d1619ad14966c",
+    "bytes": 235
+  },
+  {
+    "path": "src/glsl/webgl2/colormaps/colormap.vert",
+    "sha": "b97c5a5eff0ef19cdac606824576443110561a7e",
+    "bytes": 236
+  },
+  {
+    "path": "src/glsl/webgl2/decode.glsl",
+    "sha": "a07b8851733f29a3f75f4cda3fd684816dae6781",
+    "bytes": 1269
+  },
+  {
+    "path": "src/glsl/webgl2/fits/base.vert",
+    "sha": "50721cf6ff68e9ba71dca92ad5b3eafb942f5b52",
+    "bytes": 230
+  },
+  {
+    "path": "src/glsl/webgl2/fits/color.glsl",
+    "sha": "7fa29da6dc9d3015642e5e6d7dba9bfac702db15",
+    "bytes": 1401
+  },
+  {
+    "path": "src/glsl/webgl2/fits/f32.frag",
+    "sha": "2a067ad33d8f681da2e293bfae436d087272e007",
+    "bytes": 385
+  },
+  {
+    "path": "src/glsl/webgl2/fits/i16.frag",
+    "sha": "526063c6ec3397bfbba795bdef54a6a0ae294e10",
+    "bytes": 385
+  },
+  {
+    "path": "src/glsl/webgl2/fits/i32.frag",
+    "sha": "de5454fbd8e838ae2da78f385a975999136e7209",
+    "bytes": 385
+  },
+  {
+    "path": "src/glsl/webgl2/fits/u8.frag",
+    "sha": "326bdfd28bb4c31f1e402af9b0f06b459a2edd3c",
+    "bytes": 384
+  },
+  {
+    "path": "src/glsl/webgl2/hips/color.glsl",
+    "sha": "6d50a1eccd34ca2d4765fb9837f154f0e0c03011",
+    "bytes": 2710
+  },
+  {
+    "path": "src/glsl/webgl2/hips/rasterizer/f32.frag",
+    "sha": "78f0652dee693b64ec2f995a58dc116a748c25bd",
+    "bytes": 630
+  },
+  {
+    "path": "src/glsl/webgl2/hips/rasterizer/i16.frag",
+    "sha": "ffd242054f7554cf8e1a3bce66e81a3e13dc4a95",
+    "bytes": 630
+  },
+  {
+    "path": "src/glsl/webgl2/hips/rasterizer/i32.frag",
+    "sha": "1ecf379dd94517f5d399d95a0ce9d0e642da6241",
+    "bytes": 630
+  },
+  {
+    "path": "src/glsl/webgl2/hips/rasterizer/raster.vert",
+    "sha": "5c01ac06e86ec835d2bba38b203b4fe4c9dec286",
+    "bytes": 823
+  },
+  {
+    "path": "src/glsl/webgl2/hips/rasterizer/rgba.frag",
+    "sha": "428d64fdeb7d8296d799653f6b3217a3ee27f3d3",
+    "bytes": 486
+  },
+  {
+    "path": "src/glsl/webgl2/hips/rasterizer/rgba2cmap.frag",
+    "sha": "f47eedbe91b9c8fb591ae50027c41bd968cc2582",
+    "bytes": 492
+  },
+  {
+    "path": "src/glsl/webgl2/hips/rasterizer/u8.frag",
+    "sha": "642f074b3c5076df731304873d2a16ab2866ab97",
+    "bytes": 628
+  },
+  {
+    "path": "src/glsl/webgl2/hips/raytracer/backcolor.frag",
+    "sha": "c2b8c78eb9927e04cc3847d12be175cddf22fcea",
+    "bytes": 162
+  },
+  {
+    "path": "src/glsl/webgl2/hips/raytracer/backcolor.vert",
+    "sha": "af92c810cf4a13b7832b073c0014c2a343a0025c",
+    "bytes": 241
+  },
+  {
+    "path": "src/glsl/webgl2/hips/raytracer/binary_search_tile.glsl",
+    "sha": "9f6f5faf39c64b434c33630704f92e2c5f03d49c",
+    "bytes": 589
+  },
+  {
+    "path": "src/glsl/webgl2/hips/raytracer/f32.frag",
+    "sha": "32dacda61bc19c09fa3aa8a006d325a39ab65743",
+    "bytes": 814
+  },
+  {
+    "path": "src/glsl/webgl2/hips/raytracer/i16.frag",
+    "sha": "f7c860f1c19eaf221c48240925082abc72833f3c",
+    "bytes": 745
+  },
+  {
+    "path": "src/glsl/webgl2/hips/raytracer/i32.frag",
+    "sha": "c2c8cc37842def7c6d8f7fb3a755e65a2f4a7ccf",
+    "bytes": 812
+  },
+  {
+    "path": "src/glsl/webgl2/hips/raytracer/raytracer.vert",
+    "sha": "c44a21a262394244ad8fa32475985fe01e77c49b",
+    "bytes": 470
+  },
+  {
+    "path": "src/glsl/webgl2/hips/raytracer/rgba.frag",
+    "sha": "94c0ce70e5cdd9dc305bd4585d989b7cfbd1c34e",
+    "bytes": 759
+  },
+  {
+    "path": "src/glsl/webgl2/hips/raytracer/rgba2cmap.frag",
+    "sha": "ef05ff07d61c8c0fd3763a120b0c977ec7ffb54a",
+    "bytes": 755
+  },
+  {
+    "path": "src/glsl/webgl2/hips/raytracer/u8.frag",
+    "sha": "f233827c75fdf6db204c193ba3e932a3168e399f",
+    "bytes": 810
+  },
+  {
+    "path": "src/glsl/webgl2/hips/raytracer/utils.glsl",
+    "sha": "49ec41936e7dd111a187a98e2fabcf6e82ac261d",
+    "bytes": 236
+  },
+  {
+    "path": "src/glsl/webgl2/hips3d/f32.frag",
+    "sha": "404653ced9c9dc70d021590c93dee60d409635be",
+    "bytes": 373
+  },
+  {
+    "path": "src/glsl/webgl2/hips3d/i16.frag",
+    "sha": "c9040e1261954f49551cf1c50df0cd680075f31a",
+    "bytes": 429
+  },
+  {
+    "path": "src/glsl/webgl2/hips3d/i32.frag",
+    "sha": "a5ca26f0ade7b5085dad761fe098113e56b2f112",
+    "bytes": 429
+  },
+  {
+    "path": "src/glsl/webgl2/hips3d/raster.vert",
+    "sha": "e18ed10bd0c116854662b5536772ca729c03843e",
+    "bytes": 526
+  },
+  {
+    "path": "src/glsl/webgl2/hips3d/red.frag",
+    "sha": "16548b17437297658fdbd0e6b2cd946abc89e138",
+    "bytes": 403
+  },
+  {
+    "path": "src/glsl/webgl2/hips3d/u8.frag",
+    "sha": "be8c4178a11028cd15bfd4bd51ff4938da2cc6c5",
+    "bytes": 372
+  },
+  {
+    "path": "src/glsl/webgl2/hsv.glsl",
+    "sha": "dc4e6bf9d3ee62c638645e51156accc16d1f9172",
+    "bytes": 546
+  },
+  {
+    "path": "src/glsl/webgl2/image/base.vert",
+    "sha": "34564d4c85946570ff089ba005bb5a5e6d2964b0",
+    "bytes": 209
+  },
+  {
+    "path": "src/glsl/webgl2/image/sampler.frag",
+    "sha": "ecb4164181f4b4b1d491b65b91c36ee6ec315f38",
+    "bytes": 267
+  },
+  {
+    "path": "src/glsl/webgl2/line/base.frag",
+    "sha": "878e8a781d42a8d22618f856800c894db005f9eb",
+    "bytes": 528
+  },
+  {
+    "path": "src/glsl/webgl2/line/base.vert",
+    "sha": "a5ce9c2e87da357f1c424eef7ed6d370d9224fc3",
+    "bytes": 179
+  },
+  {
+    "path": "src/glsl/webgl2/line/inst_lonlat.vert",
+    "sha": "42e8889eb9a4cdf7b2dd03b9d5fdaee68d5058fb",
+    "bytes": 1287
+  },
+  {
+    "path": "src/glsl/webgl2/line/inst_ndc.vert",
+    "sha": "00d727363b6b402c1a5781060d8d73c6e7511b1c",
+    "bytes": 541
+  },
+  {
+    "path": "src/glsl/webgl2/moc/base.frag",
+    "sha": "6be78dfc642eeef3f738a0ff3daa6d7d09043fef",
+    "bytes": 269
+  },
+  {
+    "path": "src/glsl/webgl2/moc/base.vert",
+    "sha": "6f70d1ab6576ace8b11c932b6e9d6a448bc87456",
+    "bytes": 522
+  },
+  {
+    "path": "src/glsl/webgl2/passes/post_fragment_100es.frag",
+    "sha": "03d3bc63ccbf1cd406b7c07b67bcd5410fe01e5b",
+    "bytes": 609
+  },
+  {
+    "path": "src/glsl/webgl2/passes/post_vertex_100es.vert",
+    "sha": "5657aff2bf1d1cb92496213e66353963e60c67bb",
+    "bytes": 177
+  },
+  {
+    "path": "src/glsl/webgl2/projection/ait.glsl",
+    "sha": "b9494bd6f71e3ddc9bd7e1244202ab8f56adff31",
+    "bytes": 509
+  },
+  {
+    "path": "src/glsl/webgl2/projection/hpx_proj.glsl",
+    "sha": "2e49b7235fa56d2eb239ac813a1b7cd520da1c4a",
+    "bytes": 6020
+  },
+  {
+    "path": "src/glsl/webgl2/projection/hpx_unproj.glsl",
+    "sha": "de9b54c9cf0ca867177da96402d48c0bcaa86777",
+    "bytes": 3631
+  },
+  {
+    "path": "src/glsl/webgl2/projection/mer.glsl",
+    "sha": "6c962b6bc75707eeeca3384acda08a74a5b7f773",
+    "bytes": 75
+  },
+  {
+    "path": "src/glsl/webgl2/projection/mol.glsl",
+    "sha": "e5556477a263a82b41a14f10ceabee702ef5b44a",
+    "bytes": 621
+  },
+  {
+    "path": "src/glsl/webgl2/projection/projection.glsl",
+    "sha": "9f8fb7f832d09ac22e18cd03858f050cf490f4cf",
+    "bytes": 1218
+  },
+  {
+    "path": "src/glsl/webgl2/projection/sin.glsl",
+    "sha": "52cf02788465c30f56205bbabaeaff58d6fdab43",
+    "bytes": 162
+  },
+  {
+    "path": "src/glsl/webgl2/projection/stg.glsl",
+    "sha": "bc299939e5feca9f19157c52716e1ba741d5c218",
+    "bytes": 96
+  },
+  {
+    "path": "src/glsl/webgl2/projection/tan.glsl",
+    "sha": "77a405a69d8fea6867efa3e836078b4ca54a1288",
+    "bytes": 89
+  },
+  {
+    "path": "src/glsl/webgl2/projection/zea.glsl",
+    "sha": "62971f0d641661fbfc8d2a4227cf622c46d031ee",
+    "bytes": 165
+  },
+  {
+    "path": "src/glsl/webgl2/tonal_corrections.glsl",
+    "sha": "f9fea289414d8691100e542a8711f17c46ad2b81",
+    "bytes": 1296
+  },
+  {
+    "path": "src/glsl/webgl2/transfer_funcs.glsl",
+    "sha": "ce6fce7a60025c6580eb2a6956732d9887ff0721",
+    "bytes": 1121
+  },
+  {
+    "path": "src/img/kernel.png",
+    "sha": "b19db3b62ebc4158a36326524b9f78b3c9096dda",
+    "bytes": 918
+  },
+  {
+    "path": "src/img/letters.json",
+    "sha": "5911eae0bd5fe3f7a7fa309a60d679ccf33f1911",
+    "bytes": 34553
+  },
+  {
+    "path": "src/img/letters.png",
+    "sha": "cf80d97a1b5c50a0818848839a5bf7f51b320f54",
+    "bytes": 34237
+  },
+  {
+    "path": "src/js/A.js",
+    "sha": "5ccd850ee29535c69faf993b8fc5781aacffa318",
+    "bytes": 38950
+  },
+  {
+    "path": "src/js/Aladin.js",
+    "sha": "61b18a0b0a579830d3782f6129f0d443d648d5f2",
+    "bytes": 120522
+  },
+  {
+    "path": "src/js/AladinUtils.js",
+    "sha": "34def0c26f533a00cb20cabd2f3413935e3e5caf",
+    "bytes": 8972
+  },
+  {
+    "path": "src/js/AvmUtils.js",
+    "sha": "c4c29832259bba5ea082fecc26e88b49be96ad3b",
+    "bytes": 8089
+  },
+  {
+    "path": "src/js/Catalog.js",
+    "sha": "68f0a1ec7880c88f55f2ba4e970facb16b7c7c9e",
+    "bytes": 41440
+  },
+  {
+    "path": "src/js/Color.js",
+    "sha": "c24667a07cea1837a71b3cd5bc05ebf08724028b",
+    "bytes": 6481
+  },
+  {
+    "path": "src/js/Constants.ts",
+    "sha": "7f815b4b2fc4498ddc81489abbc8e811757fd05e",
+    "bytes": 1046
+  },
+  {
+    "path": "src/js/CooConversion.js",
+    "sha": "6987dbdc53f610f2b5da3eba2bfe31a5cc45e043",
+    "bytes": 3513
+  },
+  {
+    "path": "src/js/CooFrameEnum.js",
+    "sha": "30cdfa8002f145ff130162d52b67c260ac0bab40",
+    "bytes": 2929
+  },
+  {
+    "path": "src/js/DefaultActionsForContextMenu.js",
+    "sha": "c9dec87c8b2e93033da2cdfd0e4f3fa7b932a023",
+    "bytes": 10882
+  },
+  {
+    "path": "src/js/DefaultHiPSList.js",
+    "sha": "d6cb1bb1a1b0119e9f29fb215121eedc9c2beeb2",
+    "bytes": 9336
+  },
+  {
+    "path": "src/js/Downloader.js",
+    "sha": "f0ccc7ec841393ba8b38327bb153e021d80a8d62",
+    "bytes": 3564
+  },
+  {
+    "path": "src/js/events/ALEvent.js",
+    "sha": "fe02bcecea4ae919e3f522b3a2d12e60bfb9db07",
+    "bytes": 3645
+  },
+  {
+    "path": "src/js/FiniteStateMachine.js",
+    "sha": "65bf047af2ce80ece48116066ad3fe27b60de7f2",
+    "bytes": 1467
+  },
+  {
+    "path": "src/js/FiniteStateMachine/CircleSelect.js",
+    "sha": "4fef229bd039e5109cb4179ff80a57b594247dd4",
+    "bytes": 5314
+  },
+  {
+    "path": "src/js/FiniteStateMachine/LineSelect.js",
+    "sha": "35fe2590837b69e32f0af045ca67f20cf9403285",
+    "bytes": 4956
+  },
+  {
+    "path": "src/js/FiniteStateMachine/PolySelect.js",
+    "sha": "6ed03d8400abac2d23ae08732c22f48d0471f066",
+    "bytes": 9575
+  },
+  {
+    "path": "src/js/FiniteStateMachine/RectSelect.js",
+    "sha": "2e6f69474542fe38b5811b596d27eaabf413de95",
+    "bytes": 5454
+  },
+  {
+    "path": "src/js/Footprint.js",
+    "sha": "f3e84ca5e7741f5b3205ff4bb9f9f5e597bca88f",
+    "bytes": 6236
+  },
+  {
+    "path": "src/js/GenericPointer.js",
+    "sha": "cb855bdd4f10df5a825f9cc8f46f9df91b42fd7f",
+    "bytes": 2310
+  },
+  {
+    "path": "src/js/gui/AladinLogo.js",
+    "sha": "0d4dd566b4ab5b3009fb2bba3b4d2f158f93f689",
+    "bytes": 1874
+  },
+  {
+    "path": "src/js/gui/Box/CatalogQueryBox.js",
+    "sha": "afa6e0c8ed5e66fbafef3dace0ae694d582e1d35",
+    "bytes": 14842
+  },
+  {
+    "path": "src/js/gui/Box/ConeSearchBox.js",
+    "sha": "4c52ba0dc17b2c0a7d7e055ab52b9de0bcaa8124",
+    "bytes": 6711
+  },
+  {
+    "path": "src/js/gui/Box/GotoBox.js",
+    "sha": "c6556ebd3b6432b99994907720865ebc0c0cb8f2",
+    "bytes": 1981
+  },
+  {
+    "path": "src/js/gui/Box/GridBox.js",
+    "sha": "ee1292be529e7420b5a9f93827016bfb773558b4",
+    "bytes": 6611
+  },
+  {
+    "path": "src/js/gui/Box/HiPSBrowserBox.js",
+    "sha": "0455814d9080e00f2ded1c902ecd4832c5e3d39d",
+    "bytes": 18106
+  },
+  {
+    "path": "src/js/gui/Box/HiPSCompositeBox.js",
+    "sha": "39ddd51fe5090782919b6f6bcc12c8b225afea99",
+    "bytes": 8794
+  },
+  {
+    "path": "src/js/gui/Box/HiPSFilterBox.js",
+    "sha": "ccf0eb95862d71a77fc41e41067b6d5c446f2358",
+    "bytes": 6353
+  },
+  {
+    "path": "src/js/gui/Box/HiPSSettingsBox.js",
+    "sha": "31d0c0456d3bf4838f01fe57fe57c8fa54ccf84e",
+    "bytes": 14301
+  },
+  {
+    "path": "src/js/gui/Box/ServiceQueryBox.js",
+    "sha": "e579f35de3e148b8e26ccf21381d636423905afd",
+    "bytes": 6702
+  },
+  {
+    "path": "src/js/gui/Box/ShortLivedBox.js",
+    "sha": "16761a399e0dac5ef71517d31831d9db3847d28f",
+    "bytes": 2105
+  },
+  {
+    "path": "src/js/gui/Box/StackBox.js",
+    "sha": "49032464f56791442b0a554d0399abc59c25844c",
+    "bytes": 50243
+  },
+  {
+    "path": "src/js/gui/Box/StatusBarBox.js",
+    "sha": "8c1e4af370517d9797e52ae5d21c538de2be46cb",
+    "bytes": 5034
+  },
+  {
+    "path": "src/js/gui/Button/ColorPicker.js",
+    "sha": "2dcbf0edf122a2c2a05a643f90c490e2fd2420fe",
+    "bytes": 3088
+  },
+  {
+    "path": "src/js/gui/Button/ConeSearch.js",
+    "sha": "8114b761acc29c4e7195dab14917e9a7afb2877b",
+    "bytes": 2157
+  },
+  {
+    "path": "src/js/gui/Button/CtxMenuOpener.js",
+    "sha": "87a6179b2c93a85391c5c25cd48e8f10bfda42c5",
+    "bytes": 2500
+  },
+  {
+    "path": "src/js/gui/Button/FileLoader.js",
+    "sha": "71d671919715a1add35754ffe3ece5ccb2b4526b",
+    "bytes": 2507
+  },
+  {
+    "path": "src/js/gui/Button/FullScreen.js",
+    "sha": "6d901cae4508536449b4727edc7a1e21e614d653",
+    "bytes": 3563
+  },
+  {
+    "path": "src/js/gui/Button/GridEnabler.js",
+    "sha": "b60339950cf69f2c58f368f5e63039628043a4e7",
+    "bytes": 2895
+  },
+  {
+    "path": "src/js/gui/Button/Projection.js",
+    "sha": "35b1965a6f0e0c1e20ea2cdd50e39db6ace338bd",
+    "bytes": 3359
+  },
+  {
+    "path": "src/js/gui/Button/SAMP.js",
+    "sha": "32ab35e5e77f2163668c998f23f6c2810a736eef",
+    "bytes": 4505
+  },
+  {
+    "path": "src/js/gui/Button/SelectionMode.js",
+    "sha": "2b5ab0b6a17319a69d2a318090a6248f7841b5aa",
+    "bytes": 5754
+  },
+  {
+    "path": "src/js/gui/Button/Settings.js",
+    "sha": "825775f458119cc1ce22a31f5353024f215c56ea",
+    "bytes": 13872
+  },
+  {
+    "path": "src/js/gui/Button/ShareView.js",
+    "sha": "a8347fb90c13fc4a446bacf24b8155749cf0cdcc",
+    "bytes": 5431
+  },
+  {
+    "path": "src/js/gui/Button/SimbadPointer.js",
+    "sha": "f37c6122cf2f9856d13f493bf6f34f86ea279fc5",
+    "bytes": 3129
+  },
+  {
+    "path": "src/js/gui/Button/Snapshot.js",
+    "sha": "326c31f7ca76fd13ca57554f0af9d993372aac5a",
+    "bytes": 1718
+  },
+  {
+    "path": "src/js/gui/Button/Stack.js",
+    "sha": "fd2664a6d6a1b761d2be5a55df16edbb246cef0e",
+    "bytes": 2329
+  },
+  {
+    "path": "src/js/gui/Button/Toggler.js",
+    "sha": "b23f659feb79728a3701f7caea51f4873b12211c",
+    "bytes": 4197
+  },
+  {
+    "path": "src/js/gui/CtxMenu/GridSettings.js",
+    "sha": "58734955e214e52b1b18abb22ff1d421aa7e8ace",
+    "bytes": 3472
+  },
+  {
+    "path": "src/js/gui/CtxMenu/Projection.js",
+    "sha": "68ae2d387ec5029de0d022c1bfa930e63f79ac43",
+    "bytes": 2396
+  },
+  {
+    "path": "src/js/gui/FoV.js",
+    "sha": "778275ddf76b500a2ec96e24ccdaa66604094631",
+    "bytes": 4696
+  },
+  {
+    "path": "src/js/gui/Input/CooFrame.js",
+    "sha": "6ebcdd2cf8cb6843b710ac2ba2d44dfe8405fe16",
+    "bytes": 2712
+  },
+  {
+    "path": "src/js/gui/Input/Dropdown.js",
+    "sha": "69dbffabb95709989102fbb0c923d0966764df12",
+    "bytes": 3163
+  },
+  {
+    "path": "src/js/gui/Input/LayerSelector.js",
+    "sha": "d983feac85e9e59765d03ac7126cabb3061005fb",
+    "bytes": 4176
+  },
+  {
+    "path": "src/js/gui/Layout.js",
+    "sha": "0e429344fafd150ad787ffd629fc86e35fc4a013",
+    "bytes": 7543
+  },
+  {
+    "path": "src/js/gui/Location.js",
+    "sha": "9085e862b17426fc20869b89d00312019b4fa8cb",
+    "bytes": 9026
+  },
+  {
+    "path": "src/js/gui/Toolbar.js",
+    "sha": "d40804e9a1c189398a607cd5708586096a2ea45a",
+    "bytes": 5906
+  },
+  {
+    "path": "src/js/gui/Utils.js",
+    "sha": "8aac68e6c5649cc1191f07da534f8784ea858e6c",
+    "bytes": 1651
+  },
+  {
+    "path": "src/js/gui/Widgets/ActionButton.js",
+    "sha": "83fa9e63062ccd2830b563d315b7909d7dc1ea66",
+    "bytes": 10756
+  },
+  {
+    "path": "src/js/gui/Widgets/Box.js",
+    "sha": "0e8e640c330c69f4e0503efeee57b45a212456f7",
+    "bytes": 7939
+  },
+  {
+    "path": "src/js/gui/Widgets/ContextMenu.js",
+    "sha": "891efd2688ab4a2c9cf0bec2b161df6914612a3a",
+    "bytes": 15298
+  },
+  {
+    "path": "src/js/gui/Widgets/Form.js",
+    "sha": "bf12daae8aaa10b671c4a506f362bde6428fbad0",
+    "bytes": 5456
+  },
+  {
+    "path": "src/js/gui/Widgets/Icon.js",
+    "sha": "4d30e14b9fcbefd8bb9fc55816248b6956e53257",
+    "bytes": 8367
+  },
+  {
+    "path": "src/js/gui/Widgets/Input.js",
+    "sha": "8a668dd273b4650265695f9eff38d520df3a82d0",
+    "bytes": 15176
+  },
+  {
+    "path": "src/js/gui/Widgets/Radio.js",
+    "sha": "fa5bf276f5eec10f6bb23208721a1e1f3a3fe82b",
+    "bytes": 3417
+  },
+  {
+    "path": "src/js/gui/Widgets/Tab.js",
+    "sha": "99de6331ac17027256c86652aa7c74859ff25331",
+    "bytes": 7514
+  },
+  {
+    "path": "src/js/gui/Widgets/Table.js",
+    "sha": "e21b859007ce638003c4cabab7a1d33939d03be4",
+    "bytes": 3606
+  },
+  {
+    "path": "src/js/gui/Widgets/Tooltip.js",
+    "sha": "755c13899d7d0a99150c68defc081916efa35df7",
+    "bytes": 8044
+  },
+  {
+    "path": "src/js/gui/Widgets/Tree.js",
+    "sha": "12c8ce2043ee0154454572f6c6e7fff5fd589f54",
+    "bytes": 14892
+  },
+  {
+    "path": "src/js/gui/Widgets/Widget.js",
+    "sha": "a1588392f1f89718900a5abae977e795ec4ea047",
+    "bytes": 11123
+  },
+  {
+    "path": "src/js/HealpixGrid.js",
+    "sha": "28e665ee88152c1df88d74dee06aa4da78681e5e",
+    "bytes": 2467
+  },
+  {
+    "path": "src/js/HiPS.js",
+    "sha": "0941841abcbe3daa358b68287777df1b99b21f3d",
+    "bytes": 54225
+  },
+  {
+    "path": "src/js/HiPSCache.js",
+    "sha": "cedd5900a74912373b06cf41fb6732b3ffcfe748",
+    "bytes": 2466
+  },
+  {
+    "path": "src/js/HiPSComposite.js",
+    "sha": "393422d1ea197c12237db392edad5c99ae8510af",
+    "bytes": 2485
+  },
+  {
+    "path": "src/js/HiPSDefinition.js",
+    "sha": "068848abc3abf46638ca580501acba6e7c576cc5",
+    "bytes": 6703
+  },
+  {
+    "path": "src/js/HiPSProperties.js",
+    "sha": "e43163136360eef9696fb806c0cce6537b6e29ff",
+    "bytes": 9647
+  },
+  {
+    "path": "src/js/Image.js",
+    "sha": "ba5033f71654d5bce56a2219ff3863df0a672c77",
+    "bytes": 26661
+  },
+  {
+    "path": "src/js/libs/astro/angle.js",
+    "sha": "d216d8bda063c3e8adab725f70f3c3a258e87383",
+    "bytes": 2841
+  },
+  {
+    "path": "src/js/libs/astro/astroMath.js",
+    "sha": "3bd4e05a91cfef393653ef4634b28a76c3623cbd",
+    "bytes": 6587
+  },
+  {
+    "path": "src/js/libs/astro/coo.js",
+    "sha": "006a00bb135c161cfc97998454ec2647bad06899",
+    "bytes": 13678
+  },
+  {
+    "path": "src/js/libs/avm.js",
+    "sha": "a669a47ca424a02290e79d511b1cdcb3caa1ade6",
+    "bytes": 17058
+  },
+  {
+    "path": "src/js/libs/RequestAnimationFrame.js",
+    "sha": "d45631c5e28eff28a6b20ddb6e2ad2dc7cf8ecab",
+    "bytes": 468
+  },
+  {
+    "path": "src/js/libs/samp.js",
+    "sha": "67b17c20fafe31b9c0865ce3aa65dbba7d53275c",
+    "bytes": 49036
+  },
+  {
+    "path": "src/js/libs/Stats.js",
+    "sha": "e240c9e6ba2233f04f90961a35587b8b6ce67a7b",
+    "bytes": 4110
+  },
+  {
+    "path": "src/js/Logger.js",
+    "sha": "c06f9b60f7e68cd95361854440cec862d6e42bb8",
+    "bytes": 1592
+  },
+  {
+    "path": "src/js/MeasurementTable.js",
+    "sha": "7e43ca5cca08c35ea627afccde3229102416312d",
+    "bytes": 3134
+  },
+  {
+    "path": "src/js/MOC.js",
+    "sha": "d72c5a9369dba6fac3873845f83844c505c2f6ca",
+    "bytes": 12224
+  },
+  {
+    "path": "src/js/MocServer.js",
+    "sha": "0e7b32c134fdae40eee081a5b7800c06e806497a",
+    "bytes": 4575
+  },
+  {
+    "path": "src/js/Overlay.js",
+    "sha": "72ae6460b1523c6c4ce32cd3feaf0c6781a37a22",
+    "bytes": 11994
+  },
+  {
+    "path": "src/js/PlanetaryFeaturesNameResolver.js",
+    "sha": "c48f08c158a37ecfa925674a29b3d324c3401a6b",
+    "bytes": 3803
+  },
+  {
+    "path": "src/js/PlanetaryFeaturesPointer.js",
+    "sha": "5d7c4194f5b7ff6f12bec98f71ba2af645c4b691",
+    "bytes": 7542
+  },
+  {
+    "path": "src/js/Popup.js",
+    "sha": "4c1b1995175db928049bad1abd50fea67f51ac35",
+    "bytes": 3716
+  },
+  {
+    "path": "src/js/ProgressiveCat.js",
+    "sha": "d301c7bf74be75383d1aac58ce4d185003729e4c",
+    "bytes": 22707
+  },
+  {
+    "path": "src/js/ProjectionEnum.js",
+    "sha": "05b444571e4ee912a9c9018934270afb8163eebd",
+    "bytes": 2863
+  },
+  {
+    "path": "src/js/Reticle.js",
+    "sha": "cbf08d62d8603e188fb7b6c953c373a4f4654abe",
+    "bytes": 4470
+  },
+  {
+    "path": "src/js/Selector.js",
+    "sha": "cfac364d4ef155471738189dcdff353c9f187dde",
+    "bytes": 7491
+  },
+  {
+    "path": "src/js/Sesame.js",
+    "sha": "c87c35944161361bde3ddf6360dfcdf27eec9ddd",
+    "bytes": 4657
+  },
+  {
+    "path": "src/js/shapes/Circle.js",
+    "sha": "222170088fad7b934eafefe38d141ca3ebbcf295",
+    "bytes": 11904
+  },
+  {
+    "path": "src/js/shapes/Ellipse.js",
+    "sha": "eaa60386ae83fe21d437a3bb1ed6144c23901830",
+    "bytes": 12745
+  },
+  {
+    "path": "src/js/shapes/Polyline.js",
+    "sha": "f613ffbbc241cc3ce0b223530e2840078b44e1bf",
+    "bytes": 19357
+  },
+  {
+    "path": "src/js/shapes/Vector.js",
+    "sha": "793e5d9ee73a0f1b1838aad6fc2ea3c1a8696ff9",
+    "bytes": 7595
+  },
+  {
+    "path": "src/js/ShortcutHelper.js",
+    "sha": "41fdd22ad9c93bdd73699c72cb29063a72ce66a9",
+    "bytes": 1355
+  },
+  {
+    "path": "src/js/SimbadPointer.js",
+    "sha": "71565b455529895b2e15c1b8882246d1a354aa03",
+    "bytes": 3879
+  },
+  {
+    "path": "src/js/Source.js",
+    "sha": "8b013b1ec87116b2e28a0f8e9d26cc17e32427bd",
+    "bytes": 7684
+  },
+  {
+    "path": "src/js/SpectraDisplayer.js",
+    "sha": "d2c783db09872661c62db71649be5574a98d1cb1",
+    "bytes": 32352
+  },
+  {
+    "path": "src/js/Tile.js",
+    "sha": "6a1025cd8ce89d0db28e73c0a7ca3525679011b5",
+    "bytes": 2419
+  },
+  {
+    "path": "src/js/TileBuffer.js",
+    "sha": "7cd6359159fc3b9834078a35c4485edb50258fcc",
+    "bytes": 2304
+  },
+  {
+    "path": "src/js/URLBuilder.js",
+    "sha": "a178db924357b27e79a756421ace61bd05de27e1",
+    "bytes": 5991
+  },
+  {
+    "path": "src/js/Utils.ts",
+    "sha": "644d476cbbc8c1d869416a472765e014124975af",
+    "bytes": 20543
+  },
+  {
+    "path": "src/js/View.js",
+    "sha": "7bd903b1fc71dd2276e4c8a2542ea700a44ae837",
+    "bytes": 98929
+  },
+  {
+    "path": "src/js/vo/Datalink.js",
+    "sha": "f222b04687bfb2793e9fc2d4db5dbe7c5e72bb72",
+    "bytes": 19916
+  },
+  {
+    "path": "src/js/vo/ObsCore.js",
+    "sha": "63d2cd994964d5dc6e3bd62d1a0511991841d1fd",
+    "bytes": 12613
+  },
+  {
+    "path": "src/js/vo/samp.js",
+    "sha": "6bc04bc5c9ac3b62a9c7fed16b47884440b036eb",
+    "bytes": 14569
+  },
+  {
+    "path": "src/js/vo/VOTable.js",
+    "sha": "5e9d11dd2a098abcec1e7a193fb1b72c194d1c7f",
+    "bytes": 13361
+  },
+  {
+    "path": "src/js/WebGL.js",
+    "sha": "036cb7ca5c447c03e7a2c5aa5c3748237f5610b2",
+    "bytes": 1267
+  },
+  {
+    "path": "src/js/Zoom.js",
+    "sha": "61a2034936c5a9a280102e4b88944ec2e76fe18d",
+    "bytes": 5141
+  },
+  {
+    "path": "tutorials/Examples.md",
+    "sha": "edea0d6a804826907db24f431f06f643d12aeead",
+    "bytes": 138
+  },
+  {
+    "path": "tutorials/UI.md",
+    "sha": "66e20dcd413b1557edcea0d67f27c49af5b7434e",
+    "bytes": 2355
+  },
+  {
+    "path": "vite.config.ts",
+    "sha": "e1b8c8620e94f1c62bdc62eecd0d12a99ba53a1f",
+    "bytes": 2376
+  }
+]

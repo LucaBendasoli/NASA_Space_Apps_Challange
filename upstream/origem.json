@@ -1,0 +1,24 @@
+{
+  "repository": "https://github.com/cds-astro/aladin-lite",
+  "requestedSite": "https://aladin.cds.unistra.fr/AladinLite/",
+  "commit": "60c5cf414d6d56a10b406761e62e8c2ce9f2a760",
+  "version": "3.9.0-beta",
+  "retrievedAt": "2026-11-14",
+  "transport": "GitHub connector fetch_file (base64), verified Git blob SHA-1",
+  "included": [
+    "all src/**",
+    "all assets/**",
+    "all scripts/**",
+    "all tutorials/**",
+    "all root files"
+  ],
+  "excluded": [
+    "examples/**",
+    "tests/**",
+    ".github/**",
+    "Git history"
+  ],
+  "fileCount": 429,
+  "unmodified": true,
+  "identityNote": "Official project linked to requested site. Exact current deployment wrapper and compiled bundle equivalence to commit not verified."
+}
