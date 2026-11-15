@@ -69,7 +69,7 @@ flowchart TD
 4. Cria a vista com URL direta do levantamento, evitando depender de descoberta do registro para selecionar a camada inicial.
 5. Cria o catálogo didático oculto, conecta eventos e habilita os controles.
 6. Busca local não precisa de Sesame. Busca remota tem cancelamento e limite de 12 segundos; uma resposta antiga não substitui uma navegação posterior.
-7. A verificação de metadados do espelho informa falha de conexão, sem fingir validar a renderização de tiles.
+7. O estado das imagens usa callbacks públicos de `A.HiPS`: preparação de camada e erro de acesso são distintos da inicialização do motor. Sucesso não é tratado como prova de tiles renderizados. Veja [estados, fixação e compartilhamento](melhorias-analise.md).
 
 ## Decisão de implementação
 

@@ -80,8 +80,18 @@ Análise: [arquitetura](docs/arquitetura.md) · [funcionalidades](docs/funcional
 
 ## Seleção de astros e infravermelho
 
-Abra `/?science=demo` para experimentar três fontes explicitamente simuladas perto de Andrômeda. Clique nos círculos do catálogo científico ou use a lista no painel de análise. O painel oferece gráfico linear por comprimento de onda, incertezas e tabela acessível, seguindo o tema atual.
+Abra `/?science=demo` para experimentar três fontes explicitamente simuladas perto de Andrômeda. Clique nos círculos do catálogo científico para selecionar o astro principal. O painel oferece gráfico linear por comprimento de onda, incertezas e tabela acessível, seguindo o tema atual.
 
 Selecionar um astro abre um painel científico flutuante não modal, sem mover a página nem redimensionar o mapa. Use **Fechar medições**, **Abrir medições** e **Ampliar**; no celular o painel aparece na parte inferior. Dados em cache aparecem imediatamente. As animações usam GSAP local e respeitam movimento reduzido; sem GSAP a interface continua funcional. Veja [apresentação animada, referências e validação](docs/apresentacao-animada.md).
 
 Para dados reais, configure `src/science-config.js` e abra `/?science=http`. Falhas da API aparecem no painel sem fallback fictício. Consulte o [contrato provisório, exemplos e pendências de integração](docs/backend-infravermelho.md).
+
+Use **Fixar análise** para conservar medições ao explorar outras regiões. Tooltip por foco/toque e tabela destacam a mesma banda. **Compartilhar** inclui a fonte, observação e fixação e recupera os dados por ID ao abrir o link. Estados desligado, vazio, cobertura e erro são distintos; imagens HiPS têm feedback próprio sem confundir servidor acessível com pixels renderizados. Veja [comportamentos, testes e limitações](docs/melhorias-analise.md).
+
+Os gráficos conectam as bandas com uma linha de apoio que se desenha ao abrir, reabrir ou trocar de astro. Ausências interrompem o caminho; incertezas e valores originais são preservados. Veja [traçado animado e validação](docs/linha-animada.md).
+
+O dropdown **Comparar com outro astro visível** aparece diretamente abaixo do título, sem expansão. Escolha outra fonte visível para adicionar uma segunda linha roxa ao mesmo gráfico. A abertura começa sempre apenas com a fonte principal e o seletor sem comparação. As séries compartilham escala e unidades, com legenda, tooltip e tabela por astro. Veja [comparação, navegação e integridade dos dados](docs/comparacao-astros.md).
+
+Os rádios **Entre astros** e **Ao longo do tempo**, acima do dropdown, alternam entre a análise atual e o mesmo astro em observações de datas diferentes. A abertura começa sempre no primeiro modo. No segundo, escolha outra data para comparar com a observação de referência; comprimento de onda e radiância vêm de cada época. A demonstração já inclui datas simuladas. Veja [análise temporal e endpoint provisório para o backend](docs/analise-temporal.md).
+
+O gráfico acompanha a largura do painel durante **Ampliar/Compactar**, com uma transição curta. Ao adicionar uma comparação, apenas a nova linha é animada; a referência mantém seu traçado e dados carregados. Veja [gráfico responsivo, continuidade das séries e validação](docs/grafico-responsivo.md).

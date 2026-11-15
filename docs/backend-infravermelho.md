@@ -2,6 +2,8 @@
 
 Estes endpoints são **propostas**, não serviços existentes. Não foi encontrado backend científico neste repositório. A grandeza `radiance`, sua definição espectral/integrada e unidade científica precisam ser confirmadas pela equipe científica. Não há detecção, fotometria, conversão de magnitude/fluxo/contagens ou cálculo de radiância no frontend.
 
+A análise do mesmo astro em datas diferentes acrescenta o endpoint provisório `objects/{id}/observations` e os metadados opcionais `observedAt` e `imageId` nos objetos. Consulte [contrato de histórico, exemplo e regras científicas](analise-temporal.md). As medições por data reutilizam o endpoint abaixo com o respectivo `observationId`.
+
 ## Configuração
 
 Execute `npm.cmd start`. Por padrão os dados científicos estão desligados. Abra `http://127.0.0.1:4174/?science=demo` para ativar explicitamente a demonstração, com três fontes simuladas perto de Andrômeda. A fonte B demonstra zero, negativo, banda ausente e resposta incompleta; a terceira não tem medições. Nenhuma delas identifica um objeto físico nos pixels HiPS.
@@ -37,6 +39,31 @@ O cone é centrado na vista, considera ambas as dimensões do FoV e bordas obtid
 
 ## Medições propostas
 
+### Recuperação por identidade (novo endpoint provisório)
+
+`GET {baseURL}objects/{id}?surveyId=wise&observationId=observation-456`
+
+Necessário para recuperar links compartilhados sem depender da lista regional ou de cache. É uma **proposta ainda não implementada por um backend neste repositório**. Retorna um objeto diretamente, com a mesma identidade solicitada; 404 quando indisponível. A implementação fica em `createProvider().object` e pode ser adaptada sem mudar catálogo ou gráfico.
+
+```json
+{
+  "id": "object-123",
+  "name": "Fonte de exemplo",
+  "ra": 10.684708,
+  "dec": 41.26875,
+  "frame": "ICRS",
+  "surveyId": "wise",
+  "observationId": "observation-456",
+  "observationName": "Observação de exemplo",
+  "datasetId": "example-ir",
+  "datasetName": "Conjunto de medições de exemplo"
+}
+```
+
+`observationName`, `datasetId` e `datasetName` são novos campos opcionais, também aceitos nos registros da consulta regional. O conjunto que fornece medições é distinto da imagem de fundo; não se deduz dataset pela cor ou pelos pixels HiPS. Sem esses metadados, a interface informa que o conjunto não foi fornecido e preserva os IDs técnicos. O backend deve assegurar associação válida ao `surveyId` e confirmar a definição científica das unidades e incertezas.
+
+### Bandas
+
 `GET {baseURL}objects/{id}/measurements?surveyId=wise&observationId=observation-456`
 
 ```json
@@ -60,9 +87,11 @@ Coordenadas em pixels são recusadas. O backend deve aplicar WCS válido e entre
 
 ## Sincronização e integração Aladin
 
+Atualização de comportamento: [estados, fixação, tooltip e compartilhamento](melhorias-analise.md). Fixar mantém a análise durante navegação, mas não injeta sua fonte em resultados regionais ausentes. A chave do cache continua sendo levantamento/observação/astro. Links com identidade consultam o endpoint individual acima; nunca ativam demonstração por conta própria.
+
 Consultas aguardam 350 ms após mudanças efetivas de posição, zoom, projeção e tamanho (eventos de simples redesenho são ignorados). Mudanças invalidam respostas em voo imediatamente e cancelam requisições via AbortController, com timeout HTTP de 15 segundos. Trocar levantamento limpa fontes e seleção imediatamente; navegar/redimensionar preserva a seleção durante o carregamento e a reconcilia com a nova lista regional. Um contador também bloqueia respostas antigas de provedores que ignorem o cancelamento. Medições usam cache limitado a 100 chaves de astro/levantamento/observação, válido durante a sessão; dados mutáveis do backend exigirão versão de observação ou política de expiração acordada.
 
-Catálogo próprio usa `A.catalog`, `A.source`, `addCatalog`, `removeAll`, `source.select/deselect`, callback `onClick`, cores nativas de hover/seleção e `world2pix` somente para desambiguação de vizinhos a menos de 28 pixels de tela. Nenhum marcador HTML por objeto. A lista acessível mantém todas as fontes recebidas disponíveis, inclusive em regiões densas. Sem registro não há identidade atribuída ao ponto luminoso.
+Catálogo próprio usa `A.catalog`, `A.source`, `addCatalog`, `removeAll`, `source.select/deselect`, callback `onClick`, cores nativas de hover/seleção e `world2pix` para desambiguação de vizinhos a menos de 28 pixels de tela e verificação de visibilidade. Nenhum marcador HTML por objeto. A seleção principal ocorre pelo clique no mapa; marcadores próximos oferecem desambiguação após o clique. O dropdown do painel serve somente à comparação com outras fontes visíveis. Sem registro não há identidade atribuída ao ponto luminoso.
 
 APIs conferidas no snapshot local 3.9.0-beta (`Catalog.js`, `Source.js`, `Aladin.js`, `View.js`) e na [documentação oficial de catálogo](https://cds-astro.github.io/aladin-lite/Catalog.js.html) e [atlas](https://cds-astro.github.io/aladin-lite/Aladin.html). `aladin.on` tem um callback por evento nesta versão: a aplicação compartilha os eventos de posição/zoom com os indicadores existentes.
 

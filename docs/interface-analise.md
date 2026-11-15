@@ -33,4 +33,4 @@ O backend científico real e toque em aparelho físico continuam pendentes. A fa
 
 ## Próxima evolução sugerida
 
-Comparar dois astros fixados no painel, com a mesma escala e unidades compatíveis, seria a próxima melhoria de análise. Deve aguardar validação com pesquisadores e o contrato científico definitivo. Não foi implementada nesta alteração.
+Na etapa descrita neste documento, comparar dois astros ainda era uma melhoria futura. A comparação opcional entre a fonte principal e outra fonte visível foi implementada posteriormente; veja [comparação de astros](comparacao-astros.md). Validação com pesquisadores e confirmação do contrato científico real continuam pendentes.

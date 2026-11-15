@@ -1,10 +1,14 @@
 # Apresentação animada das medições
 
+Atualização: os gráficos agora incluem [linha de apoio com traçado animado](linha-animada.md), conforme a direção visual mais recente. A descrição original abaixo registra a etapa anterior de revelação apenas por pontos.
+
 ## Comportamento e arquitetura
 
 O painel é uma única região não modal, fixa ao viewport. No desktop usa até 560 px, limitada a 46% da largura disponível do mapa, com margem de 18 px. Na abertura, `world2pix` ajuda a escolher o lado que reduz a sobreposição com a fonte; o lado permanece estável até fechar. Os controles do mapa ficam na lateral oposta. Nenhuma câmera, coordenada, FoV ou projeção é alterada para acomodar o painel.
 
-No celular, o painel inferior tem superfície sólida, safe area, cabeçalho persistente, gráfico e rolagem interna. Ampliar/Compactar dá acesso à tabela e aos detalhes. Não há arraste de painel disputando os gestos do mapa. Em paisagem baixa o gráfico é compacto, com tipografia SVG ajustada.
+O tamanho original é o modo compactado. **Ampliar** aumenta a largura em até 40%, com limite de 860 px e da área disponível à esquerda, mantendo borda direita, posição vertical e altura. **Compactar** restaura a geometria original. A transição dura 280 ms; o SVG aproveita toda a largura mantendo altura estável, sem distorcer textos, recriar séries existentes ou repetir sua entrada. A operação não redimensiona o Aladin nem modifica a seleção ou comparação. Veja [geometria responsiva e animação apenas das novas séries](grafico-responsivo.md).
+
+No celular, o painel inferior tem superfície sólida, safe area, cabeçalho persistente, gráfico e rolagem interna. Quando já ocupa a largura disponível, Ampliar fica desabilitado e informa esse limite no título do botão. Tabela e detalhes permanecem acessíveis por rolagem interna. Não há arraste de painel disputando os gestos do mapa. Em paisagem baixa o gráfico é compacto, com tipografia SVG ajustada.
 
 - `presentation-state.js`: aberto/fechado/expandido, independente das requisições.
 - `panel-presentation.js`: posicionamento, origem de foco, Escape, timelines, preferência de movimento e limpeza.

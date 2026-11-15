@@ -1,12 +1,20 @@
-import { TARGETS, SURVEYS, findTarget, parseCoordinates, parseSesame, readView, viewHash, formatDegrees, formatFov } from './sky-model.js';
+import { TARGETS, SURVEYS, findTarget, parseCoordinates, parseSesame, readView, formatDegrees, formatFov } from './sky-model.js';
 import { createFrameUpdater, setTextIfChanged } from './frame-updater.js';
 import { setupScience } from './science.js';
 import { setupWorkspace } from './workspace.js';
+import { scienceShareURL } from './science-share.js';
+import { createImageStatus } from './image-status.js';
 
 const workspace = setupWorkspace();
 
 const $ = id => document.getElementById(id);
-let aladin, catalog, science, noticeTimer, searchController, surveyController, navigation = 0;
+let aladin, catalog, science, library, noticeTimer, searchController, navigation = 0;
+const imageStatus=createImageStatus(state=>{
+  $('image-engine-state').textContent=state.engine==='ready'?'Motor pronto':state.engine==='error'?'Falha no motor':'Motor inicializando…';
+  $('image-state').textContent={idle:'Imagens aguardando o motor',requesting:'Solicitando a camada de imagens…',unconfirmed:'Imagens sob demanda · exibição não confirmada',error:'Falha no acesso à camada de imagens'}[state.images];
+  $('image-explanation').textContent=state.images==='error'?'Não foi possível preparar o levantamento neste servidor. Tente outro espelho.':'A API confirma a preparação da camada, mas não a renderização de todos os tiles. Uma área escura pode ter várias causas; não é possível concluir falta de cobertura.';
+  $('image-mirror-retry').disabled=state.engine!=='ready';
+});
 const readout = { ra: $('ra'), dec: $('dec'), fov: $('fov'), name: $('view-name') };
 const readoutUpdates = createFrameUpdater(syncReadout);
 let exploring = false;
@@ -82,29 +90,11 @@ function updateSurveyText() {
   $('view-layer').textContent = item.label;
   $('survey-credit').href = `${surveyURL()}/properties`;
 }
-async function probeSurvey() {
-  surveyController?.abort();
-  const controller = surveyController = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 12000);
-  try {
-    const response = await fetch(`${surveyURL()}/properties`, { signal: controller.signal });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const text = await response.text();
-    if (!/hips_order\s*=/.test(text)) throw new Error('Metadados HiPS inválidos');
-    if (controller !== surveyController) return;
-    $('engine-status').textContent = 'HiPS acessível';
-  } catch {
-    if (controller !== surveyController) return;
-    $('engine-status').textContent = 'Verifique o espelho';
-    notify('Não foi possível confirmar o servidor de imagens. Se o mapa ficar vazio, troque o espelho. A cobertura também depende do levantamento.', true);
-  } finally { clearTimeout(timer); }
-}
 function changeSurvey() {
   updateSurveyText();
   try {
-    aladin.setBaseImageLayer(surveyURL());
+    aladin.setBaseImageLayer(library.HiPS(surveyURL(),imageStatus.request()));
     $('engine-status').textContent = 'Solicitando imagens';
-    probeSurvey();
   } catch (error) { notify(`Falha ao trocar camada: ${error.message || error}`); }
 }
 function loadScript(url) {
@@ -132,12 +122,12 @@ async function getOfficialLibrary() {
 async function boot() {
   try {
     if (!document.createElement('canvas').getContext('webgl2')) throw new Error('O visualizador precisa de WebGL2. Use um navegador com suporte a WebGL2 e aceleração gráfica disponível.');
-    const A = await getOfficialLibrary();
+    const A = library = await getOfficialLibrary();
     let timer;
     try { await Promise.race([A.init, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('O motor WebAssembly não inicializou a tempo. Verifique a conexão e tente novamente.')), 30000); })]); }
     finally { clearTimeout(timer); }
     aladin = A.aladin('#aladin', {
-      survey: surveyURL(), target: `${start.ra} ${start.dec}`, fov: start.fov,
+      survey: A.HiPS(surveyURL(),imageStatus.request()), target: `${start.ra} ${start.dec}`, fov: start.fov,
       projection: start.projection, cooFrame: 'ICRSd', backgroundColor: '#080f1a',
       showZoomControl: false, showLayersControl: false, showGotoControl: false,
       showFullscreenControl: false, showFrame: false, showCooGrid: false,
@@ -169,18 +159,20 @@ async function boot() {
     $('engine-dot').classList.add('ready');
     readoutUpdates.request();
     updateSurveyText();
-    probeSurvey();
+    imageStatus.engineReady();
   } catch (error) {
     console.error(error);
     $('loading').hidden = true;
     $('failure').hidden = false;
     $('failure-message').textContent = error.message || String(error);
     $('engine-status').textContent = 'Sem conexão com o motor';
+    imageStatus.engineFailed();
   }
 }
 $('search-form').addEventListener('submit', search);
 for (const button of document.querySelectorAll('[data-target]')) button.addEventListener('click', () => destination(TARGETS.find(t => t.id === button.dataset.target)));
 for (const id of ['survey', 'mirror']) $(id).addEventListener('change', changeSurvey);
+$('image-mirror-retry').addEventListener('click',()=>{ $('mirror').value=$('mirror').value==='esa'?'china':'esa';$('mirror').dispatchEvent(new Event('change')); });
 $('projection').addEventListener('change', () => aladin.setProjection($('projection').value));
 $('grid').addEventListener('change', () => aladin.setCooGrid({ enabled: $('grid').checked }));
 $('catalog').addEventListener('change', () => $('catalog').checked ? catalog.show() : catalog.hide());
@@ -190,11 +182,11 @@ $('zoom-out').addEventListener('click', () => aladin.decreaseZoom());
 $('home').addEventListener('click', () => destination(TARGETS[0]));
 $('share').addEventListener('click', async () => {
   const [ra, dec] = aladin.getRaDec();
-  const url = new URL(location.href);
-  url.hash = viewHash({ ra, dec, fov: aladin.getFov()[0], survey: $('survey').value, projection: $('projection').value });
+  const selection=science?.getSelection();
+  const url = scienceShareURL(location.href,{ ra, dec, fov: aladin.getFov()[0], survey: $('survey').value, projection: $('projection').value },selection?.object,selection?.pinned,science?.provider);
   history.replaceState(null, '', url);
-  try { await navigator.clipboard.writeText(url.href); notify('Link com a posição e a camada copiado.'); }
-  catch { notify('A posição foi salva no endereço desta página. Copie o link na barra do navegador.', true); }
+  try { await navigator.clipboard.writeText(url.href); notify(selection?'Link com a vista e a análise selecionada copiado.':'Link com a posição e a camada copiado.'); }
+  catch { notify('A vista e a seleção disponível foram salvas no endereço desta página. Copie o link na barra do navegador.', true); }
 });
 $('retry').addEventListener('click', () => location.reload());
 $('about-open').addEventListener('click', () => $('about').showModal());
