@@ -80,6 +80,8 @@ Análise: [arquitetura](docs/arquitetura.md) · [funcionalidades](docs/funcional
 
 ## Seleção de astros e infravermelho
 
-Abra `/?science=demo` para experimentar três fontes explicitamente simuladas perto de Andrômeda. Clique nos círculos do catálogo científico ou use a lista abaixo do mapa. O painel oferece gráfico linear por comprimento de onda, incertezas e tabela acessível, seguindo o tema atual.
+Abra `/?science=demo` para experimentar três fontes explicitamente simuladas perto de Andrômeda. Clique nos círculos do catálogo científico ou use a lista no painel de análise. O painel oferece gráfico linear por comprimento de onda, incertezas e tabela acessível, seguindo o tema atual.
+
+Selecionar um astro abre um painel científico flutuante não modal, sem mover a página nem redimensionar o mapa. Use **Fechar medições**, **Abrir medições** e **Ampliar**; no celular o painel aparece na parte inferior. Dados em cache aparecem imediatamente. As animações usam GSAP local e respeitam movimento reduzido; sem GSAP a interface continua funcional. Veja [apresentação animada, referências e validação](docs/apresentacao-animada.md).
 
 Para dados reais, configure `src/science-config.js` e abra `/?science=http`. Falhas da API aparecem no painel sem fallback fictício. Consulte o [contrato provisório, exemplos e pendências de integração](docs/backend-infravermelho.md).

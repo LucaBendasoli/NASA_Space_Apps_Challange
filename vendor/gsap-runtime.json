@@ -1,0 +1,8 @@
+{
+    "version":  "3.13.0",
+    "name":  "GSAP",
+    "source":  "https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js",
+    "sha256":  "96c01b81f44a3290e2b4532f55e2c9534b2adc43273a19f3756b2cb41f0fd0b6",
+    "note":  "Hash registrado no download; não é assinatura do fornecedor.",
+    "license":  "https://gsap.com/standard-license/"
+}

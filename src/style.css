@@ -32,29 +32,112 @@ noscript{background:var(--paper);color:var(--ink)}
 :root[data-theme="dark"] .theme-toggle .theme-sun{display:block}
 :root[data-theme="dark"] .theme-toggle .theme-moon{display:none}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
-/* O mapa mantém altura útil; medições seguem no fluxo normal da página. */
-body{height:auto;min-height:100dvh;align-items:flex-start}
-.sidebar{position:sticky;top:0;height:100dvh}
-main{min-height:100dvh}
-.sky-workspace{flex:none;height:calc(100dvh - 160px);min-height:430px}
-.science-panel{margin:0 32px 32px;padding:24px 0;border-top:1px solid var(--line);min-height:240px;line-height:1.65;overflow-wrap:anywhere}
+/* Bancada de observação: mapa e análise compartilham a mesma janela. */
+body{height:100dvh;min-height:480px;align-items:stretch;overflow:hidden}
+.sidebar{position:relative;width:250px;height:100%;padding:22px 20px;overscroll-behavior:contain;background:var(--paper)}
+.sidebar .workspace-label{letter-spacing:1px;font-size:8px}
+main{height:100%;min-height:0;display:grid;grid-template-columns:minmax(260px,1fr) clamp(360px,32vw,460px);grid-template-rows:64px minmax(0,1fr) 58px;gap:0 12px;padding-right:14px}
+.workspace-tools{grid-column:1/-1;grid-row:1;display:flex;align-items:center;gap:12px;padding:0 242px 0 16px;min-width:0}
+.workspace-purpose{font-size:12px;color:var(--muted);margin-right:auto;white-space:nowrap}
+.workspace-tools .quiet-button{min-height:38px}
+#controls-toggle{display:none}
+.topbar{grid-column:1/-1;grid-row:1;justify-self:end;height:auto;padding:0;gap:0}
+.breadcrumb{display:none}
+.sky-workspace{grid-column:1;grid-row:2;min-height:0;height:auto;min-width:0;flex:none;margin:0 0 0 14px;border-radius:12px}
+.view-title{top:20px;left:20px}.view-title h1{font-size:clamp(20px,2vw,30px)}
+.view-tag{top:auto;bottom:18px;right:16px;font-size:8px}.map-caption{bottom:20px;left:20px;font-size:9px;gap:10px}
+.telemetry{grid-column:1;grid-row:3;height:auto;min-width:0;padding:0 12px 0 20px;gap:16px}
+.telemetry strong{font-size:12px}.telemetry .metric-label{font-size:7px;letter-spacing:.7px}.telemetry .telemetry-status{display:none}.telemetry button{margin-left:auto;font-size:0;padding:8px;min-width:36px}.telemetry button:after{content:'↗';font-size:16px}
+.science-panel{grid-column:2;grid-row:2/4;display:flex;flex-direction:column;min-height:0;min-width:0;margin:0 0 14px;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;line-height:1.55;overflow:hidden;overflow-wrap:anywhere}
+.science-content{overflow-y:auto;overscroll-behavior:contain;min-height:0;padding:0 20px 20px;scrollbar-gutter:stable}
+.science-heading{padding:16px 20px;border-bottom:1px solid var(--line);flex-shrink:0;background:var(--surface)}
 .science-heading{display:flex;align-items:center;justify-content:space-between;gap:16px}
-.science-panel h2{font-family:'Space Grotesk',var(--font);font-size:23px;font-weight:500;margin:0}
-.science-panel h3{font-size:18px;font-weight:500;margin-bottom:4px}
+.science-heading>div{margin-right:auto;min-width:0}.science-heading{gap:8px}.science-heading button{padding:8px;min-height:36px}
+.science-panel h2{font-family:'Space Grotesk',var(--font);font-size:19px;font-weight:500;letter-spacing:-.5px;margin:0;text-wrap:balance}
+.science-provenance{display:block;font-size:10px;color:var(--muted);margin-top:3px}
+.science-region-status{color:var(--muted);font-size:11px;margin:12px 0}
+.science-panel h3{font-family:'Space Grotesk',var(--font);font-size:20px;font-weight:500;margin:14px 0 8px}
 .science-note{color:var(--muted);font-size:12px;max-width:80ch}
-.science-panel label{margin-top:18px;letter-spacing:0;font-size:12px}
-.science-panel select{max-width:100%}
-.science-detail{min-height:100px;padding-top:10px}
+.science-panel label{margin-top:12px;letter-spacing:0;font-size:11px;margin-bottom:5px}
+.science-panel select{max-width:100%;min-height:40px;font-size:12px}
+.science-detail{min-height:100px;padding-top:0;font-size:12px}
+.science-empty{padding:40px 0;max-width:35ch;color:var(--muted)}
+.science-empty h3{color:var(--ink);font-size:24px}.science-empty-orbit{font-size:44px;color:var(--focus);line-height:1}
 .science-choices{display:flex;flex-wrap:wrap;gap:8px}
-.science-chart{display:block;width:100%;height:auto;min-width:300px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;margin:20px 0}
+.science-chart{display:block;width:100%;height:auto;min-width:0;color:var(--ink);background:var(--surface);margin:0}
 .science-chart text{fill:currentColor;font-family:var(--font);font-size:13px}
 .chart-grid{stroke:var(--line);stroke-width:1}
 .chart-axis,.chart-error{stroke:var(--muted);fill:none;stroke-width:1.5}
 .chart-point{fill:var(--accent-ink);stroke:var(--surface);stroke-width:2;cursor:help}
 .chart-point:hover,.chart-point:focus{fill:var(--focus);outline:none;stroke:var(--ink);stroke-width:3}
 .science-table-wrap{overflow-x:auto}
-.science-chart-wrap{overflow-x:auto}
+.science-chart-wrap{margin:12px -8px 14px}
+.science-chart-wrap figcaption{font-size:10px;color:var(--muted);padding:4px 8px}
+.science-metadata,.science-measurements{border-top:1px solid var(--line);margin-top:12px}
+.science-panel summary{cursor:pointer;padding:12px 0;font-size:12px;min-height:44px;font-weight:500}
+.science-panel summary:focus-visible{outline:3px solid var(--focus);outline-offset:-3px}
 .science-panel table{border-collapse:collapse;width:100%;font-size:12px;font-variant-numeric:tabular-nums;text-align:left}
 .science-panel caption{text-align:left;color:var(--muted);padding:10px 0}
 .science-panel th,.science-panel td{padding:12px 10px;border-bottom:1px solid var(--line)}
-@media(max-width:720px){.sidebar{position:static;height:auto}.science-panel{margin:0 20px 24px}.science-heading{align-items:flex-start}.science-panel h2{font-size:20px}.sky-workspace{height:65dvh;min-height:430px}.science-chart{min-width:650px}.science-chart text{font-size:16px}}
+main.analysis-hidden{grid-template-columns:minmax(0,1fr)}
+main.analysis-expanded:not(.analysis-hidden){grid-template-columns:minmax(260px,1fr) minmax(400px,1.15fr)}
+.controls-dismiss{display:none}
+.skip-link{position:fixed;top:8px;left:8px;z-index:30;background:var(--surface);padding:12px;transform:translateY(-160%);border:1px solid var(--focus)}
+.skip-link:focus{transform:translateY(0)}
+button,summary,select{touch-action:manipulation}
+@media(max-width:1100px){
+  #controls-toggle{display:block}
+  .sidebar{position:fixed;inset:0 auto 0 0;z-index:21;width:290px;max-width:85vw;visibility:hidden;transform:translateX(-100%);transition:transform .18s ease,visibility .18s}
+  .controls-open .sidebar{visibility:visible;transform:translateX(0)}
+  .controls-open .controls-dismiss{display:block;position:fixed;inset:0;border:0;background:#080f1aaa;z-index:20;cursor:pointer}
+  main{grid-template-columns:minmax(280px,1fr) clamp(360px,40vw,420px)}
+  .workspace-purpose{display:none}.workspace-tools{justify-content:space-between}
+}
+@media(max-width:760px){
+  body{display:flex;min-height:480px}main{width:100%;padding:0 10px env(safe-area-inset-bottom);gap:0;grid-template-columns:minmax(0,1fr);grid-template-rows:54px minmax(180px,43fr) 44px minmax(190px,57fr)}
+  .workspace-tools{padding:0 52px 0 0;gap:8px}.topbar{padding:0}.topbar #about-open{display:none}
+  .workspace-tools .quiet-button{min-height:38px;font-size:11px;padding:8px 10px}
+  .sky-workspace{grid-column:1;grid-row:2;margin:0;border-radius:10px;min-height:0;height:auto}
+  .science-panel{grid-column:1;grid-row:4;margin:0 0 8px;min-height:0;border-radius:10px}
+  .science-heading{padding:10px 14px}.science-content{padding:0 14px 18px}.science-panel h2{font-size:17px}
+  .science-panel h3{font-size:18px;margin:10px 0 4px}.science-region-status{margin:8px 0;font-size:10px}
+  .science-panel label{margin-top:8px}.science-panel select{font-size:11px;min-height:36px;padding:7px}
+  .science-chart-wrap{margin:8px -6px}.science-chart text{font-size:14px}
+  .science-empty{padding:20px 0}.science-empty-orbit{display:none}
+  .telemetry{grid-column:1;grid-row:3;padding:0 4px;gap:12px}.telemetry strong{font-size:10px}.telemetry .metric-label{font-size:6px}
+  .view-title{top:16px;left:16px}.view-title h1{font-size:21px}.view-title .eyebrow{display:none}.view-tag{display:none}.map-caption{bottom:12px;left:14px;font-size:8px}.map-actions{right:12px;top:32%}
+  main.analysis-hidden{grid-template-rows:54px minmax(0,1fr) 44px}
+  main.analysis-expanded:not(.analysis-hidden){grid-template-columns:minmax(0,1fr);grid-template-rows:54px minmax(150px,28fr) 44px minmax(220px,72fr)}
+}
+@media(prefers-reduced-motion:reduce){.sidebar{transition:none}}
+/* Painel não modal: abertura e fechamento não redimensionam o atlas. */
+body{min-height:0}
+main,main.analysis-expanded:not(.analysis-hidden),main.analysis-hidden{grid-template-columns:minmax(0,1fr);grid-template-rows:64px minmax(0,1fr) 58px}
+.science-panel{position:fixed;z-index:12;left:var(--panel-x,auto);top:var(--panel-y,82px);right:auto;bottom:auto;width:var(--panel-width,520px);max-width:calc(100vw - 24px);height:min(650px,calc(100dvh - var(--panel-y,82px) - 20px));max-height:calc(100dvh - 32px);margin:0;box-shadow:0 16px 54px #0003,0 2px 8px #0001;border-radius:16px;background:var(--surface);isolation:isolate}
+.science-panel[data-expanded="true"]{height:calc(100dvh - var(--panel-y,82px) - 20px)}
+.science-panel[aria-hidden="true"]{pointer-events:none}
+.science-heading{padding:14px 18px;align-items:flex-start;gap:10px}
+.science-heading h2{font-size:21px;line-height:1.25}
+.science-heading button{flex-shrink:0;min-width:38px;min-height:38px}
+#science-close{font-size:22px;line-height:1;padding:5px}
+.science-content{padding:0 18px 20px;scrollbar-gutter:stable;scroll-padding:12px}
+.science-context{margin:10px 0 2px;font-size:11px;color:var(--muted)}
+.science-plot{min-height:230px;display:grid;align-content:center}
+.science-plot .science-chart-wrap{margin:4px -4px 8px}
+.science-placeholder{min-height:230px;display:grid;align-content:center;padding:24px;color:var(--muted);background:var(--paper);border:1px solid var(--line);border-radius:8px;margin:8px 0}
+.science-content>button,.science-picker{margin-top:10px}
+.science-content summary,.science-content button,.science-content select{scroll-margin:12px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+body[data-panel-side="right"] .map-actions{left:18px;right:auto}
+@media(max-width:760px){
+  main,main.analysis-expanded:not(.analysis-hidden),main.analysis-hidden{grid-template-columns:minmax(0,1fr);grid-template-rows:54px minmax(0,1fr) 44px}
+  .science-panel{left:8px;right:8px;top:auto;bottom:calc(8px + env(safe-area-inset-bottom));width:auto;max-width:none;height:min(470px,64dvh);max-height:calc(100dvh - 68px - env(safe-area-inset-bottom));border-radius:18px 18px 12px 12px}
+  .science-panel[data-expanded="true"]{height:calc(100dvh - 100px - env(safe-area-inset-bottom))}
+  .science-heading{padding:12px 14px}.science-heading h2{font-size:18px}.science-provenance{font-size:10px}.science-content{padding:0 12px 18px}.science-plot{min-height:210px}.science-placeholder{min-height:210px}
+  body[data-panel-side] .map-actions{left:auto;right:12px;top:18%}
+}
+@media(max-height:500px){
+  .science-panel{max-height:calc(100dvh - 76px)}
+  .science-heading{padding:8px 12px}.science-heading h2{font-size:16px}.science-content{padding:0 10px 12px}.science-context{margin:5px 0;font-size:10px}
+  .science-plot,.science-placeholder{min-height:170px}.science-chart{height:170px;width:100%}.science-chart text{font-size:18px}.science-chart-wrap figcaption{display:none}
+}

@@ -1,6 +1,9 @@
 import { TARGETS, SURVEYS, findTarget, parseCoordinates, parseSesame, readView, viewHash, formatDegrees, formatFov } from './sky-model.js';
 import { createFrameUpdater, setTextIfChanged } from './frame-updater.js';
 import { setupScience } from './science.js';
+import { setupWorkspace } from './workspace.js';
+
+const workspace = setupWorkspace();
 
 const $ = id => document.getElementById(id);
 let aladin, catalog, science, noticeTimer, searchController, surveyController, navigation = 0;
@@ -157,7 +160,7 @@ async function boot() {
       science?.schedule();
     });
     aladin.on('zoomChanged', () => { readoutUpdates.request(); science?.schedule(); });
-    science = setupScience(A, aladin, () => $('survey').value);
+    science = setupScience(A, aladin, () => $('survey').value, workspace.presentation);
     $('survey').addEventListener('change', () => science.schedule());
     $('controls').disabled = false;
     for (const id of ['search-button', 'zoom-in', 'zoom-out', 'home', 'share']) $(id).disabled = false;

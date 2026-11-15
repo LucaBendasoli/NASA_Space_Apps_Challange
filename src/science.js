@@ -4,23 +4,28 @@ import { createScienceState } from './science-state.js';
 import { createScienceCatalog } from './science-catalog.js';
 import { renderPanel } from './science-panel.js';
 
-export function setupScience(A, aladin, survey) {
+export function setupScience(A, aladin, survey, presentation) {
   const root=document.getElementById('science-panel');
   const mode=new URLSearchParams(location.search).get('science') || SCIENCE_CONFIG.provider;
   if(!['demo','http'].includes(mode)) {
-    root.textContent='Medições no infravermelho: selecione uma fonte de dados.';
-    const link=document.createElement('a');link.href='?science=demo'+location.hash;link.textContent='Ativar demonstração com dados simulados';root.append(document.createElement('br'),link);return {schedule(){}};
+    renderPanel(root,{status:'initial',objects:[]},{select(){},clear(){},retry(){}},false);
+    const link=document.createElement('a');link.href='?science=demo'+location.hash;link.className='text-link';link.textContent='Ativar demonstração com dados simulados';root.querySelector('.science-plot').append(link);return {schedule(){}};
   }
   const provider=createProvider({...SCIENCE_CONFIG,provider:mode});
   let catalog, timer, currentSurvey=survey(), lastView;
   const state=createScienceState(provider, data=>{
     // Restaura foco de controles estáveis após atualizar o painel, sem rolar a página.
-    const focused=root.contains(document.activeElement) ? document.activeElement.id : null;
-    renderPanel(root,data,{select:o=>state.select(o),clear:()=>state.clear(),retry:()=>state.retry()},mode==='demo');
+    const changed=renderPanel(root,data,{select,clear:()=>state.clear(),retry:()=>state.retry()},mode==='demo');
     catalog?.render(data.objects,data.selected);
-    if(focused) document.getElementById(focused)?.focus({preventScroll:true});
+    if(changed)presentation.reveal();
   });
-  catalog=createScienceCatalog(A,aladin,o=>state.select(o),items=>state.choose(items));
+  function select(object) {
+    presentation.open(aladin.world2pix(object.ra,object.dec));
+    const content = root.querySelector('.science-content');
+    if(content) content.scrollTop = 0;
+    state.select(object);
+  }
+  catalog=createScienceCatalog(A,aladin,select,items=>{presentation.open();state.choose(items);});
   function schedule() {
     const view=JSON.stringify([aladin.getRaDec(),aladin.getFov(),aladin.getSize(),survey(),document.getElementById('projection').value]);
     if(view === lastView) return;
@@ -31,6 +36,6 @@ export function setupScience(A, aladin, survey) {
     timer=setTimeout(()=>state.load(visibleContext(aladin,currentSurvey,SCIENCE_CONFIG.observationId)),350);
   }
   for(const event of ['resizeChanged','projectionChanged']) aladin.on(event,schedule);
-  window.addEventListener('pagehide',()=>{clearTimeout(timer);state.invalidate();});
+  window.addEventListener('pagehide',event=>{if(!event.persisted){clearTimeout(timer);state.invalidate();presentation.dispose();}});
   schedule(); return {schedule};
 }

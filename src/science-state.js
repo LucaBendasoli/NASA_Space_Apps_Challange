@@ -33,6 +33,8 @@ export function createScienceState(provider, emit) {
       if (!state.objects.some(o => objectKey(o) === objectKey(object))) return;
       selectionAbort?.abort(); selectionAbort = new AbortController();
       const version = ++selectionVersion, region = regionVersion;
+      const cached = cache.get(objectKey(object));
+      if(cached) { update({selected:object,measurements:cached,status:cached.rows.some(r=>r.radiance!==null)?'ready':'empty',error:null,candidates:null}); return; }
       update({selected:object,status:'loading',measurements:null,error:null,candidates:null});
       const key = objectKey(object);
       try {
@@ -42,6 +44,6 @@ export function createScienceState(provider, emit) {
         update({measurements:data,status:data.rows.some(r=>r.radiance !== null)?'ready':'empty'});
       } catch(error) { if(version === selectionVersion && region === regionVersion) update({status:'error',error:error.message}); }
     },
-    retry() { if(state.selected) this.select(state.selected); else if(context) this.load(context); },
+    retry() { if(state.regionStatus==='error'&&context) this.load(context); else if(state.selected) this.select(state.selected); else if(context) this.load(context); },
   };
 }
