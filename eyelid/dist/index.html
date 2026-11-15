@@ -92,7 +92,10 @@ body{background:radial-gradient(ellipse at 15% 0%,#1b2941 0,transparent 48%),var
   <div class="eyelid-shortcuts" aria-label="Seções do mapa" role="group">
    <button data-section="saved" type="button" aria-label="Minhas regiões" title="Minhas regiões"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v16l-6-4-6 4z"/></svg><span>Minhas regiões</span></button>
   </div>
-  <button class="eyelid-account" data-page="profile" type="button" aria-label="Perfil de visitante" title="Perfil de visitante"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span><strong>Visitante</strong><small>Perfil</small></span></button>
+  <div class="eyelid-account-actions">
+   <button class="eyelid-account" data-page="profile" type="button" aria-label="Perfil de visitante" title="Perfil de visitante"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span><strong>Visitante</strong><small>Perfil</small></span></button>
+   <button id="sidebar-logout" type="button" aria-label="Sair" title="Sair" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9"/></svg></button>
+  </div>
  </nav>
 </aside>
 <main>
@@ -116,11 +119,22 @@ body{background:radial-gradient(ellipse at 15% 0%,#1b2941 0,transparent 48%),var
 <section id="eyelid-profile-page" class="eyelid-page" hidden>
  <h1 tabindex="-1">Perfil</h1>
  <section class="eyelid-surface eyelid-profile">
-  <h2>Você está explorando como visitante</h2>
-  <p>O mapa e a busca estão disponíveis para você.</p>
+  <h2 id="account-status">Você está explorando como visitante</h2>
+  <p id="account-email" hidden></p>
+  <p id="account-error" role="status" hidden></p>
+  <div id="account-guest">
+   <button type="button" data-auth-mode="login">Entrar</button>
+   <button type="button" data-auth-mode="cadastro">Criar conta</button>
+   <button type="button" id="account-judge">Login de jurados</button>
+  </div>
+  <button type="button" id="account-logout" hidden>Sair</button>
   <button type="button" data-page="map">Voltar ao mapa</button>
  </section>
 </section>
+<dialog id="eyelid-auth-dialog" aria-label="Entrar no Eyelid">
+ <button type="button" id="close-eyelid-auth" aria-label="Fechar login">×</button>
+ <iframe title="Cadastro e login do Eyelid"></iframe>
+</dialog>
 
 <section id="eyelid-map-page" aria-label="Mapa" tabindex="-1">
 <div class="layout" id="analysis">
@@ -1577,4 +1591,4 @@ document.addEventListener('keydown',event=>{
  }
 });
 
-</script><script src="./navigation.js"></script></html>
+</script><script src="./navigation.js"></script><script src="./account-ui.js"></script></html>

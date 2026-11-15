@@ -32,6 +32,7 @@ from PIL import Image
 from scipy.ndimage import map_coordinates
 import requests
 
+from accounts import auth_get, auth_post
 from align_epochs import align_images
 from local_epochs import EpochArchive
 
@@ -704,8 +705,14 @@ class AtlasHandler(SimpleHTTPRequestHandler):
         except (BrokenPipeError, ConnectionResetError):
             pass
 
+    def do_POST(self):
+        if not auth_post(self, urlsplit(self.path).path):
+            self.send_error(404)
+
     def do_GET(self):
         url = urlsplit(self.path)
+        if auth_get(self, url.path):
+            return
         if url.path.startswith(('/api/local-frame/', '/api/local-preview/', '/api/local-original/')):
             entry = LOCAL_EPOCHS.get(url.path.rsplit('/', 1)[-1])
             if not entry:
