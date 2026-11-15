@@ -26,7 +26,8 @@
   const field = element('textarea');
   field.required = true;
   field.maxLength = 2000;
-  field.rows = 3;
+  field.rows = 2;
+  field.placeholder = reply?'Escreva uma resposta':'O que você observou?';
   label.append(field);
   const option = element('label','Anexar a vista atual do céu','community-attach');
   const check = element('input');
@@ -37,6 +38,7 @@
   submit.type = 'submit';
   const status = element('p',null,'community-status');
   status.setAttribute('role','status');
+  if(!attach)form.prepend(element('span','◉','community-avatar'));
   form.append(label);
   if(attach)form.append(option);
   form.append(submit,status);
@@ -81,20 +83,30 @@
   time.dateTime = item.created_at;
   const byline = element('div',null,'community-byline');
   byline.append(element('strong',item.author),time);
-  card.append(byline,text);
+  const avatar = element('span',item.author.split(/\s+/).slice(0,2).map(word=>word[0]).join('').toUpperCase(),'community-avatar');
+  avatar.setAttribute('aria-hidden','true');
+  const content = element('div',null,'community-post-content');
+  card.append(avatar,content);
+  content.append(byline,text);
   if(item.view){
    const link = element('a','Abrir vista no mapa');
    link.href = '/?'+new URLSearchParams(item.view);
    link.target = '_blank';
    link.rel = 'noopener';
-   card.append(link);
+   link.className = 'community-view-link';
+   link.setAttribute('aria-label','Abrir vista no mapa');
+   link.textContent = '';
+   const viewName = element('span','Vista compartilhada');
+   viewName.append(element('small','SPHEREx · canal '+item.view.canal+(item.view.data?' · '+item.view.data:'')));
+   link.append(viewName,element('span','Abrir vista →'));
+   content.append(link);
   }
   if(open){
    const button = element('button',item.replies===1?'1 resposta':item.replies+' respostas');
    button.type = 'button';
    button.onclick = open;
    button.setAttribute('aria-label','Abrir discussão. '+button.textContent);
-   card.append(button);
+   content.append(button);
   }
   return card;
  }
@@ -125,8 +137,11 @@
     before = result.next;
     more.hidden = !before;
     if(!fromMap){
-     byId('community-contributors').replaceChildren(...result.contributors.map(item=>
-      element('li',item.name+' · '+item.contributions)));
+     byId('community-contributors').replaceChildren(...result.contributors.map(item=>{
+      const row = element('li');
+      row.append(element('strong',item.name),element('span',item.contributions+(item.contributions===1?' contribuição':' contribuições')));
+      return row;
+     }));
      byId('community-contributors-empty').hidden = Boolean(result.contributors.length);
     }
    } catch {

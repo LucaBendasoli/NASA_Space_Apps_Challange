@@ -1,18 +1,37 @@
 <section id="eyelid-home-page" class="eyelid-page" hidden>
- <h1 tabindex="-1">Início</h1>
- <p>Explore regiões do céu observadas pelo SPHEREx.</p>
+ <div class="home-title">
+  <div><h1 tabindex="-1">Explore o céu</h1><p>Acompanhe as observações da comunidade e abra as vistas compartilhadas no mapa.</p></div>
+  <button id="home-help" type="button" aria-controls="home-guide" aria-expanded="true">ⓘ Ajuda</button>
+ </div>
  <div class="eyelid-home-layout">
-  <section class="eyelid-surface">
+  <section class="eyelid-surface home-feed-surface" aria-label="Publicações da comunidade">
    <div class="eyelid-home-tabs" aria-label="Seções do início" role="group">
     <button data-section="community" type="button" aria-pressed="true">Comunidade</button>
     <button data-section="trending" type="button" aria-pressed="false">Em alta</button>
    </div>
    <div id="community-home"></div>
   </section>
-  <div>
-   <section class="eyelid-surface"><h2>Explore o céu</h2><div id="eyelid-region-links"></div></section>
-   <section class="eyelid-surface" id="eyelid-contributors" tabindex="-1"><h2>Top colaboradores</h2><ol id="community-contributors"></ol><p id="community-contributors-empty">Ainda não há contribuições.</p></section>
-  </div>
+  <aside class="home-side" aria-label="Sugestões e atalhos">
+   <section class="eyelid-surface home-suggestions">
+    <h2>Sugestões para explorar</h2>
+    <div id="home-guide" class="home-guide">
+     <div><strong>Guia · Passo 1</strong><p>Abra a Estrela de Barnard e compare as datas disponíveis no mapa.</p></div>
+     <button id="skip-home-guide" type="button">Pular guia</button>
+    </div>
+    <article class="home-feature">
+     <img src="./brand/barnard-guide.webp" alt="">
+     <span class="home-feature-tag">Exercício guiado</span>
+     <div><h3>Estrela de Barnard</h3><p>Compare observações e procure mudanças na posição da estrela.</p><a id="home-barnard" class="home-feature-action" href="/">Abrir no mapa <span aria-hidden="true">→</span></a></div>
+    </article>
+    <small class="home-asset-note">Imagem ilustrativa · Pexels</small>
+   </section>
+   <section class="eyelid-surface" id="eyelid-contributors" tabindex="-1">
+    <h2>Top colaboradores</h2><ol id="community-contributors"></ol><p id="community-contributors-empty">Ainda não há contribuições.</p>
+   </section>
+   <section class="eyelid-surface" aria-labelledby="home-saved-title">
+    <h2 id="home-saved-title">Minhas regiões</h2><div id="home-saved-regions" class="sky-saved-options"></div>
+   </section>
+  </aside>
  </div>
 </section>
 <section id="eyelid-profile-page" class="eyelid-page" hidden>
