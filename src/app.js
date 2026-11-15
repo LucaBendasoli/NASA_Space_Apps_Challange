@@ -1,8 +1,9 @@
 import { TARGETS, SURVEYS, findTarget, parseCoordinates, parseSesame, readView, viewHash, formatDegrees, formatFov } from './sky-model.js';
 import { createFrameUpdater, setTextIfChanged } from './frame-updater.js';
+import { setupScience } from './science.js';
 
 const $ = id => document.getElementById(id);
-let aladin, catalog, noticeTimer, searchController, surveyController, navigation = 0;
+let aladin, catalog, science, noticeTimer, searchController, surveyController, navigation = 0;
 const readout = { ra: $('ra'), dec: $('dec'), fov: $('fov'), name: $('view-name') };
 const readoutUpdates = createFrameUpdater(syncReadout);
 let exploring = false;
@@ -153,8 +154,11 @@ async function boot() {
     aladin.on('positionChanged', ({ dragging }) => {
       if (dragging) exploring = true;
       readoutUpdates.request();
+      science?.schedule();
     });
-    aladin.on('zoomChanged', () => readoutUpdates.request());
+    aladin.on('zoomChanged', () => { readoutUpdates.request(); science?.schedule(); });
+    science = setupScience(A, aladin, () => $('survey').value);
+    $('survey').addEventListener('change', () => science.schedule());
     $('controls').disabled = false;
     for (const id of ['search-button', 'zoom-in', 'zoom-out', 'home', 'share']) $(id).disabled = false;
     $('loading').hidden = true;

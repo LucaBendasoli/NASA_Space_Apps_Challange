@@ -77,3 +77,9 @@ O CDS publicou em 09/11/2026 um aviso de degradação dos serviços; por isso os
 Para transformar em produto: validar no navegador com rede e WebGL2, escolher e testar uma versão estável da biblioteca, adicionar consultas de catálogo com limites de área e resultados, persistir favoritos e planejar a disponibilidade dos serviços. Não é necessário reimplementar HEALPix, projeções ou renderização para personalizar a experiência.
 
 Análise: [arquitetura](docs/arquitetura.md) · [funcionalidades](docs/funcionalidades.md) · [origem e licenças](docs/fontes-e-licencas.md).
+
+## Seleção de astros e infravermelho
+
+Abra `/?science=demo` para experimentar três fontes explicitamente simuladas perto de Andrômeda. Clique nos círculos do catálogo científico ou use a lista abaixo do mapa. O painel oferece gráfico linear por comprimento de onda, incertezas e tabela acessível, seguindo o tema atual.
+
+Para dados reais, configure `src/science-config.js` e abra `/?science=http`. Falhas da API aparecem no painel sem fallback fictício. Consulte o [contrato provisório, exemplos e pendências de integração](docs/backend-infravermelho.md).

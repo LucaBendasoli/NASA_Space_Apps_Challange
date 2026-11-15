@@ -42,7 +42,7 @@ O arraste e a roda são tratados pela própria biblioteca. Eventos `positionChan
 
 Imagens e catálogos são camadas distintas: as primeiras contêm pixels; os segundos contêm fontes com coordenadas e atributos. A API original permite catálogos locais, consultas a SIMBAD/VizieR/NED, catálogos HiPS progressivos, sobreposições e coberturas MOC. O código também contém integração SAMP e leitura de imagens FITS. A existência desses recursos foi verificada no código/documentação; não implica que todos os serviços estejam operacionais hoje.
 
-Nossa versão usa somente um catálogo local de oito referências, criado por `A.catalog`, `A.source` e `addCatalog`. Não consulta grandes catálogos remotos. A resolução de outros nomes usa HTTP(S) do Sesame com resposta textual e posição `%J`; não confundir essa busca com baixar um catálogo inteiro. As imagens usam HiPS sobre HTTPS nos espelhos ESA e China-VO. A aplicação não tem banco, backend científico ou API secreta.
+O catálogo didático local de oito referências usa `A.catalog`, `A.source` e `addCatalog`. Um catálogo científico separado agora permite fontes por região, seleção e medições no infravermelho, com provedor HTTP configurável ou demonstração explicitamente ativada. O contrato ainda é provisório: veja [backend-infravermelho.md](backend-infravermelho.md). A resolução de outros nomes usa HTTP(S) do Sesame com resposta textual e posição `%J`; não confundir essa busca com baixar um catálogo inteiro. As imagens usam HiPS sobre HTTPS nos espelhos ESA e China-VO. Não há implementação de backend científico neste repositório.
 
 ## Fluxo da demonstração própria
 
