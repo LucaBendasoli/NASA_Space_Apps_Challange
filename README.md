@@ -1,3 +1,7 @@
+## Eyelid publicado
+
+A versão em [nasaspaceapps.eyelid.com.br](https://nasaspaceapps.eyelid.com.br/) está em [eyelid/](eyelid/), com o código do frontend, o backend Python e os arquivos da interface. Veja o [guia do Eyelid](eyelid/README.md) para rodar localmente. O aplicativo publicado é servido pelo backend Python na raiz do domínio.
+
 # Órbita — estudo do Aladin Lite
 
 Site local de exploração astronômica com interface própria e integração com o **Aladin Lite oficial do CDS**, a ferramenta de https://aladin.cds.unistra.fr/AladinLite/.
