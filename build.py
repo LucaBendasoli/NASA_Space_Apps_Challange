@@ -46,9 +46,9 @@ s=s.replace('</style>',"""#sky{background:#05070c} #sky-image{image-rendering:pi
 .playlist label{display:flex;align-items:center;background:#172436;border-radius:4px;font-size:12px}
 #frame-origin{color:var(--blue)} #frame-status{min-height:2.8em}</style>""",1)
 s=s.replace('</style>',(p/'gaia.css').read_text()+'</style>',1)
-for script in ('aladin-view.js', 'spectral-tiles.js', 'navigation.js', 'object-sheet.js', 'object-spectrum.css'):
+for script in ('aladin-view.js', 'spectral-tiles.js', 'navigation.js', 'object-sheet.js', 'object-spectrum.css', 'login.html', 'auth-form.js', 'account-ui.js'):
  (p/'dist'/script).write_text((p/script).read_text())
-s=s.replace('</html>','<script>\n'+(p/'viewer.js').read_text()+'\n</script><script src="./navigation.js"></script></html>')
+s=s.replace('</html>','<script>\n'+(p/'viewer.js').read_text()+'\n</script><script src="./navigation.js"></script><script src="./account-ui.js"></script></html>')
 for asset in ('object-spectrum.js', 'object-spectrum.LICENSE.txt'):
  (p/'dist'/'vendor'/asset).write_bytes((p/'vendor'/asset).read_bytes())
 (p/'dist'/'index.html').write_text(s)

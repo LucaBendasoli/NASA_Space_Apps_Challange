@@ -18,8 +18,19 @@
 <section id="eyelid-profile-page" class="eyelid-page" hidden>
  <h1 tabindex="-1">Perfil</h1>
  <section class="eyelid-surface eyelid-profile">
-  <h2>Você está explorando como visitante</h2>
-  <p>O mapa e a busca estão disponíveis para você.</p>
+  <h2 id="account-status">Você está explorando como visitante</h2>
+  <p id="account-email" hidden></p>
+  <p id="account-error" role="status" hidden></p>
+  <div id="account-guest">
+   <button type="button" data-auth-mode="login">Entrar</button>
+   <button type="button" data-auth-mode="cadastro">Criar conta</button>
+   <button type="button" id="account-judge">Login de jurados</button>
+  </div>
+  <button type="button" id="account-logout" hidden>Sair</button>
   <button type="button" data-page="map">Voltar ao mapa</button>
  </section>
 </section>
+<dialog id="eyelid-auth-dialog" aria-label="Entrar no Eyelid">
+ <button type="button" id="close-eyelid-auth" aria-label="Fechar login">×</button>
+ <iframe title="Cadastro e login do Eyelid"></iframe>
+</dialog>

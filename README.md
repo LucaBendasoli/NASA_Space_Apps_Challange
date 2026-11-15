@@ -33,3 +33,9 @@ O Aladin Lite 3.8.2 está em `dist/vendor/` e abre os recortes locais com WCS. O
 **Analisar área do mapa** executa a triagem em um recorte de 6′ × 6′ centrado na vista. O servidor usa o cubo FITS do SPHEREx, os recortes WISE e o catálogo Gaia sem o limite de 500 fontes da camada visual. Os cubos ficam em cache temporário no processo. O primeiro campo de cada bloco exige baixar cerca de 107 MB, além dos recortes WISE.
 
 As análises concluídas ficam em `.eyelid/scans/` e os candidatos voltam ao mapa ao recarregar a plataforma. Os campos preparados também aparecem no mesmo mapa. Ao voltar a um campo já analisado, o visor reutiliza seus resultados. As análises feitas pelo servidor são organizadas pela versão dos dados SPHEREx e do detector.
+
+## Contas e acesso de jurados
+
+O mapa abre para visitantes. No Perfil, use **Criar conta**, **Entrar** ou **Login de jurados**. O caminho `/jurados` também abre o mapa com uma sessão de demonstração de jurado. Essa sessão é independente para cada navegador, usa o perfil compartilhado `jury-demo` e deve receber apenas permissões públicas de demonstração.
+
+O backend armazena contas e sessões no SQLite em `.eyelid/accounts.sqlite3`. Use `EYELID_ACCOUNTS_DB` para configurar outro caminho persistente. Em domínio público, o navegador recebe cookie de sessão seguro e a API espera que o proxy preserve o cabeçalho `Host` do site.
