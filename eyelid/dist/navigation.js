@@ -10,11 +10,19 @@
  const savedToggle = byId('toggle-sky-saved');
  const saved = byId('eyelid-sky-saved');
  const normalize = value => value.normalize('NFD').replace(/\p{Diacritic}/gu,'').trim().toLowerCase();
- const targets = [
-  {name:'Estrela de Barnard', aliases:['Barnard','Barnard’s Star','Gl 699','Gl699'], center:[269.452083,4.693370]},
-  {name:'Galáxia de Andrômeda', aliases:['Andrômeda','Andromeda Galaxy','M31','M 31'], center:[10.684793,41.269065]},
-  ...Object.values(regions)
+ const juryRegions = [
+  {name:'Barnard’s Star', aliases:['Barnard','Estrela de Barnard','Gl 699','Gl699'], center:[269.452083,4.693370], fov:.09, channel:20},
+  {name:'Epsilon Indi B', aliases:['ε Indi B','Eps Ind B'], description:'Par de anãs marrons', center:[331.09566,-56.80086], fov:.09, channel:20},
+  {name:'WISE 0855', aliases:['WISE 0855−0714'], description:'Anã marrom de movimento rápido', center:[133.7951291667,-7.2451472222], fov:.09},
+  {name:'RW Aurigae', aliases:['RW Aur'], description:'Estrela variável', center:[76.9565260346,30.4014381739], fov:.09},
+  {name:'R Draconis', aliases:['R Dra'], description:'Estrela variável', center:[248.1676075,66.7549841667], fov:.09}
  ];
+ const andromeda = {name:'Galáxia de Andrômeda', aliases:['Andrômeda','Andromeda Galaxy','M31','M 31'], center:[10.684793,41.269065]};
+ const targets = [...juryRegions,andromeda,...Object.values(regions)];
+ const mapUrl = target => '/?'+new URLSearchParams({
+  ra:target.center[0],dec:target.center[1],fov:target.fov??.18,canal:target.channel??63
+ });
+
 
  function showPage(page, focus = true){
   for (const [name, element] of Object.entries(pages)) element.hidden = name !== page;
@@ -63,7 +71,7 @@
   if (!search.hidden) disclosure(searchToggle,search);
   if (!helpPanel.hidden) disclosure(help,helpPanel);
   disclosure(savedToggle,saved);
-  if (!saved.hidden) saved.querySelector('button').focus();
+  if (!saved.hidden) savedList.querySelector('a')?.focus();
  };
  saved.onkeydown = event => {
   if (event.key !== 'Escape') return;
@@ -115,33 +123,33 @@
   searchToggle.focus();
  };
 
- for (const target of targets.slice(0,2)){
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.textContent = target.name;
-  button.onclick = () => {
-   if (!focusTarget(target.center)) return;
-   disclosure(savedToggle,saved);
-   savedToggle.focus();
-  };
-  saved.querySelector('.sky-saved-options').append(button);
+ const savedList = saved.querySelector('.sky-saved-options');
+ const homeSaved = byId('home-saved-regions');
+ function renderSavedRegions(user){
+  const items = user?.role==='judge' ? juryRegions : [juryRegions[0],andromeda];
+  for(const list of [savedList,homeSaved]){
+   list.replaceChildren(...items.map(target=>{
+    const link = document.createElement('a');
+    link.href = mapUrl(target);
+    link.textContent = target.name;
+    if(user?.role==='judge'&&target.description){
+     const description = document.createElement('small');
+     description.textContent = target.description;
+     link.append(description);
+    }
+    return link;
+   }));
+  }
  }
+ document.addEventListener('eyelid-account-changed',event=>renderSavedRegions(event.detail));
+ renderSavedRegions();
+ byId('home-barnard').href = mapUrl(juryRegions[0]);
+ const homeHelp = byId('home-help');
+ const homeGuide = byId('home-guide');
+ homeHelp.onclick = ()=>disclosure(homeHelp,homeGuide);
+ byId('skip-home-guide').onclick = ()=>{
+  disclosure(homeHelp,homeGuide);
+  homeHelp.focus();
+ };
 
- for (const [key, region] of Object.entries(regions)){
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.textContent = region.name;
-  button.onclick = () => {
-   if (key !== regionKey){
-    const link = new URL(location.href);
-    link.search = '';
-    link.searchParams.set('regiao',key);
-    location.assign(link);
-   } else {
-    showPage('map');
-    focusTarget(region.center);
-   }
-  };
-  byId('eyelid-region-links').append(button);
- }
 }

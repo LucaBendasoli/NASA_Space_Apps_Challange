@@ -16,6 +16,7 @@
   sidebarLogout.hidden = !user;
   document.querySelector('.eyelid-account strong').textContent = user?.name ?? 'Visitante';
   profileButton.setAttribute('aria-label',user ? 'Meu perfil' : 'Perfil de visitante');
+  document.dispatchEvent(new CustomEvent('eyelid-account-changed',{detail:user}));
  }
 
  async function account(action){
