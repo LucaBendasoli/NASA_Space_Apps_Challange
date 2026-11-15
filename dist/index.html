@@ -108,11 +108,11 @@ body{background:radial-gradient(ellipse at 15% 0%,#1b2941 0,transparent 48%),var
     <button data-section="community" type="button" aria-pressed="true">Comunidade</button>
     <button data-section="trending" type="button" aria-pressed="false">Em alta</button>
    </div>
-   <p id="eyelid-home-status">As discussões da comunidade serão disponibilizadas nesta seção.</p>
+   <div id="community-home"></div>
   </section>
   <div>
    <section class="eyelid-surface"><h2>Explore o céu</h2><div id="eyelid-region-links"></div></section>
-   <section class="eyelid-surface" id="eyelid-contributors" tabindex="-1"><h2>Top colaboradores</h2><p>O ranking fica disponível quando a comunidade começar a contribuir.</p></section>
+   <section class="eyelid-surface" id="eyelid-contributors" tabindex="-1"><h2>Top colaboradores</h2><ol id="community-contributors"></ol><p id="community-contributors-empty">Ainda não há contribuições.</p></section>
   </div>
  </div>
 </section>
@@ -166,8 +166,8 @@ body{background:radial-gradient(ellipse at 15% 0%,#1b2941 0,transparent 48%),var
  <button type="button" id="minimize-object" aria-label="Fechar painel" title="Fechar painel">×</button>
 </div>
 <div class="sky-panel-body">
- <section data-sky-pane="community"><h3>Comunidade</h3><p>As discussões da comunidade serão disponibilizadas aqui.</p></section>
- <section data-sky-pane="discussion" hidden><h3>Discussão</h3><p>Nenhuma discussão disponível neste ponto.</p></section>
+ <section data-sky-pane="community"><h3>Comunidade</h3><div id="community-map"></div></section>
+ <section data-sky-pane="discussion" hidden><div id="community-map-thread"><p>Escolha uma publicação na aba Comunidade para ler a discussão.</p></div></section>
  <section data-sky-pane="object" hidden>
  <p id="empty-object">Selecione um objeto no mapa para abrir a ficha.</p>
  <div id="selected-object-content" hidden>
@@ -610,7 +610,7 @@ function initializeExposureViewer(){
  let viewport, remoteDates={}, historyCoverage, datesKey='', lastSearch='', lastGaia='', remoteRequest, gaiaRequest, searchTimer;
  let previewToken=0, previewPath;
  const epochPreview=byId('epoch-preview');
- let archiveStatus='', presentedFrame, requestedDate='';
+ let archiveStatus='', presentedFrame, requestedDate=/^\d{4}-\d{2}-\d{2}$/.test(openingQuery.get('data')??'')?openingQuery.get('data'):'';
  let monoAnchor, monoAttempt, monoDetail, monoRequest, monoStatus='';
  let rgbGeneration=0, rgbChannels, rgbMosaicLabel, rgbDetailKey, rgbDetailRequest, rgbTimer;
  const mode=byId('image-mode'), rgbControls=byId('rgb-controls'), surveyPicker=byId('image-source');
@@ -1380,6 +1380,8 @@ async function openSkyViewer(){
   },area=>{
    document.dispatchEvent(new CustomEvent('atlas-coverage',{detail:area}));
   },openingTarget??data.center);
+  const sharedFov=Number(openingQuery.get('fov'));
+  if(openingTarget&&sharedFov>=.00001&&sharedFov<=360)aladin.setFieldOfView(sharedFov);
   aladinActive=true;
   document.dispatchEvent(new Event('atlas-aladin-ready'));
   if(navigationStatus.textContent==='Carregando mapa do céu…')navigationStatus.textContent='';
@@ -1591,4 +1593,4 @@ document.addEventListener('keydown',event=>{
  }
 });
 
-</script><script src="./navigation.js"></script><script src="./account-ui.js"></script></html>
+</script><script src="./navigation.js"></script><script src="./account-ui.js"></script><script src="./community-ui.js"></script></html>

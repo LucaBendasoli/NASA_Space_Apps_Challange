@@ -52,9 +52,7 @@
     for (const tab of pages.home.querySelectorAll('[data-section]')){
      tab.setAttribute('aria-pressed',String(tab.dataset.section === section));
     }
-    byId('eyelid-home-status').textContent = section === 'community'
-     ? 'As discussões da comunidade serão disponibilizadas nesta seção.'
-     : 'As investigações em alta aparecerão quando a comunidade começar a contribuir.';
+    document.dispatchEvent(new CustomEvent('eyelid-community-tab',{detail:section}));
    }
   }
  });
