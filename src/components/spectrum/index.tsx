@@ -9,7 +9,7 @@ export type { CelestialObject, Observation, SpectralPoint } from './lib/spectrum
 
 export type SpectrumInstance = {
   /** Substitui todas as props e reinicia a seleção e os filtros. */
-  update(props: SpectrumExplorerProps): void;
+  update(props: SpectrumExplorerProps, options?: { resetState?: boolean }): void;
   destroy(): void;
 };
 
@@ -29,6 +29,7 @@ export function mountSpectrum(host: HTMLElement, props: SpectrumExplorerProps): 
   sheet.textContent = styles;
   const container = document.createElement('div');
   container.className = 'spectrum-widget';
+  container.lang = props.locale ?? 'pt-BR';
   shadow.append(sheet, container);
 
   const root = createRoot(container, { identifierPrefix: `spectrum-${++instance}-` });
@@ -37,9 +38,11 @@ export function mountSpectrum(host: HTMLElement, props: SpectrumExplorerProps): 
   root.render(<SpectrumExplorer {...props} key={revision} />);
 
   return {
-    update(next) {
+    update(next, options) {
       if (destroyed) throw new Error('O gráfico já foi desmontado.');
-      root.render(<SpectrumExplorer {...next} key={++revision} />);
+      if (options?.resetState !== false) revision++;
+      container.lang = next.locale ?? 'pt-BR';
+      root.render(<SpectrumExplorer {...next} key={revision} />);
     },
     destroy() {
       if (destroyed) return;

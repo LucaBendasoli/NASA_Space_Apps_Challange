@@ -72,6 +72,8 @@ type CelestialObject = {
 | Propriedade | Descrição / padrão |
 | --- | --- |
 | `objects` | Lista de astros, obrigatória; `[]` mostra estado vazio. |
+| `locale` | Idioma das datas e números; padrão `pt-BR`. |
+| `messages` | Catálogo de rótulos `chart.*`; o padrão mantém os textos em português. |
 | `title` | `Assinatura espectral`. |
 | `valueLabel` | Nome da grandeza no eixo Y; `Radiância`. |
 | `radianceUnit` | Unidade exibida no eixo Y; `MJy/sr`. Não converte valores. |
@@ -80,6 +82,8 @@ type CelestialObject = {
 | `onRangeChange` | Callback opcional com `[mínimo, máximo]` em μm. |
 
 Use IDs únicos, datas ISO válidas e comprimentos de onda em μm. Todas as séries devem usar a mesma grandeza/unidade. O campo `radiance` também pode transportar fluxo, desde que os rótulos sejam ajustados. Em **Comparar astros**, a primeira observação de cada astro é a referência; em **Comparar observações**, todas as observações do astro escolhido ficam disponíveis. Pontos isolados são desenhados como círculos. Valores não finitos são excluídos e os pontos são ordenados sem alterar os dados recebidos.
+
+Para atualizar apenas o idioma e os rótulos sem reiniciar a seleção e os filtros, use `chart.update(novasProps, { resetState: false })`. O comportamento padrão de `update(novasProps)` continua reiniciando o estado para um novo conjunto de dados.
 
 O gráfico não consulta APIs nem extrai espectros de HiPS/FITS. A aplicação fornece os dados e controla paginação/seleção do catálogo. Prefira conjuntos limitados, como os 100 objetos por página do projeto de origem.
 

@@ -1,5 +1,6 @@
 import { TARGETS, SURVEYS, findTarget, parseCoordinates, parseSesame, readView, viewHash, formatDegrees, formatFov } from './sky-model.js';
 import { createFrameUpdater, setTextIfChanged } from './frame-updater.js';
+import { t, onLanguageChange, errorKey, uiError } from './i18n/index.js';
 
 const $ = id => document.getElementById(id);
 let aladin, catalog, noticeTimer, searchController, surveyController, navigation = 0;
@@ -8,13 +9,36 @@ const readoutUpdates = createFrameUpdater(syncReadout);
 let exploring = false;
 const shared = readView(location.hash);
 const start = shared || { ...TARGETS[0], survey: 'dss', projection: 'SIN' };
+let viewName = { key: shared ? 'view.shared' : 'targets.m31' };
+let statusKey = 'status.connecting';
+let currentNotice, currentFailure;
+let catalogSources = [];
 $('survey').value = start.survey;
 $('projection').value = start.projection;
-if (shared) $('view-name').textContent = 'Posição compartilhada';
+function renderDynamicText() {
+  setTextIfChanged(readout.name, viewName.literal ?? t(viewName.key));
+  setTextIfChanged($('engine-status'), t(statusKey));
+  updateSurveyText();
+  if (currentFailure) $('failure-message').textContent = t(errorKey(currentFailure));
+  if (catalog) catalog.name = t('catalog.name');
+  if (currentNotice && !$('notice').hidden) {
+    const { key, parameters } = currentNotice;
+    $('notice').textContent = t(key, parameters.targetId ? { ...parameters, name: t(`targets.${parameters.targetId}`) } : parameters);
+  }
+  catalogSources.forEach((source, index) => {
+    source.data.name = t(`targets.${TARGETS[index].id}`);
+    source.data.origem = t('catalog.origin');
+  });
+  if ($('target').validity.customError) $('target').setCustomValidity(t('search.required'));
+}
+function setStatus(key) { statusKey = key; $('engine-status').textContent = t(key); }
+onLanguageChange(renderDynamicText);
+renderDynamicText();
 
-function notify(message, persistent = false) {
+function notify(key, parameters = {}, persistent = false) {
   clearTimeout(noticeTimer);
-  $('notice').textContent = message;
+  currentNotice = { key, parameters };
+  $('notice').textContent = t(key, parameters.targetId ? { ...parameters, name: t(`targets.${parameters.targetId}`) } : parameters);
   $('notice').hidden = false;
   if (!persistent) noticeTimer = setTimeout(() => { $('notice').hidden = true; }, 6500);
 }
@@ -24,13 +48,14 @@ function syncReadout() {
   setTextIfChanged(readout.ra, formatDegrees(ra));
   setTextIfChanged(readout.dec, formatDegrees(dec, true));
   setTextIfChanged(readout.fov, formatFov(aladin.getFov()[0]));
-  if (exploring) setTextIfChanged(readout.name, 'Explorando o céu');
+  if (exploring) { viewName = { key: 'view.exploring' }; setTextIfChanged(readout.name, t(viewName.key)); }
 }
 function pointTo(target, title) {
   exploring = false;
   aladin.gotoRaDec(target.ra, target.dec);
   if (target.fov) aladin.setFoV(target.fov);
-  $('view-name').textContent = title || target.name;
+  viewName = title || { key: `targets.${target.id}` };
+  $('view-name').textContent = viewName.literal ?? t(viewName.key);
   readoutUpdates.request();
 }
 function destination(target) {
@@ -39,7 +64,7 @@ function destination(target) {
   $('search-button').disabled = false;
   pointTo(target);
   $('target').value = target.aliases[0];
-  notify(`Destino: ${target.name}.`);
+  notify('notice.destination', { targetId: target.id });
 }
 async function search(event) {
   event.preventDefault();
@@ -49,33 +74,33 @@ async function search(event) {
   const request = ++navigation;
   searchController?.abort();
   try {
-    const local = findTarget(query);
-    if (local) { pointTo(local); notify(`Destino local: ${local.name}.`); return; }
+    const local = findTarget(query) || TARGETS.find(target => t(`targets.${target.id}`).toLocaleLowerCase() === query.toLocaleLowerCase());
+    if (local) { pointTo(local); notify('notice.local', { targetId: local.id }); return; }
     const coordinates = parseCoordinates(query);
-    if (coordinates) { pointTo(coordinates, 'Coordenadas ICRS'); notify('Posição ICRS selecionada.'); return; }
-    if (!/[a-zA-ZÀ-ÿ]/.test(query)) throw new Error('Digite duas coordenadas em graus, separadas por vírgula ou espaço. Exemplo: 10.68, 41.27.');
+    if (coordinates) { pointTo(coordinates, { key: 'view.coordinates' }); notify('view.coordinates'); return; }
+    if (!/[a-zA-ZÀ-ÿ]/.test(query)) throw uiError('errors.coordinatesInput');
     const controller = searchController = new AbortController();
     const timer = setTimeout(() => controller.abort(), 12000);
     $('search-button').disabled = true;
-    notify(`Buscando “${query}” no Sesame…`, true);
+    notify('notice.searching', { query }, true);
     try {
       const response = await fetch(`https://cds.unistra.fr/cgi-bin/nph-sesame/-o/SVNI?${encodeURIComponent(query)}`, { signal: controller.signal });
-      if (!response.ok) throw new Error('O serviço de busca está indisponível. Use um dos atalhos ou coordenadas.');
+      if (!response.ok) throw uiError('errors.searchService');
       const position = parseSesame(await response.text());
       if (request !== navigation) return;
-      pointTo(position, query);
-      notify(`Objeto localizado: ${query}.`);
+      pointTo(position, { literal: query });
+      notify('notice.found', { query });
     } finally { clearTimeout(timer); }
   } catch (error) {
     if (request !== navigation) return;
-    notify(error.name === 'AbortError' ? 'A busca demorou demais. Tente coordenadas ou um dos atalhos locais.' : error.message === 'Failed to fetch' ? 'Não foi possível acessar o Sesame. Tente coordenadas ou os atalhos locais.' : error.message);
+    notify(errorKey(error));
   } finally { if (request === navigation) $('search-button').disabled = false; }
 }
 function surveyURL() { return SURVEYS[$('survey').value].urls[$('mirror').value]; }
 function updateSurveyText() {
-  const item = SURVEYS[$('survey').value];
-  $('survey-description').textContent = item.description;
-  $('view-layer').textContent = item.label;
+  const id = $('survey').value;
+  $('survey-description').textContent = t(`survey.description.${id}`);
+  $('view-layer').textContent = t(`survey.layer.${id}`);
   $('survey-credit').href = `${surveyURL()}/properties`;
 }
 async function probeSurvey() {
@@ -88,29 +113,29 @@ async function probeSurvey() {
     const text = await response.text();
     if (!/hips_order\s*=/.test(text)) throw new Error('Metadados HiPS inválidos');
     if (controller !== surveyController) return;
-    $('engine-status').textContent = 'HiPS acessível';
+    setStatus('status.hips');
   } catch {
     if (controller !== surveyController) return;
-    $('engine-status').textContent = 'Verifique o espelho';
-    notify('Não foi possível confirmar o servidor de imagens. Se o mapa ficar vazio, troque o espelho. A cobertura também depende do levantamento.', true);
+    setStatus('status.mirror');
+    notify('errors.images', {}, true);
   } finally { clearTimeout(timer); }
 }
 function changeSurvey() {
   updateSurveyText();
   try {
     aladin.setBaseImageLayer(surveyURL());
-    $('engine-status').textContent = 'Solicitando imagens';
+    setStatus('status.requesting');
     probeSurvey();
-  } catch (error) { notify(`Falha ao trocar camada: ${error.message || error}`); }
+  } catch (error) { console.error(error); notify('errors.layer'); }
 }
 function loadScript(url) {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
-    const timer = setTimeout(() => { script.remove(); reject(new Error('Tempo de conexão excedido')); }, 18000);
+    const timer = setTimeout(() => { script.remove(); reject(uiError('errors.connectionTimeout')); }, 18000);
     script.src = url;
     script.charset = 'utf-8';
     script.onload = () => { clearTimeout(timer); resolve(); };
-    script.onerror = () => { clearTimeout(timer); script.remove(); reject(new Error('Falha ao carregar a biblioteca')); };
+    script.onerror = () => { clearTimeout(timer); script.remove(); reject(uiError('errors.libraryLoad')); };
     document.head.append(script);
   });
 }
@@ -123,14 +148,14 @@ async function getOfficialLibrary() {
       if (window.A?.init && window.A?.aladin) return window.A;
     } catch (error) { console.warn('Aladin Lite:', url, error.message); }
   }
-  throw new Error('Não foi possível baixar o Aladin Lite oficial. Verifique sua conexão com aladin.cds.unistra.fr e tente novamente.');
+  throw uiError('errors.library');
 }
 async function boot() {
   try {
-    if (!document.createElement('canvas').getContext('webgl2')) throw new Error('O visualizador precisa de WebGL2. Use um navegador com suporte a WebGL2 e aceleração gráfica disponível.');
+    if (!document.createElement('canvas').getContext('webgl2')) throw uiError('errors.webgl');
     const A = await getOfficialLibrary();
     let timer;
-    try { await Promise.race([A.init, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('O motor WebAssembly não inicializou a tempo. Verifique a conexão e tente novamente.')), 30000); })]); }
+    try { await Promise.race([A.init, new Promise((_, reject) => { timer = setTimeout(() => reject(uiError('errors.wasm')), 30000); })]); }
     finally { clearTimeout(timer); }
     aladin = A.aladin('#aladin', {
       survey: surveyURL(), target: `${start.ra} ${start.dec}`, fov: start.fov,
@@ -146,8 +171,9 @@ async function boot() {
     });
     // Sem faixa adicional: o motor oficial controla os limites de cada projeção
     // e a aproximação mínima nativa (0,1 segundo de arco nesta versão).
-    catalog = A.catalog({ name: 'Referências didáticas (ICRS, aproximadas)', sourceSize: 14, color: '#b8efbd', onClick: 'showPopup' });
-    catalog.addSources(TARGETS.map(t => A.source(t.ra, t.dec, { name: t.name, id: t.aliases[0], origem: 'Lista didática local; coordenadas aproximadas.' })));
+    catalog = A.catalog({ name: t('catalog.name'), sourceSize: 14, color: '#b8efbd', onClick: 'showPopup' });
+    catalogSources = TARGETS.map(target => A.source(target.ra, target.dec, { name: t(`targets.${target.id}`), id: target.aliases[0], origem: t('catalog.origin') }));
+    catalog.addSources(catalogSources);
     aladin.addCatalog(catalog);
     catalog.hide();
     aladin.on('positionChanged', ({ dragging }) => {
@@ -158,7 +184,7 @@ async function boot() {
     $('controls').disabled = false;
     for (const id of ['search-button', 'zoom-in', 'zoom-out', 'home', 'share']) $(id).disabled = false;
     $('loading').hidden = true;
-    $('engine-status').textContent = 'Motor pronto';
+    setStatus('status.ready');
     $('engine-dot').classList.add('ready');
     readoutUpdates.request();
     updateSurveyText();
@@ -167,11 +193,14 @@ async function boot() {
     console.error(error);
     $('loading').hidden = true;
     $('failure').hidden = false;
-    $('failure-message').textContent = error.message || String(error);
-    $('engine-status').textContent = 'Sem conexão com o motor';
+    currentFailure = error;
+    $('failure-message').textContent = t(errorKey(error));
+    setStatus('status.offline');
   }
 }
 $('search-form').addEventListener('submit', search);
+$('target').addEventListener('invalid', () => { if ($('target').validity.valueMissing) $('target').setCustomValidity(t('search.required')); });
+$('target').addEventListener('input', () => $('target').setCustomValidity(''));
 for (const button of document.querySelectorAll('[data-target]')) button.addEventListener('click', () => destination(TARGETS.find(t => t.id === button.dataset.target)));
 for (const id of ['survey', 'mirror']) $(id).addEventListener('change', changeSurvey);
 $('projection').addEventListener('change', () => aladin.setProjection($('projection').value));
@@ -186,8 +215,8 @@ $('share').addEventListener('click', async () => {
   const url = new URL(location.href);
   url.hash = viewHash({ ra, dec, fov: aladin.getFov()[0], survey: $('survey').value, projection: $('projection').value });
   history.replaceState(null, '', url);
-  try { await navigator.clipboard.writeText(url.href); notify('Link com a posição e a camada copiado.'); }
-  catch { notify('A posição foi salva no endereço desta página. Copie o link na barra do navegador.', true); }
+  try { await navigator.clipboard.writeText(url.href); notify('notice.copied'); }
+  catch { notify('notice.copyFallback', {}, true); }
 });
 $('retry').addEventListener('click', () => location.reload());
 $('about-open').addEventListener('click', () => $('about').showModal());
