@@ -177,7 +177,7 @@ export async function createAladin(host, center, channel, onSelect, onError, onC
   const [width,height] = view.getFoV();
   const east = ((ra - center[0] + 540) % 360 - 180) * Math.cos(center[1] * Math.PI / 180);
   const nearPrepared=Math.abs(east)<0.05&&Math.abs(dec-center[1])<0.05;
-  onCoverage({ra,dec,size:Math.max(width,height),nearPrepared,prepared:width<=0.75&&nearPrepared});
+  onCoverage({ra,dec,fov:width,size:Math.max(width,height),nearPrepared,prepared:width<=0.75&&nearPrepared});
  }
  view.on('positionChanged', () => {syncCoverage();});
  function syncZoom() {
@@ -233,6 +233,7 @@ export async function createAladin(host, center, channel, onSelect, onError, onC
     for(const tile of tiles)fetch(spectralSurvey(band)+'/'+tile,{priority:'low'}).catch(()=>{});
    }
   },
+  setFieldOfView(degrees) { view.setFoV(degrees); },
   focus(ra,dec) {
    view.gotoRaDec(ra,dec);
    if(view.getFoV()[0]>fieldOfView)view.setFoV(fieldOfView);

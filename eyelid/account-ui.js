@@ -38,14 +38,15 @@
   return true;
  }
 
- function openAuth(mode){
-  returnToMap = true;
+ function openAuth(mode, goBackToMap = true){
+  returnToMap = goBackToMap;
   frame.src = '/login.html?modo='+mode;
   dialog.showModal();
  }
  for (const button of document.querySelectorAll('[data-auth-mode]')){
   button.onclick = () => openAuth(button.dataset.authMode);
  }
+ document.addEventListener('eyelid-community-login',()=>openAuth('login',false));
  byId('close-eyelid-auth').onclick = () => dialog.close();
  dialog.addEventListener('close', () => {
   frame.removeAttribute('src');

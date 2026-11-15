@@ -33,6 +33,7 @@ from scipy.ndimage import map_coordinates
 import requests
 
 from accounts import auth_get, auth_post
+from community import community_get, community_post
 from align_epochs import align_images
 from local_epochs import EpochArchive
 
@@ -706,12 +707,13 @@ class AtlasHandler(SimpleHTTPRequestHandler):
             pass
 
     def do_POST(self):
-        if not auth_post(self, urlsplit(self.path).path):
+        path = urlsplit(self.path).path
+        if not (auth_post(self, path) or community_post(self, path)):
             self.send_error(404)
 
     def do_GET(self):
         url = urlsplit(self.path)
-        if auth_get(self, url.path):
+        if auth_get(self, url.path) or community_get(self, url):
             return
         if url.path.startswith(('/api/local-frame/', '/api/local-preview/', '/api/local-original/')):
             entry = LOCAL_EPOCHS.get(url.path.rsplit('/', 1)[-1])

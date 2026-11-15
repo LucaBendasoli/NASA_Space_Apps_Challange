@@ -28,7 +28,7 @@ function initializeExposureViewer(){
  let viewport, remoteDates={}, historyCoverage, datesKey='', lastSearch='', lastGaia='', remoteRequest, gaiaRequest, searchTimer;
  let previewToken=0, previewPath;
  const epochPreview=byId('epoch-preview');
- let archiveStatus='', presentedFrame, requestedDate='';
+ let archiveStatus='', presentedFrame, requestedDate=/^\d{4}-\d{2}-\d{2}$/.test(openingQuery.get('data')??'')?openingQuery.get('data'):'';
  let monoAnchor, monoAttempt, monoDetail, monoRequest, monoStatus='';
  let rgbGeneration=0, rgbChannels, rgbMosaicLabel, rgbDetailKey, rgbDetailRequest, rgbTimer;
  const mode=byId('image-mode'), rgbControls=byId('rgb-controls'), surveyPicker=byId('image-source');
@@ -798,6 +798,8 @@ async function openSkyViewer(){
   },area=>{
    document.dispatchEvent(new CustomEvent('atlas-coverage',{detail:area}));
   },openingTarget??data.center);
+  const sharedFov=Number(openingQuery.get('fov'));
+  if(openingTarget&&sharedFov>=.00001&&sharedFov<=360)aladin.setFieldOfView(sharedFov);
   aladinActive=true;
   document.dispatchEvent(new Event('atlas-aladin-ready'));
   if(navigationStatus.textContent==='Carregando mapa do céu…')navigationStatus.textContent='';

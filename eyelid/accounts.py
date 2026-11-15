@@ -174,23 +174,31 @@ def auth_get(handler, path):
     return True
 
 
+def read_same_origin_json(handler, max_bytes=4096):
+    try:
+        origin = urlsplit(handler.headers.get('Origin', ''))
+    except ValueError as error:
+        raise AuthError(403, 'origin') from error
+    if origin.scheme not in ('http', 'https') or origin.netloc != handler.headers.get('Host'):
+        raise AuthError(403, 'origin')
+    try:
+        length = int(handler.headers.get('Content-Length', '0'))
+        if not 0 < length <= max_bytes or handler.headers.get_content_type() != 'application/json':
+            raise ValueError()
+        body = json.loads(handler.rfile.read(length))
+        if not isinstance(body, dict):
+            raise ValueError()
+    except (ValueError, UnicodeError) as error:
+        raise AuthError(400, 'invalid') from error
+    return body
+
+
 def auth_post(handler, path):
     action = path.removeprefix('/api/auth/')
     if action not in ('register', 'login', 'judge', 'logout') or path != '/api/auth/' + action:
         return False
     try:
-        origin = urlsplit(handler.headers.get('Origin', ''))
-        if origin.scheme not in ('http', 'https') or origin.netloc != handler.headers.get('Host'):
-            raise AuthError(403, 'origin')
-        try:
-            length = int(handler.headers.get('Content-Length', '0'))
-            if not 0 < length <= 4096 or handler.headers.get_content_type() != 'application/json':
-                raise ValueError()
-            body = json.loads(handler.rfile.read(length))
-            if not isinstance(body, dict):
-                raise ValueError()
-        except (ValueError, UnicodeError) as error:
-            raise AuthError(400, 'invalid') from error
+        body = read_same_origin_json(handler)
         previous = current_token(handler)
         with closing(database()) as db, db:
             if action == 'logout':
