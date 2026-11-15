@@ -1,0 +1,95 @@
+{
+  "tempo_total_observado_s": 76.754,
+  "regioes": {
+    "campo-leao": {
+      "preparation": 0.534365583996987,
+      "detection": 0.197691457986366,
+      "output": 0.1650596669933293,
+      "processing": 0.8971168339776341,
+      "acquisition": {
+        "gaia.csv": {
+          "bytes": 7681,
+          "seconds": 3.0292497080226894,
+          "url": "https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+source_id%2Cra%2Cdec%2Cphot_g_mean_mag%2Cpmra%2Cpmdec+FROM+gaiadr3.gaia_source+WHERE+1%3DCONTAINS%28POINT%28%27ICRS%27%2Cra%2Cdec%29%2CCIRCLE%28%27ICRS%27%2C146.25%2C15.713861048%2C0.085%29%29"
+        },
+        "wise.tar.gz": {
+          "bytes": 1771399,
+          "seconds": 4.259907250001561,
+          "url": "https://unwise.me/cutout_fits?version=neo7&ra=146.25&dec=15.713861048&size=260&bands=12"
+        },
+        "allwise.tar.gz": {
+          "bytes": 639783,
+          "seconds": 2.7537815420073457,
+          "url": "https://unwise.me/cutout_fits?version=allwise&ra=146.25&dec=15.713861048&size=260&bands=1"
+        },
+        "cube.bin": {
+          "bytes": 106963968,
+          "seconds": 47.21011295801145,
+          "url": "https://irsa.ipac.caltech.edu/ibe/data/spherex/dr1/hips5_cube/hips_20261026/Norder5/Dir0/Npix1100_cube.fits"
+        },
+        "wall": 47.3733272079844
+      },
+      "candidates": 6
+    },
+    "campo-c03": {
+      "preparation": 0.2188800839940086,
+      "detection": 0.49519291598699056,
+      "output": 0.2714009170013014,
+      "processing": 0.9854740839800797,
+      "acquisition": {
+        "wise.tar.gz": {
+          "bytes": 1494238,
+          "seconds": 3.024502082989784,
+          "url": "https://unwise.me/cutout_fits?version=neo7&ra=83.63615&dec=-59.464758&size=260&bands=12"
+        },
+        "gaia.csv": {
+          "bytes": 21620,
+          "seconds": 4.235930374998134,
+          "url": "https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+source_id%2Cra%2Cdec%2Cphot_g_mean_mag%2Cpmra%2Cpmdec+FROM+gaiadr3.gaia_source+WHERE+1%3DCONTAINS%28POINT%28%27ICRS%27%2Cra%2Cdec%29%2CCIRCLE%28%27ICRS%27%2C83.63615%2C-59.464758%2C0.085%29%29"
+        },
+        "allwise.tar.gz": {
+          "bytes": 572640,
+          "seconds": 2.312962832977064,
+          "url": "https://unwise.me/cutout_fits?version=allwise&ra=83.63615&dec=-59.464758&size=260&bands=1"
+        },
+        "cube.bin": {
+          "bytes": 106963968,
+          "seconds": 72.82724166699336,
+          "url": "https://irsa.ipac.caltech.edu/ibe/data/spherex/dr1/hips5_cube/hips_20261026/Norder5/Dir0/Npix8455_cube.fits"
+        },
+        "wall": 72.97136683299323
+      },
+      "candidates": 9
+    },
+    "campo-hercules": {
+      "preparation": 0.5629812910046894,
+      "detection": 0.22133200001553632,
+      "output": 0.1441105419944506,
+      "processing": 0.9284239160188008,
+      "acquisition": {
+        "wise.tar.gz": {
+          "bytes": 1895404,
+          "seconds": 3.7626032079861034,
+          "url": "https://unwise.me/cutout_fits?version=neo7&ra=253.125&dec=37.168899656&size=260&bands=12"
+        },
+        "gaia.csv": {
+          "bytes": 16501,
+          "seconds": 4.929264542006422,
+          "url": "https://gea.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+source_id%2Cra%2Cdec%2Cphot_g_mean_mag%2Cpmra%2Cpmdec+FROM+gaiadr3.gaia_source+WHERE+1%3DCONTAINS%28POINT%28%27ICRS%27%2Cra%2Cdec%29%2CCIRCLE%28%27ICRS%27%2C253.125%2C37.168899656%2C0.085%29%29"
+        },
+        "allwise.tar.gz": {
+          "bytes": 687678,
+          "seconds": 2.8191150419879705,
+          "url": "https://unwise.me/cutout_fits?version=allwise&ra=253.125&dec=37.168899656&size=260&bands=1"
+        },
+        "cube.bin": {
+          "bytes": 106963968,
+          "seconds": 47.25842933400418,
+          "url": "https://irsa.ipac.caltech.edu/ibe/data/spherex/dr1/hips5_cube/hips_20261026/Norder5/Dir0/Npix2400_cube.fits"
+        },
+        "wall": 47.40382658300223
+      },
+      "candidates": 5
+    }
+  }
+}

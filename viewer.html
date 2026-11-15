@@ -1,0 +1,55 @@
+<div class="map-controls">
+ <div class="control-group mono-control">
+  <label for="observation-date">Data da imagem</label>
+  <div class="control-row"><select id="observation-date"><option value="">Todas as observações</option></select>
+  <button type="button" id="date-play" disabled>▶ Datas</button>
+  <button type="button" id="exposure-focus" hidden>Ver recorte</button></div>
+  <details id="date-playlist" hidden>
+   <summary>Selecionar datas do loop</summary>
+   <button type="button" id="reset-date-playlist">Usar todas as datas</button>
+   <div id="date-options"></div>
+  </details>
+ </div>
+ <div class="control-group mono-control">
+  <label for="image-channel">Faixa infravermelha</label>
+  <div class="control-row"><select id="image-channel"></select>
+  <button type="button" id="band-play" disabled>▶ Canais</button></div>
+ </div>
+ <div class="control-group scan-controls">
+  <button type="button" id="scan-view" disabled>Analisar área do mapa</button>
+  <span id="scan-status" class="caption" role="status"></span>
+ </div>
+</div>
+<details class="map-display-options">
+ <summary>Opções de imagem</summary>
+ <div class="map-display-controls">
+ <div class="control-group">
+  <label for="image-source">Imagem do céu</label>
+  <select id="image-source" disabled>
+   <option value="spherex">SPHEREx</option>
+   <option value="optical">Luz visível</option>
+   <option value="wise">WISE</option>
+  </select>
+ </div>
+ <details class="image-adjustments">
+  <summary>Ajustes da imagem</summary>
+  <fieldset id="appearance-controls" disabled>
+   <label class="image-contrast" for="image-contrast">Contraste <input id="image-contrast" type="range" min="-60" max="60" value="0" step="5"></label>
+   <label><input id="image-invert" type="checkbox"> Inverter tons</label>
+   <label><input id="image-enhance" type="checkbox"> Realçar sinais fracos</label>
+   <button type="button" id="image-reset" class="id">Restaurar</button>
+  </fieldset>
+ </details>
+ <div class="control-group display-mode">
+  <label for="image-mode">Visualização</label>
+  <select id="image-mode" disabled><option value="gray">Tons de cinza</option><option value="rgb">Falsa cor (RGB)</option></select>
+ </div>
+ <div class="rgb-controls" id="rgb-controls" hidden>
+  <div class="control-group"><label for="rgb-red">Vermelho</label><select id="rgb-red"></select></div>
+  <div class="control-group"><label for="rgb-green">Verde</label><select id="rgb-green"></select></div>
+  <div class="control-group"><label for="rgb-blue">Azul</label><select id="rgb-blue"></select></div>
+ </div>
+ </div>
+</details>
+<p id="date-status" class="caption status" role="status"></p>
+<p id="navigation-status" class="caption status" role="status">Carregando mapa do céu…</p>
