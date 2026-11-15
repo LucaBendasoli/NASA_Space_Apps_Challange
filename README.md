@@ -2,6 +2,14 @@
 
 Site local de exploração astronômica com interface própria e integração com o **Aladin Lite oficial do CDS**, a ferramenta de https://aladin.cds.unistra.fr/AladinLite/.
 
+## Componente de análise espectral
+
+O botão **Análise espectral** abre o gráfico reutilizável `SpectrumExplorer`, com comparação de astros e observações, filtro espectral e exportação CSV. A demonstração usa dados sintéticos identificados na interface, sem relação com o objeto no mapa.
+
+Os fontes ficam em [`src/components/spectrum/`](src/components/spectrum/README.md). O bundle e os avisos de licença já estão em `assets/spectrum/`, prontos para o servidor estático. O gráfico carrega somente ao abrir o diálogo e tem estilos isolados do restante da aplicação.
+
+Para desenvolver o componente, execute `npm.cmd ci`, `npm.cmd run typecheck:spectrum` e `npm.cmd run build:spectrum`. Depois use `npm.cmd start`. Ao alterar os fontes, inclua também o bundle regenerado no commit. Veja a [API e os exemplos de reutilização](src/components/spectrum/README.md).
+
 ## Abrir
 
 Você já tem Node.js neste computador. Não é necessário instalar dependências.
@@ -65,6 +73,8 @@ Para compilar os fontes originais em outro ambiente, leia `upstream/aladin-lite/
 npm.cmd test
 npm.cmd run verify:upstream
 ```
+
+O snapshot oficial preserva os bytes de origem, inclusive arquivos com quebras de linha mistas. A regra em `.gitattributes` impede que o Git converta esse diretório durante o checkout no Windows. Não normalize os arquivos de `upstream/aladin-lite/`, pois a verificação compara os hashes dos blobs oficiais.
 
 Executados: **12 testes aprovados**, servidor HTTP e **429/429 hashes conferidos**. Os testes incluem compartilhamento no zoom mínimo nativo, preservação de coordenadas, indicadores em graus/minutos/segundos e agendamento de atualizações durante eventos contínuos. A sintaxe dos módulos próprios também foi verificada. Testes de parsing Sesame usam respostas de teste, não chamadas ao serviço real.
 

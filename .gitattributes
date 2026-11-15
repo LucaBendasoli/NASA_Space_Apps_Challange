@@ -1,0 +1,2 @@
+# Preserve os bytes do snapshot oficial usados por verify:upstream no Windows.
+/upstream/aladin-lite/** -text -whitespace

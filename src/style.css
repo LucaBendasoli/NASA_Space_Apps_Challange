@@ -29,6 +29,12 @@ noscript{background:var(--paper);color:var(--ink)}
 .theme-toggle{display:grid;place-items:center;width:36px;height:36px;padding:8px;flex-shrink:0}
 .theme-toggle svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .theme-toggle .theme-sun{display:none}
+.spectrum-dialog{max-width:1100px;max-height:calc(100dvh - 32px);padding:24px;overflow-y:auto;overscroll-behavior:contain}
+.spectrum-dialog-heading{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.spectrum-dialog-heading h2{font-size:24px;margin:8px 0 0}
+.spectrum-dialog-heading button{flex-shrink:0}
+.spectrum-dialog>p{margin:14px 0 20px}
+@media(max-width:760px){.spectrum-dialog{padding:14px;width:calc(100% - 16px);max-height:calc(100dvh - 16px)}.spectrum-dialog-heading h2{font-size:21px}.spectrum-dialog-heading .eyebrow{font-size:8px}.spectrum-dialog>p{font-size:11px}}
 :root[data-theme="dark"] .theme-toggle .theme-sun{display:block}
 :root[data-theme="dark"] .theme-toggle .theme-moon{display:none}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
