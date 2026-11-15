@@ -22,16 +22,19 @@ function createView(host) {
   const size=el('button','Ampliar','quiet-button');size.id='science-size';size.setAttribute('aria-controls','science-content');size.setAttribute('aria-expanded','false');
   const close=el('button','×','quiet-button');close.id='science-close';close.setAttribute('aria-label','Fechar medições');heading.append(titles,size,close);
   const content=el('div',null,'science-content');content.id='science-content';
-  const context=el('p',null,'science-context'),plot=el('div',null,'science-plot'),notice=el('p',null,'science-note'),status=el('p',null,'science-region-status');
+  const context=el('div',null,'science-context'),plot=el('div',null,'science-plot'),notice=el('p',null,'science-note'),status=el('p',null,'science-region-status');
   plot.id='science-plot';
   const live=el('p',null,'sr-only');live.setAttribute('role','status');live.setAttribute('aria-live','polite');
   const retry=el('button','Tentar novamente','quiet-button');retry.id='science-retry';
-  const choices=el('div',null,'science-choices'),metadata=el('section',null,'science-metadata'),metaTitle=el('h3','Observação e coordenadas','science-section-title');metaTitle.id='science-metadata-title';metadata.setAttribute('aria-labelledby',metaTitle.id);metadata.append(metaTitle);const meta=el('p',null,'science-note');metadata.append(meta);
+  const choices=el('div',null,'science-choices'),metadata=el('section',null,'science-metadata'),metaTitle=el('h3','Observação e coordenadas','science-section-title');metaTitle.id='science-metadata-title';metadata.setAttribute('aria-labelledby',metaTitle.id);metadata.append(metaTitle);const meta=el('dl',null,'science-metadata-grid');metadata.append(meta);
   const tableSection=el('section',null,'science-measurements');tableSection.id='science-table';const tableTitle=el('h3','Tabela de medições','science-section-title');tableTitle.id='science-table-title';tableSection.setAttribute('aria-labelledby',tableTitle.id);const tableWrap=el('div',null,'science-table-wrap');tableSection.append(tableTitle,tableWrap);
+  tableWrap.tabIndex=0;tableWrap.setAttribute('role','region');tableWrap.setAttribute('aria-labelledby',tableTitle.id);
+  const tableHint=el('p','Incertezas na unidade da radiância. Deslize a tabela para consultar todas as colunas.','science-table-hint');tableHint.id='science-table-hint';tableWrap.setAttribute('aria-describedby',tableHint.id);tableSection.insertBefore(tableHint,tableWrap);
   const pin=el('button','Fixar análise','quiet-button');pin.id='science-pin';pin.setAttribute('aria-pressed','false');
   const selectionTools=el('div',null,'science-selection-tools');
-  const modes=el('fieldset',null,'science-analysis-modes');modes.append(el('legend','Tipo de análise','sr-only'));
-  const radios=['objects','time'].map((value,i)=>{const label=el('label'),input=el('input');input.type='radio';input.name='science-analysis-mode';input.value=value;input.id=`science-mode-${value}`;input.setAttribute('aria-controls',plot.id);label.append(input,el('span',i?'Ao longo do tempo':'Entre astros'));modes.append(label);return input;});
+  const modes=el('fieldset',null,'science-analysis-modes');modes.append(el('legend','Escolher tipo de comparação','science-mode-title'));
+  const modeOptions=el('div',null,'science-mode-options');modes.append(modeOptions);
+  const radios=['objects','time'].map((value,i)=>{const label=el('label'),input=el('input');input.type='radio';input.name='science-analysis-mode';input.value=value;input.id=`science-mode-${value}`;input.setAttribute('aria-controls',plot.id);label.append(input,el('span',i?'Ao longo do tempo':'Entre astros'));modeOptions.append(label);return input;});
   const field=el('p',null,'science-field-state'),shareWarning=el('p',null,'science-note');shareWarning.setAttribute('role','status');
   const demoLink=el('a','Experimentar demonstração','demo-link');const url=new URL(location.href);url.searchParams.set('science','demo');url.hash='';demoLink.href=url.href;
   const comparePicker=el('div',null,'science-picker');
@@ -52,7 +55,13 @@ export function renderPanel(host,state,actions,demo) {
   host.dataset.status=state.status;v.title.textContent=off?'Análise não configurada':state.selected?.name||'Medições no infravermelho';v.provenance.textContent=off?'Sem conexão científica':demo?'Demonstração ativada · valores simulados':'Dados científicos do backend';
   v.title.title=v.title.textContent;
   v.provenance.title=v.provenance.textContent;
-  v.context.textContent=off?'Conecte um provedor científico ou experimente os dados simulados.':`Imagem de fundo: ${SURVEYS[state.viewSurvey||state.selected?.surveyId]?.label||'levantamento atual'}.${state.selected?` Medições: ${state.selected.datasetName||'conjunto não informado'}. Observação: ${state.selected.observationName||state.selected.observationId}.`:''}`;
+  const surveyLabel=SURVEYS[state.viewSurvey||state.selected?.surveyId]?.label||'levantamento atual';
+  const contextKey=JSON.stringify([off,surveyLabel,Boolean(state.selected),state.selected?.datasetName]);
+  if(contextKey!==v.contextKey){
+    v.contextKey=contextKey;v.context.replaceChildren();
+    if(off)v.context.textContent='Conecte um provedor científico ou experimente os dados simulados.';
+    else for(const [label,value] of [['Imagem de fundo',surveyLabel],...(state.selected?[['Medições',state.selected.datasetName||'Conjunto não informado']]:[])]){const item=el('span');item.append(el('span',`${label}: `,'science-context-label'),document.createTextNode(value));v.context.append(item);}
+  }
   v.selectionTools.hidden=off||!state.selected;v.demoLink.hidden=!off;v.pin.disabled=!state.selected;v.pin.textContent=state.pinned?'Desfixar análise':'Fixar análise';v.pin.setAttribute('aria-pressed',String(Boolean(state.pinned)));v.pin.onclick=()=>actions.pin?.();
   v.modes.hidden=off||!state.selected;v.radios.forEach(input=>{input.checked=input.value===(temporal?'time':'objects');input.onchange=()=>{if(input.checked)actions.setMode(input.value);};});
   v.field.textContent=state.selected&&state.inField===false?'Fonte fora do campo atual':state.selected&&state.regionalMissing?(state.partial?'Fonte não retornada nesta resposta parcial.':'Fonte ausente do catálogo regional atual.') :state.pinned?'Análise fixada durante a exploração.':'';v.field.hidden=!v.field.textContent;
@@ -71,7 +80,12 @@ export function renderPanel(host,state,actions,demo) {
   v.retry.hidden=state.status!=='error'&&state.regionStatus!=='error';
   v.notice.textContent=[temporal?'Mesma fonte em observações diferentes; o fundo HiPS não muda.':'',temporal&&comparison.partial?'Lista de datas parcial; podem existir outras observações.':'',state.coverage==='partial'?'Cobertura científica parcial.':'',state.partial?'Resultados regionais parciais.':'',state.measurements?.incomplete?'Medições principais incompletas.':'',secondary?.measurements.incomplete?'Medições da comparação incompletas.':'',series.some(s=>s.rows.some(r=>r.radiance===null))?'Bandas ausentes não são desenhadas nem conectadas.':''].filter(Boolean).join(' ');v.notice.hidden=!v.notice.textContent;
   v.metadata.hidden=!state.selected;v.tableSection.hidden=!state.measurements?.rows.length;
-  if(state.selected)v.meta.textContent=`ID ${state.selected.id} · ${state.selected.frame} · RA ${String(state.selected.ra)}° · Dec ${String(state.selected.dec)}° · Imagem de fundo: ${SURVEYS[state.viewSurvey||state.selected.surveyId]?.label||state.selected.surveyId} · Observação ${state.selected.observationName||'sem nome'} [${state.selected.observationId}] · Data ${reference?.observedAt||'não informada'} · Imagem ${reference?.imageId||'não informada'} · Conjunto ${state.selected.datasetName||'não informado'} [${state.selected.datasetId||'ID não informado'}] · Associação ao levantamento ${state.selected.surveyId}${temporal&&secondary?` · Comparação: ${secondary.selected.observedAt} · Observação ${secondary.selected.observationId} · Imagem ${secondary.selected.imageId||'não informada'}`:''}`;
+  if(state.selected){
+    const o=state.selected;
+    const entries=[['Identificador do astro',o.id],['Coordenadas',`${o.frame} · RA ${String(o.ra)}° · Dec ${String(o.dec)}°`],['Imagem de fundo',`${surveyLabel} · ${o.surveyId}`],['Conjunto científico',`${o.datasetName||'Não informado'} · ${o.datasetId||'ID não informado'}`],['Observação de referência',`${o.observationName||'Sem nome'} · ${o.observationId}`],['Data e imagem',`${reference?.observedAt||'Data não informada'} · ${reference?.imageId||'Imagem não informada'}`],...(temporal&&secondary?[['Observação comparada',`${secondary.selected.observedAt} · ${secondary.selected.observationId} · ${secondary.selected.imageId||'Imagem não informada'}`]]:[])];
+    const signature=JSON.stringify(entries);
+    if(signature!==v.metaSignature){v.metaSignature=signature;v.meta.replaceChildren();for(const [label,value] of entries){const pair=el('div');pair.append(el('dt',label),el('dd',value));v.meta.append(pair);}}
+  }
   if(changed){
     // Nova identidade troca o gráfico; uma comparação atualiza somente suas séries.
     const retained=key===v.lastKey&&state.status==='ready'&&v.chartSvg?.isConnected;
@@ -91,11 +105,13 @@ export function renderPanel(host,state,actions,demo) {
     else{message=state.status==='restoring'?'Recuperando a fonte compartilhada…':state.status==='loading'?`Carregando medições de ${state.selected.name}…`:state.status==='empty'?'Astro sem medições válidas de radiância.':state.status==='error'?state.error:state.candidates?'Fontes próximas: escolha o astro desejado.':message;v.plot.append(el('p',message,'science-placeholder'));}
     v.live.textContent=message;v.tableWrap.replaceChildren();
     if(state.measurements?.rows.length){
-      const table=el('table');table.append(el('caption','Incerteza na mesma unidade da radiância. Identidades completas na legenda e nas opções de seleção.'));
+      const table=el('table');table.append(el('caption','Medições por banda e por fonte ou observação.','sr-only'));
       const head=el('thead'),line=el('tr');for(const s of [temporal?'Observação':'Astro','Banda','Comprimento de onda','Radiância','Incerteza','Qualidade']){const th=el('th',s);th.scope='col';line.append(th);}head.append(line);table.append(head);
       const body=el('tbody');for(const s of series)for(const r of s.rows){
         const tr=el('tr');tr.dataset.band=r.bandId;tr.dataset.series=s.key;tr.dataset.measurement=`${s.description} · ${formatMeasurement(r)}`;tr.tabIndex=0;tr.setAttribute('aria-label',tr.dataset.measurement);
-        for(const text of [s.tableName,r.bandId,`${String(r.wavelength)} ${r.wavelengthUnit}`,`${r.radiance==null?'Ausente':String(r.radiance)} ${r.radianceUnit}`,r.uncertainty==null?'Não informada':String(r.uncertainty),typeof r.quality==='string'?r.quality:JSON.stringify(r.quality??'Não informada')])tr.append(el('td',text));body.append(tr);
+        tr.append(el('td',s.tableName),el('td',r.bandId));
+        for(const [value,unit] of [[String(r.wavelength),r.wavelengthUnit],[r.radiance==null?'Ausente':String(r.radiance),r.radianceUnit]]){const cell=el('td');cell.append(el('span',value,'measurement-value'),el('span',unit,'measurement-unit'));tr.append(cell);}
+        tr.append(el('td',r.uncertainty==null?'Não informada':String(r.uncertainty)),el('td',typeof r.quality==='string'?r.quality:JSON.stringify(r.quality??'Não informada')));body.append(tr);
       }table.append(body);v.tableWrap.append(table);v.tableTitle.textContent=`Tabela de medições · ${series.reduce((n,s)=>n+s.rows.length,0)} bandas`;
     }
     v.lastKey=key;v.lastStatus=state.status;v.lastRows=state.measurements;v.lastError=state.error;

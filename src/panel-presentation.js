@@ -70,7 +70,7 @@ export function createPanelPresentation(root) {
     e.preventDefault();close();
   },options);
   document.addEventListener('focusin',e=>{
-    if(!state.value.open||root.contains(e.target))return;
+    if(!state.value.open||root.contains(e.target)||document.querySelector('dialog[open]')||document.body.classList.contains('controls-open'))return;
     const a=e.target.getBoundingClientRect(),b=root.getBoundingClientRect();
     if(a.width&&a.height&&a.left>=b.left&&a.right<=b.right&&a.top>=b.top&&a.bottom<=b.bottom)close(false);
   },options);

@@ -194,13 +194,116 @@ tr.band-active{background:var(--accent-surface);color:var(--accent-ink)}
 .science-legend li{display:flex;align-items:center;gap:8px;min-width:0;overflow-wrap:anywhere}
 .series-swatch{width:22px;height:3px;border-radius:2px;flex-shrink:0;background:var(--series-color)}
 .science-legend[hidden]{display:none}
-.science-analysis-modes{display:flex;gap:8px;min-width:0;margin:0;padding:8px 16px;border:0;border-bottom:1px solid var(--line);flex-shrink:0;background:var(--surface)}
+.science-analysis-modes{display:block;min-width:0;margin:0;padding:12px 16px;border:0;border-bottom:1px solid var(--line);flex-shrink:0;background:var(--surface)}
+/* A legend participa do conteúdo, em vez de ocupar a borda superior do fieldset. */
+.science-analysis-modes legend{float:left;width:100%;padding:0;margin:0 0 8px;font-size:0.75rem;line-height:1.5;font-weight:650;letter-spacing:0;color:var(--muted)}
+.science-mode-options{display:flex;gap:8px;clear:both;min-width:0}
 .science-analysis-modes label{display:flex;align-items:center;justify-content:center;gap:8px;flex:1 1 0;min-width:0;min-height:44px;margin:0;padding:6px 8px;font-size:0.75rem;line-height:1.4;font-weight:500;letter-spacing:0;cursor:pointer;border:1px solid var(--line);border-radius:8px;color:var(--muted)}
 .science-analysis-modes input{width:16px;height:16px;margin:0;flex-shrink:0;accent-color:var(--focus)}
 .science-analysis-modes label:has(input:checked){color:var(--accent-ink);background:var(--accent-surface);border-color:var(--focus)}
 .science-analysis-modes label:has(input:focus-visible){outline:2px solid var(--focus);outline-offset:2px}
-@media(max-width:760px){.science-analysis-modes{padding:6px 12px;gap:6px}}
+@media(max-width:760px){.science-analysis-modes{padding:10px 12px}.science-mode-options{gap:6px}}
 @media(max-width:760px) and (min-height:501px){
-  .science-panel:has(.science-analysis-modes:not([hidden])) .science-chart{height:190px}
+  .science-panel:has(.science-analysis-modes:not([hidden])) .science-chart{height:170px}
   .science-panel:has(.science-analysis-modes:not([hidden])) .science-plot{min-height:190px}
+}
+/* Ritmo de leitura: eixos, legendas e dados compartilham o mesmo alinhamento. */
+.science-panel{overflow-wrap:normal}
+.science-content{line-height:1.55}
+.science-selection-tools{padding-top:12px}
+.science-picker label{line-height:1.5;margin-bottom:8px}
+main,main.analysis-expanded:not(.analysis-hidden),main.analysis-hidden{grid-template-columns:minmax(0,1fr) auto;grid-template-rows:minmax(64px,max-content) minmax(0,1fr) minmax(58px,max-content)}
+.workspace-tools{grid-column:1;padding:0 12px 0 16px}
+.topbar{grid-column:2}
+.sky-workspace,.telemetry{grid-column:1/-1}
+.science-context{display:flex;flex-wrap:wrap;gap:2px 16px;max-height:none;margin:12px 0 8px;overflow:visible;overflow-wrap:anywhere}
+.science-context>span{min-width:0}
+.science-context-label{color:var(--muted);font-weight:650}
+.science-legend{gap:5px 18px;margin:8px 0 6px}
+.science-legend li{align-items:baseline;line-height:1.55}
+.series-swatch{align-self:center}
+.science-plot .science-chart-wrap{margin:4px 0 8px}
+.science-chart .chart-tick{fill:var(--muted);font-variant-numeric:tabular-nums}
+.science-chart .chart-axis-title{fill:var(--ink);font-weight:550}
+.science-chart-wrap figcaption{padding:8px 0 0;line-height:1.6;text-wrap:pretty}
+.science-note,.science-region-status{margin:12px 0;overflow-wrap:anywhere}
+.science-panel .science-section-title{padding:16px 0 8px;font-weight:650}
+.science-measurements,.science-metadata{margin-top:16px}
+.science-table-hint{margin:0 0 12px;color:var(--muted);font-size:0.75rem;line-height:1.6}
+.science-table-wrap{border:1px solid var(--line);border-radius:8px;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:var(--muted) var(--paper)}
+.science-table-wrap:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+.science-panel table{min-width:660px;line-height:1.55}
+.science-panel th,.science-panel td{padding:12px;vertical-align:top;overflow-wrap:normal;word-break:normal}
+.science-panel th{white-space:nowrap;font-weight:650;color:var(--muted);background:var(--paper)}
+.science-panel th:nth-child(3){white-space:normal;min-width:120px}
+.science-panel td:first-child{min-width:125px;max-width:180px;overflow-wrap:anywhere}
+.science-panel td:not(:first-child){white-space:nowrap}
+.science-panel th:nth-child(n+3):nth-child(-n+5),.science-panel td:nth-child(n+3):nth-child(-n+5){text-align:right}
+.science-panel tbody tr:last-child td{border-bottom:0}
+.measurement-value{display:block;white-space:nowrap}
+.measurement-unit{display:block;margin-top:3px;white-space:nowrap;color:var(--muted);font-size:0.75rem}
+.science-metadata-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 24px;margin:4px 0 20px;font-size:0.8125rem}
+.science-metadata-grid>div{min-width:0}
+.science-metadata-grid dt{font-size:0.75rem;color:var(--muted);margin-bottom:4px;font-weight:550}
+.science-metadata-grid dd{margin:0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+/* Controles auxiliares legíveis também no menu móvel. */
+.sidebar{width:clamp(250px,15.625rem,360px)}
+.sidebar-heading>div{min-width:0}
+.sidebar .search-box button{width:44px;min-height:44px;flex-shrink:0;font-size:1rem}
+.sidebar label:not(.toggle-row),.sidebar .field-hint,.sidebar .text-link,.sidebar .toggle-row,.sidebar .destination strong{font-size:0.75rem;line-height:1.6}
+.sidebar select,.sidebar .search-box input{font-size:0.75rem;min-height:44px}
+.sidebar .destination small,.sidebar-footer{font-size:0.75rem;line-height:1.6}
+.sidebar .destination{min-height:60px;gap:10px}
+.sidebar .toggle-row{min-height:44px;gap:10px}
+.sidebar .toggle-row small{font-size:0.75rem}
+.search-box:focus-within{border-color:var(--focus);box-shadow:0 0 0 2px var(--accent-surface)}
+.workspace-tools .quiet-button,.topbar .quiet-button{font-size:0.75rem;min-height:44px}
+.theme-toggle{width:44px;height:44px}
+button:disabled{cursor:not-allowed}
+.telemetry .metric-label{font-size:0.625rem;line-height:1.6;letter-spacing:.3px}
+.telemetry #share{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:8px 12px;font-size:0.75rem;white-space:nowrap}
+.telemetry #share::after{content:none}
+.telemetry #share svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+dialog{max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain}
+dialog p,dialog small,.dialog-links a{font-size:0.8125rem;line-height:1.7}
+.dialog-close{min-width:44px;min-height:44px}
+/* O estado nativo continua informativo, com o contraste do fundo do céu. */
+#aladin .aladin-status-bar{bottom:52px;left:14px;right:auto;transform:none;max-width:min(340px,calc(100% - 80px));background:#111b25ed;color:#e6eee9;border:1px solid #50645c;border-radius:8px;box-shadow:none;font:12px/1.5 var(--font)}
+#aladin .aladin-status-bar-message{overflow-wrap:anywhere}
+@media(max-width:1100px){
+  .sidebar{width:290px}
+  .sidebar #controls{display:block}
+  .sidebar .destinations{display:block}
+  .sidebar .destination{width:100%;align-items:center}
+  .sidebar .destination small{display:block}
+  .sidebar .object-art{width:32px;height:32px;flex-shrink:0}
+}
+@media(max-width:760px){
+  main,main.analysis-expanded:not(.analysis-hidden),main.analysis-hidden{grid-template-rows:minmax(54px,max-content) minmax(0,1fr) minmax(44px,max-content)}
+  .workspace-tools{padding:0 8px 0 0}
+  .science-selection-tools{padding-top:8px}
+  .science-context{margin:8px 0 6px;gap:2px 12px}
+  .science-legend{gap:4px 12px;margin:6px 0 4px}
+  .science-chart-wrap figcaption{padding-top:6px}
+  .science-metadata-grid{grid-template-columns:minmax(0,1fr);gap:14px}
+  .telemetry{gap:12px}
+  .telemetry .metric-label{font-size:0.625rem;letter-spacing:0}
+  .telemetry #share{min-width:44px;padding:8px}
+  .telemetry #share span{display:none}
+  dialog{padding:24px;max-width:calc(100vw - 24px)}
+  dialog h2{font-size:1.5rem}
+}
+@media(max-height:500px){
+  .science-context{display:none}
+  .science-legend{margin:0}
+  .science-plot .science-chart-wrap{margin:0}
+  .science-analysis-modes{display:flex;padding:4px 10px;gap:8px;align-items:center}
+  .science-analysis-modes legend{float:left;flex:0 0 104px;width:104px;line-height:1.4;margin:0}
+  .science-mode-options{flex:1;clear:none;gap:6px}
+  .science-analysis-modes label{padding:4px;gap:4px}
+  .science-selection-tools{padding-top:4px}
+  .science-chart{height:124px}
+  .science-plot{min-height:124px}
+  .image-feedback{bottom:58px}
+  #aladin .aladin-status-bar{bottom:10px;left:65px}
 }

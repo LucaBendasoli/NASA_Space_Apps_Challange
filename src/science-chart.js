@@ -1,6 +1,6 @@
 import {formatMeasurement} from './measurement-interaction.js';
 import {measurementSegments} from './chart-trace.js';
-import {chartGeometry} from './chart-geometry.js';
+import {chartGeometry,formatChartTick} from './chart-geometry.js';
 export {linearTicks} from './chart-geometry.js';
 
 const ns='http://www.w3.org/2000/svg',charts=new WeakMap();
@@ -21,16 +21,15 @@ function layout(record){
   const g=chartGeometry(series,width,height),{x,y,left,right,top,bottom}=g;
   attributes(svg,{viewBox:`0 0 ${width} ${height}`});
   const usedAxes=new Set(),axis=(key,tag,attrs,text)=>patch(axes,axisNodes,usedAxes,key,tag,attrs,text);
-  const tick=n=>new Intl.NumberFormat('pt-BR',{maximumSignificantDigits:4,notation:Math.abs(n)>=10000||(n!==0&&Math.abs(n)<.01)?'scientific':'standard'}).format(n);
   for(const value of g.yTicks){
     axis(`grid:${value}`,'line',{x1:left,y1:y(value),x2:right,y2:y(value),class:'chart-grid'});
-    axis(`y:${value}`,'text',{x:left-8,y:y(value)+4,'text-anchor':'end'},tick(value));
+    axis(`y:${value}`,'text',{x:left-8,y:y(value)+4,'text-anchor':'end',class:'chart-tick'},formatChartTick(value));
   }
-  for(const value of g.xTicks)axis(`x:${value}`,'text',{x:x(value),y:bottom+20,'text-anchor':'middle'},tick(value));
+  for(const value of g.xTicks)axis(`x:${value}`,'text',{x:x(value),y:bottom+20,'text-anchor':'middle',class:'chart-tick'},formatChartTick(value));
   if(g.loY<=0&&g.hiY>=0)axis('zero','line',{x1:left,x2:right,y1:y(0),y2:y(0),class:'chart-zero','aria-label':'Referência de radiância zero'});
   axis('frame','path',{d:`M${left} ${top} V${bottom} H${right}`,class:'chart-axis'});
-  axis('x-title','text',{x:(left+right)/2,y:height-6,'text-anchor':'middle'},`Comprimento de onda (${rows[0]?.wavelengthUnit||''})`);
-  axis('y-title','text',{x:12,y:19},`Radiância (${rows[0]?.radianceUnit||''})`);
+  axis('x-title','text',{x:(left+right)/2,y:height-7,'text-anchor':'middle',class:'chart-axis-title'},`Comprimento de onda (${rows[0]?.wavelengthUnit||''})`);
+  axis('y-title','text',{x:left,y:18,class:'chart-axis-title'},`Radiância (${rows[0]?.radianceUnit||''})`);
   prune(axisNodes,usedAxes);
   const usedGroups=new Set();
   for(const [index,s] of series.entries()){
