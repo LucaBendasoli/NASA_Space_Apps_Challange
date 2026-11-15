@@ -10,7 +10,9 @@ test('servidor entrega aplicação e fontes, trata erros e bloqueia escrita e es
   try {
     const index = await fetch(base);
     assert.equal(index.status, 200);
-    assert.match(await index.text(), /Órbita — Atlas celeste/);
+    const html = await index.text();
+    assert.match(html, /Órbita — Sky atlas/);
+    assert.match(html, /<html lang="en"/);
     const js = await fetch(base + '/src/app.js');
     assert.match(js.headers.get('content-type'), /javascript/);
     assert.equal(js.status, 200);

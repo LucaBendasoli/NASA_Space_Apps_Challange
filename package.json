@@ -4,11 +4,29 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test:browser": "node tests/browser/integration.cjs",
     "start": "node scripts/serve.mjs",
     "dev": "node scripts/serve.mjs",
     "test": "node --test tests/*.test.mjs",
     "verify:upstream": "node scripts/verify-upstream.mjs",
-    "vendor:runtime": "node scripts/vendor-runtime.mjs"
+    "vendor:runtime": "node scripts/vendor-runtime.mjs",
+    "build:spectrum": "node scripts/build-spectrum.mjs",
+    "typecheck:spectrum": "tsc --project tsconfig.spectrum.json"
   },
-  "engines": { "node": ">=22" }
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "lucide-react": "^0.468.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "esbuild": "0.28.2",
+    "playwright": "^1.65.1",
+    "typescript": "^7.0.2"
+  }
 }

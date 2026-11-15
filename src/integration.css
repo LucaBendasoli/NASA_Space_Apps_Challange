@@ -1,0 +1,36 @@
+/* Both toolbars share a fixed header area; dialogs never resize the sky viewer. */
+main, main.analysis-expanded:not(.analysis-hidden), main.analysis-hidden {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 112px minmax(0, 1fr) 58px;
+}
+.workspace-tools, .topbar.topbar--missions { grid-column: 1; }
+.workspace-tools { align-self: start; height: 42px; padding: 0 14px; }
+.topbar.topbar--missions { align-self: end; justify-self: stretch; justify-content: flex-end; min-height: 60px; padding: 0 14px 10px; }
+.topbar--missions .breadcrumb { display: none; }
+.topbar--missions .topbar-actions { flex: 0 1 auto; flex-wrap: wrap; gap: 8px; }
+.topbar--missions #about-open { display: inline-block; }
+.spectrum-dialog { max-width: 1100px; max-height: calc(100dvh - 32px); padding: 24px; overflow-y: auto; overscroll-behavior: contain; }
+.spectrum-dialog-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.spectrum-dialog-heading h2 { margin: 8px 0 0; font-size: 24px; }
+.spectrum-dialog-heading button { flex-shrink: 0; }
+.spectrum-dialog>p { margin: 14px 0 20px; }
+.science-heading h2 { white-space: normal; overflow-wrap: anywhere; }
+@media (max-width: 900px) {
+  main, main.analysis-expanded:not(.analysis-hidden), main.analysis-hidden { grid-template-rows: 160px minmax(0, 1fr) 58px; }
+}
+@media (max-width: 760px) {
+  main, main.analysis-expanded:not(.analysis-hidden), main.analysis-hidden { grid-template-rows: 204px minmax(0, 1fr) 44px; }
+  .workspace-tools { padding: 0; height: 42px; }
+  .topbar.topbar--missions { padding: 0 0 10px; min-height: 0; }
+  .topbar--missions .topbar-actions { width: 100%; flex: 1 1 100%; justify-content: flex-start; }
+  .topbar--missions #missions-open, .topbar--missions #spectrum-open, .topbar--missions #about-open { width: min(182px, calc(50% - 4px)); min-height: 40px; white-space: normal; }
+  .spectrum-dialog { width: calc(100% - 16px); max-height: calc(100dvh - 16px); padding: 14px; }
+  .spectrum-dialog-heading h2 { font-size: 21px; }
+  .spectrum-dialog>p { font-size: 12px; }
+}
+@media (max-height: 500px) {
+  main, main.analysis-expanded:not(.analysis-hidden), main.analysis-hidden { grid-template-rows: 100px minmax(0, 1fr) 44px; }
+  .topbar--missions .topbar-actions { flex-wrap: nowrap; overflow-x: auto; padding: 3px; }
+  .topbar--missions .topbar-actions>button { flex-shrink: 0; }
+  .topbar.topbar--missions { min-height: 48px; padding-bottom: 6px; }
+}

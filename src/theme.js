@@ -10,9 +10,7 @@
     document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#111b25' : '#f5f6f2';
     const button = document.getElementById('theme-toggle');
     if (button) {
-      const label = theme === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro';
-      button.setAttribute('aria-label', label);
-      button.title = label;
+      document.dispatchEvent(new Event('themechange'));
     }
   }
 

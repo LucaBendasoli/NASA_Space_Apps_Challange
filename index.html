@@ -1,74 +1,178 @@
 <!doctype html>
-<html lang="pt-BR">
-<head>
+<html lang="en"><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#111b25">
-  <meta name="description" content="Explore imagens reais do céu com o motor oficial Aladin Lite e uma interface de estudo independente.">
-  <title>Órbita — Atlas celeste</title>
+  <meta name="description" content="Explore real images of the sky with the official Aladin Lite engine and an independent learning interface." data-i18n-content="page.description">
+  <title data-i18n="page.title">Órbita — Sky atlas</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23111b25'/%3E%3Ccircle cx='20' cy='20' r='9' fill='none' stroke='%23b5edbd' stroke-width='2'/%3E%3Cpath d='M5 25L35 15' stroke='%23b5edbd' stroke-width='2'/%3E%3C/svg%3E">
   <script src="./src/theme.js"></script>
   <link rel="stylesheet" href="./src/style.css">
-  <script defer src="./vendor/gsap.min.js"></script>
+  <link rel="stylesheet" href="./src/missions.css">
+  <link rel="stylesheet" href="./src/i18n/styles.css">
+  <link rel="stylesheet" href="./src/integration.css">
+  <script type="module" src="./src/i18n/index.js"></script>
+  <script type="module" src="./src/missions.js"></script>
+  <script type="module" src="./src/spectrum-dialog.js"></script>
+  <script defer="" src="./vendor/gsap.min.js"></script>
   <script type="module" src="./src/app.js"></script>
 </head>
 <body>
-  <a class="skip-link" href="#science-panel">Ir para a análise</a>
-  <button id="controls-dismiss" class="controls-dismiss" type="button" aria-label="Fechar controles do observatório"></button>
-  <aside class="sidebar" id="observatory-controls" aria-label="Controles do observatório">
-    <a class="brand" href="./" aria-label="Órbita, início"><span class="brand-icon">◎</span> órbita<span class="brand-dot">.</span></a>
-    <div class="workspace-label">UM OBSERVATÓRIO NO NAVEGADOR</div>
-    <div class="sidebar-heading"><span class="tiny-orbit">✧</span><div><strong>Atlas celeste</strong><span>Explore além do visível</span></div><span class="edition">01</span></div>
+  <div id="language-announcement" class="i18n-sr-only" role="status" aria-live="polite"></div>
+  <a class="skip-link" href="#science-panel" data-i18n="workspace.skip">Go to analysis</a>
+  <button id="controls-dismiss" class="controls-dismiss" type="button" aria-label="Close observatory controls" data-i18n-aria-label="workspace.closeControls"></button>
+  <aside class="sidebar" id="observatory-controls" aria-label="Observatory controls" data-i18n-aria-label="workspace.controlsLabel">
+    <a class="brand" href="./" aria-label="Órbita, home" data-i18n-aria-label="nav.homeLabel"><span class="brand-icon">◎</span> órbita<span class="brand-dot">.</span></a>
+    <div class="workspace-label" data-i18n="nav.observatory">AN OBSERVATORY IN YOUR BROWSER</div>
+    <div class="sidebar-heading"><span class="tiny-orbit">✧</span><div><strong data-i18n="nav.atlas">Sky atlas</strong><span data-i18n="nav.tagline">Explore beyond the visible</span></div><span class="edition">01</span></div>
     <form id="search-form">
-      <label for="target">PARA ONDE VAMOS?</label>
-      <div class="search-box"><span aria-hidden="true">⌕</span><input id="target" name="target" autocomplete="off" placeholder="M31, Sirius ou 10.68, 41.27" required maxlength="120"><button id="search-button" type="submit" aria-label="Buscar objeto" disabled>↗</button></div>
-      <p class="field-hint">Nome do objeto ou RA, Dec em graus (ICRS).</p>
+      <label for="target" data-i18n="search.heading">WHERE SHALL WE GO?</label>
+      <div class="search-box"><span aria-hidden="true">⌕</span><input id="target" name="target" autocomplete="off" placeholder="M31, Sirius or 10.68, 41.27" required="" maxlength="120" data-i18n-placeholder="search.placeholder"><button id="search-button" type="submit" aria-label="Search for an object" disabled="" data-i18n-aria-label="search.submit">↗</button></div>
+      <p class="field-hint" data-i18n="search.hint">Object name or RA, Dec in degrees (ICRS).</p>
     </form>
-    <fieldset id="controls" disabled>
+    <fieldset id="controls" disabled="">
       <section class="control-section">
-        <div class="section-title"><h2>Camada do céu</h2><span class="section-number">01</span></div>
-        <label for="survey">LEVANTAMENTO</label><select id="survey"><option value="dss">DSS2 · Óptico / colorido</option><option value="2mass">2MASS · Infravermelho próximo</option><option value="wise">AllWISE · Infravermelho</option><option value="sdss">SDSS9 · Óptico / parcial</option></select>
-        <label for="mirror" class="spaced-label">SERVIDOR DE IMAGENS</label><select id="mirror"><option value="esa">ESA · Espanha</option><option value="china">China-VO · Espelho alternativo</option></select>
-        <p id="survey-description" class="field-hint">Uma visão do céu em luz visível, composta por placas fotográficas digitalizadas.</p>
-        <a id="survey-credit" class="text-link" href="https://skies.esac.esa.int/DSSColor/properties" target="_blank" rel="noreferrer">Origem e créditos dos dados ↗</a>
+        <div class="section-title"><h2 data-i18n="survey.heading">Sky layer</h2><span class="section-number">01</span></div>
+        <label for="survey" data-i18n="survey.label">SURVEY</label><select id="survey"><option value="dss" data-i18n="survey.option.dss">DSS2 · Optical / color</option><option value="2mass" data-i18n="survey.option.2mass">2MASS · Near infrared</option><option value="wise" data-i18n="survey.option.wise">AllWISE · Infrared</option><option value="sdss" data-i18n="survey.option.sdss">SDSS9 · Optical / partial</option></select>
+        <label for="mirror" class="spaced-label" data-i18n="survey.server">IMAGE SERVER</label><select id="mirror"><option value="esa" data-i18n="survey.mirror.esa">ESA · Spain</option><option value="china" data-i18n="survey.mirror.china">China-VO · Alternative mirror</option></select>
+        <p id="survey-description" class="field-hint">A view of the sky in visible light, made from digitized photographic plates.</p>
+        <a id="survey-credit" class="text-link" href="https://skies.esac.esa.int/DSSColor/properties" target="_blank" rel="noreferrer" data-i18n="survey.credits">Data source and credits ↗</a>
       </section>
       <section class="control-section">
-        <div class="section-title"><h2>Seu ponto de vista</h2><span class="section-number">02</span></div>
-        <label for="projection">PROJEÇÃO</label><select id="projection"><option value="SIN">Ortográfica · SIN</option><option value="AIT">Céu completo · Aitoff</option><option value="MOL">Mollweide · MOL</option></select>
-        <label class="toggle-row" for="grid"><span>Grade de coordenadas</span><input id="grid" type="checkbox"><span class="switch" aria-hidden="true"></span></label>
-        <label class="toggle-row" for="catalog"><span>Objetos de referência <small>8 objetos</small></span><input id="catalog" type="checkbox"><span class="switch" aria-hidden="true"></span></label>
+        <div class="section-title"><h2 data-i18n="view.heading">Your viewpoint</h2><span class="section-number">02</span></div>
+        <label for="projection" data-i18n="view.projection">PROJECTION</label><select id="projection"><option value="SIN" data-i18n="view.sin">Orthographic · SIN</option><option value="AIT" data-i18n="view.ait">Whole sky · Aitoff</option><option value="MOL" data-i18n="view.mol">Mollweide · MOL</option></select>
+        <label class="toggle-row" for="grid"><span data-i18n="view.grid">Coordinate grid</span><input id="grid" type="checkbox"><span class="switch" aria-hidden="true"></span></label>
+        <label class="toggle-row" for="catalog"><span data-i18n-nodes="{&quot;0&quot;:&quot;view.catalog&quot;}">Reference objects <small data-i18n="view.catalogCount">8 objects</small></span><input id="catalog" type="checkbox"><span class="switch" aria-hidden="true"></span></label>
       </section>
       <section class="control-section destinations">
-        <div class="section-title"><h2>Comece uma viagem</h2><span class="section-number">03</span></div>
-        <button type="button" class="destination" data-target="m31"><span class="object-art galaxy">✺</span><span><strong>Galáxia de Andrômeda</strong><small>M31 · A 2,5 milhões de anos-luz</small></span><span class="arrow">↗</span></button>
-        <button type="button" class="destination" data-target="m42"><span class="object-art nebula">✧</span><span><strong>Nebulosa de Órion</strong><small>M42 · Um berçário de estrelas</small></span><span class="arrow">↗</span></button>
-        <button type="button" class="destination" data-target="pleiades"><span class="object-art cluster">⁙</span><span><strong>As Plêiades</strong><small>M45 · Um encontro de estrelas</small></span><span class="arrow">↗</span></button>
+        <div class="section-title"><h2 data-i18n="targets.heading">Start a journey</h2><span class="section-number">03</span></div>
+        <button type="button" class="destination" data-target="m31"><span class="object-art galaxy">✺</span><span><strong data-i18n="targets.m31">Andromeda Galaxy</strong><small data-i18n="targets.m31Hint">M31 · 2.5 million light-years away</small></span><span class="arrow">↗</span></button>
+        <button type="button" class="destination" data-target="m42"><span class="object-art nebula">✧</span><span><strong data-i18n="targets.m42">Orion Nebula</strong><small data-i18n="targets.m42Hint">M42 · A stellar nursery</small></span><span class="arrow">↗</span></button>
+        <button type="button" class="destination" data-target="pleiades"><span class="object-art cluster">⁙</span><span><strong data-i18n="targets.pleiades">The Pleiades</strong><small data-i18n="targets.pleiadesHint">M45 · A gathering of stars</small></span><span class="arrow">↗</span></button>
       </section>
     </fieldset>
-    <div class="sidebar-footer"><span class="live-dot"></span> Imagens astronômicas reais<br><span class="powered">Motor <a href="https://aladin.cds.unistra.fr/AladinLite/" target="_blank" rel="noreferrer">Aladin Lite · CDS ↗</a></span></div>
+    <div class="sidebar-footer" data-i18n-nodes="{&quot;1&quot;:&quot;nav.realImages&quot;}"><span class="live-dot"></span> Real astronomical images<br><span class="powered" data-i18n-nodes="{&quot;0&quot;:&quot;nav.engine&quot;}">Engine <a href="https://aladin.cds.unistra.fr/AladinLite/" target="_blank" rel="noreferrer">Aladin Lite · CDS ↗</a></span></div>
   </aside>
   <main>
-    <nav class="workspace-tools" aria-label="Organização da área de trabalho">
-      <button id="controls-toggle" class="quiet-button" type="button" aria-controls="observatory-controls" aria-expanded="false">☰ Controles</button>
-      <span class="workspace-purpose">Observar e analisar</span>
-      <button id="analysis-toggle" class="quiet-button" type="button" aria-controls="science-panel" aria-expanded="true">Focar no mapa</button>
+    <nav class="workspace-tools" aria-label="Workspace layout" data-i18n-aria-label="workspace.tools">
+      <button id="controls-toggle" class="quiet-button" type="button" aria-controls="observatory-controls" aria-expanded="false" data-i18n="workspace.controls">☰ Controls</button>
+      <span class="workspace-purpose" data-i18n="workspace.purpose">Observe and analyze</span>
+      <button id="analysis-toggle" class="quiet-button" type="button" aria-controls="science-panel" aria-expanded="true">Open measurements</button>
     </nav>
-    <header class="topbar"><div class="breadcrumb">EXPLORAR <span>/</span> <strong>O céu, em todas as direções</strong></div><div class="topbar-actions"><button id="theme-toggle" class="quiet-button theme-toggle" type="button" aria-label="Ativar tema escuro" title="Ativar tema escuro"><svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 13A8.5 8.5 0 0 1 11 3.5 8.5 8.5 0 1 0 20.5 13Z"/></svg><svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg></button><button id="about-open" class="quiet-button" type="button">Sobre o projeto <span>↗</span></button></div></header>
-    <section class="sky-workspace" aria-label="Visualizador interativo do céu">
-      <div id="aladin" aria-label="Mapa celeste Aladin Lite"></div>
-      <div class="view-title"><span class="eyebrow">VOCÊ ESTÁ EXPLORANDO</span><h1 id="view-name">Galáxia de Andrômeda</h1><span id="view-layer">DSS2 · Luz visível</span></div>
+    <header class="topbar topbar--missions"><div class="breadcrumb" data-i18n-nodes="{&quot;0&quot;:&quot;nav.explore&quot;}">EXPLORE <span>/</span> <strong data-i18n="nav.sky">The sky, in every direction</strong></div><div class="topbar-actions"><button id="theme-toggle" class="quiet-button theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch to dark theme"><svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 13A8.5 8.5 0 0 1 11 3.5 8.5 8.5 0 1 0 20.5 13Z"></path></svg><svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"></path></svg></button><label class="language-control" for="language-select"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18Z"></path></svg><span class="i18n-sr-only" data-i18n="language.label">Interface language</span><select id="language-select" name="language" aria-label="Interface language" data-i18n-aria-label="language.label"><option value="pt-BR" lang="pt-BR" translate="no">Português (Brasil)</option><option value="en" lang="en" translate="no" selected="">English</option><option value="es" lang="es" translate="no">Español</option></select></label><button id="missions-open" class="quiet-button missions-open" type="button" aria-haspopup="dialog" aria-controls="missions-panel" aria-expanded="false" data-i18n-nodes="{&quot;1&quot;:&quot;missions.title&quot;}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h5a4 4 0 0 1 3 1.5A4 4 0 0 1 15 4h5v15h-5a4 4 0 0 0-3 1.5A4 4 0 0 0 9 19H4V4Zm8 1.5v15"></path></svg>Explore the missions</button><button id="spectrum-open" class="quiet-button" type="button" aria-haspopup="dialog" aria-controls="spectrum-dialog" data-i18n-nodes="{&quot;0&quot;:&quot;spectrum.demoTitle&quot;}">Spectral sandbox <span>↗</span></button><button id="about-open" class="quiet-button" type="button" data-i18n-nodes="{&quot;0&quot;:&quot;about.title&quot;}">About the project <span>↗</span></button></div></header>
+    <section class="sky-workspace" aria-label="Interactive sky viewer" data-i18n-aria-label="view.viewerLabel">
+      <div id="aladin" aria-label="Aladin Lite sky map" data-i18n-aria-label="view.mapLabel"></div>
+      <div class="view-title"><span class="eyebrow" data-i18n="view.exploringLabel">YOU ARE EXPLORING</span><h1 id="view-name">Andromeda Galaxy</h1><span id="view-layer">DSS2 · Visible light</span></div>
       <div class="view-tag"><span class="live-dot"></span> ICRS / J2000</div>
-      <aside class="image-feedback" aria-label="Estado do motor e das imagens"><span id="image-engine-state" role="status">Motor inicializando…</span><details><summary id="image-state">Imagens aguardando o motor</summary><p id="image-explanation">A disponibilidade das imagens depende dos servidores HiPS.</p><button id="image-mirror-retry" type="button" class="quiet-button" disabled>Tentar outro espelho</button></details></aside>
-      <div id="loading" class="loading-panel" role="status"><span class="loader"></span><strong>Preparando o observatório</strong><p>Carregando o motor oficial Aladin Lite…</p></div>
-      <div id="failure" class="failure-panel" role="alert" hidden><span class="failure-icon">↯</span><h2>O céu está fora de alcance</h2><p id="failure-message"></p><button id="retry" class="primary-button" type="button">Tentar novamente ↗</button><small>A interface é local. O motor e as imagens precisam de conexão HTTPS.</small></div>
-      <div class="map-actions"><button id="zoom-in" title="Aproximar" aria-label="Aproximar" disabled>+</button><button id="zoom-out" title="Afastar" aria-label="Afastar" disabled>−</button><span></span><button id="home" title="Voltar a Andrômeda" aria-label="Voltar a Andrômeda" disabled>⌂</button></div>
-      <div class="map-caption"><span>↔ Arraste para explorar</span><span>⊕ Role para aproximar</span></div>
-      <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+      <aside class="image-feedback" aria-label="Engine and image status" data-i18n-aria-label="image.heading"><span id="image-engine-state" role="status">Engine starting…</span><details><summary id="image-state">Images waiting for the engine</summary><p id="image-explanation">The API confirms that the layer is prepared, but not that all tiles have been rendered. A dark area may have several causes; missing coverage cannot be assumed.</p><button id="image-mirror-retry" type="button" class="quiet-button" disabled="" data-i18n="image.retry">Try another image server</button></details></aside>
+      <div id="loading" class="loading-panel" role="status"><span class="loader"></span><strong data-i18n="loading.heading">Preparing the observatory</strong><p data-i18n="loading.body">Loading the official Aladin Lite engine…</p></div>
+      <div id="failure" class="failure-panel" role="alert" hidden=""><span class="failure-icon">↯</span><h2 data-i18n="errors.heading">The sky is out of reach</h2><p id="failure-message"></p><button id="retry" class="primary-button" type="button" data-i18n="errors.retry">Try again ↗</button><small data-i18n="errors.connectionHint">The interface runs locally. The engine and images need an HTTPS connection.</small></div>
+      <div class="map-actions"><button id="zoom-in" title="Zoom in" aria-label="Zoom in" disabled="" data-i18n-aria-label="view.zoomIn" data-i18n-title="view.zoomIn">+</button><button id="zoom-out" title="Zoom out" aria-label="Zoom out" disabled="" data-i18n-aria-label="view.zoomOut" data-i18n-title="view.zoomOut">−</button><span></span><button id="home" title="Return to Andromeda" aria-label="Return to Andromeda" disabled="" data-i18n-aria-label="view.home" data-i18n-title="view.home">⌂</button></div>
+      <div class="map-caption"><span data-i18n="view.drag">↔ Drag to explore</span><span data-i18n="view.scroll">⊕ Scroll to zoom</span></div>
+      <div id="notice" class="notice" role="status" aria-live="polite" hidden=""></div>
     </section>
-    <footer class="telemetry"><div><span class="metric-label">ASCENSÃO RETA</span><strong id="ra">—</strong></div><div><span class="metric-label">DECLINAÇÃO</span><strong id="dec">—</strong></div><div><span class="metric-label">CAMPO DE VISÃO</span><strong id="fov">—</strong></div><div class="telemetry-status"><span id="engine-dot" class="status-dot"></span><span id="engine-status">Conectando</span></div><button id="share" type="button" aria-label="Compartilhar vista e análise" title="Compartilhar vista e análise" disabled><span>Compartilhar</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M10 5H5a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-5"/></svg></button></footer>
-    <section id="science-panel" class="science-panel" tabindex="-1" aria-label="Medições no infravermelho"><h2>Medições no infravermelho</h2><p>Preparando seleção de astros…</p></section>
+    <footer class="telemetry"><div><span class="metric-label" data-i18n="view.ra">RIGHT ASCENSION</span><strong id="ra">—</strong></div><div><span class="metric-label" data-i18n="view.dec">DECLINATION</span><strong id="dec">—</strong></div><div><span class="metric-label" data-i18n="view.fov">FIELD OF VIEW</span><strong id="fov">—</strong></div><div class="telemetry-status"><span id="engine-dot" class="status-dot"></span><span id="engine-status">Connecting</span></div><button id="share" type="button" disabled="" aria-label="Share view and analysis" title="Share view and analysis" data-i18n-aria-label="view.shareDescription" data-i18n-title="view.shareDescription"><span data-i18n="view.share">Share</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M10 5H5a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1v-5"/></svg></button></footer>
+    <section id="science-panel" class="science-panel" tabindex="-1" aria-label="Infrared measurements" data-i18n-aria-label="science.title"><h2 data-i18n="science.title">Infrared measurements</h2><p data-i18n="science.preparing">Preparing object selection…</p></section>
   </main>
-  <dialog id="about"><button id="about-close" class="dialog-close" aria-label="Fechar">×</button><span class="eyebrow">UM PROJETO PARA ENTENDER O CÉU</span><h2>Uma interface nossa.<br>Um motor científico aberto.</h2><p>Órbita é uma demonstração independente que integra o Aladin Lite, desenvolvido pelo CDS em Estrasburgo. A renderização, as projeções e a navegação astronômica são da biblioteca oficial.</p><p>A interface, os atalhos, a validação de coordenadas e o compartilhamento foram criados para este estudo. Os fontes originais estão separados em <code>upstream/aladin-lite/</code>, com licenças preservadas.</p><p>Os oito objetos de referência formam uma lista didática local com posições aproximadas. A busca por outros nomes consulta o serviço Sesame. A disponibilidade das imagens depende dos provedores e da cobertura do levantamento.</p><div class="dialog-links"><a href="https://github.com/cds-astro/aladin-lite" target="_blank" rel="noreferrer">Repositório oficial ↗</a><a href="./docs/arquitetura.md" target="_blank">Ler a análise técnica ↗</a><a href="./upstream/aladin-lite/LICENSE" target="_blank">Licença da biblioteca ↗</a></div><small>Aladin Lite 3.9.0-beta · LGPL-3.0-or-later · Créditos das imagens nos metadados de cada levantamento.</small></dialog>
-  <noscript>Ative JavaScript para carregar o visualizador astronômico.</noscript>
-</body>
-</html>
+  <dialog id="about"><button id="about-close" class="dialog-close" aria-label="Close" data-i18n-aria-label="common.close">×</button><span class="eyebrow" data-i18n="about.eyebrow">A PROJECT TO UNDERSTAND THE SKY</span><h2 data-i18n-nodes="{&quot;0&quot;:&quot;about.headingFirst&quot;,&quot;2&quot;:&quot;about.headingSecond&quot;}">Our own interface.<br>An open scientific engine.</h2><p data-i18n="about.intro">Órbita is an independent demo built on Aladin Lite, developed by CDS in Strasbourg. Rendering, projections and sky navigation come from the official library.</p><p data-i18n-nodes="{&quot;0&quot;:&quot;about.sourcePrefix&quot;,&quot;2&quot;:&quot;about.sourceSuffix&quot;}">The interface, shortcuts, coordinate validation and sharing were created for this study. The original source files are kept separately in <code>upstream/aladin-lite/</code>, with their licenses preserved.</p><p data-i18n="about.data">The eight reference objects are a local learning list with approximate positions. Searches for other names use the Sesame service. Image availability depends on the providers and survey coverage.</p><div class="dialog-links"><a href="https://github.com/cds-astro/aladin-lite" target="_blank" rel="noreferrer" data-i18n="about.repository">Official repository ↗</a><a href="./docs/arquitetura.md" target="_blank" data-i18n="about.documentation">Read the technical notes ↗</a><a href="./upstream/aladin-lite/LICENSE" target="_blank" data-i18n="about.license">Library license ↗</a></div><small data-i18n="about.credits">Aladin Lite 3.9.0-beta · LGPL-3.0-or-later · Image credits are in each survey’s metadata.</small></dialog>
+  <dialog id="spectrum-dialog" class="spectrum-dialog" aria-labelledby="spectrum-title" aria-describedby="spectrum-description">
+    <header class="spectrum-dialog-heading">
+      <div><span class="eyebrow" data-i18n="spectrum.eyebrow">INFRARED EXPLORATION</span><h2 id="spectrum-title" data-i18n="spectrum.title">Spectral analysis</h2></div>
+      <button id="spectrum-close" class="quiet-button" type="button" autofocus="" data-i18n-nodes="{&quot;0&quot;:&quot;common.close&quot;}">Close <span aria-hidden="true">×</span></button>
+    </header>
+    <p id="spectrum-description" data-i18n="spectrum.disclaimer">Synthetic data for demonstrating the chart. The curves do not represent the object shown on the map.</p>
+    <p id="spectrum-status" role="status" hidden=""></p>
+    <div id="spectrum-host"></div>
+  </dialog>
+  <dialog id="missions-panel" class="missions-panel" aria-labelledby="missions-title" aria-describedby="missions-intro">
+    <header class="missions-heading">
+      <h2 id="missions-title" data-i18n="missions.title">Explore the missions</h2>
+      <button id="missions-close" class="missions-close" type="button" data-i18n-nodes="{&quot;0&quot;:&quot;common.close&quot;}">
+        Close
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+      </button>
+    </header>
+    <div class="missions-scroll">
+      <p id="missions-intro" class="missions-intro" data-i18n="missions.intro">Discover how different observations help us study the sky. Infrared is light that our eyes cannot see.</p>
+      <div class="missions-cards">
+        <details class="mission-card">
+          <summary>
+            <svg class="mission-symbol" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6m4-9v12m4-15v18m4-15v12m4-9v6"></path></svg>
+            <span class="mission-summary"><strong class="mission-name" translate="no">SPHEREx</strong><span class="mission-agency">NASA</span><span class="mission-tagline" data-i18n="missions.spherex.tagline">Explores the sky in many bands of infrared light.</span></span>
+            <svg class="mission-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+          </summary>
+          <div class="mission-content">
+            <dl>
+              <div><dt data-i18n="missions.what">What it does</dt><dd data-i18n="missions.spherex.what">Builds a map of the sky by separating incoming light into many bands.</dd></div>
+              <div><dt data-i18n="missions.observations">What it observes</dt><dd data-i18n="missions.spherex.observations">Observes in 102 near-infrared bands. Each band covers a range of this light.</dd></div>
+              <div><dt data-i18n="missions.helps">What this mission can help us understand</dt><dd data-i18n="missions.spherex.helps">Comparing observations from different times helps investigate changes in position and brightness. The analysis needs to account for when and in which band each measurement was taken.</dd></div>
+            </dl>
+            <a class="mission-source" href="https://irsa.ipac.caltech.edu/Missions/spherex.html" target="_blank" rel="noopener noreferrer" aria-label="Official source · IRSA: SPHEREx (opens in a new tab)" data-i18n-nodes="{&quot;0&quot;:&quot;missions.source.irsa&quot;}" data-i18n-aria-label="missions.sourceLabel.irsa">Official source · IRSA <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7m0-7L10 14M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"></path></svg></a>
+          </div>
+        </details>
+        <details class="mission-card">
+          <summary>
+            <svg class="mission-symbol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"></circle><path d="M12 2v4m0 12v4M2 12h4m12 0h4m-6-6 1 3 3 1-3 1-1 3-1-3-3-1 3-1Z"></path></svg>
+            <span class="mission-summary"><strong class="mission-name" translate="no">Gaia</strong><span class="mission-agency" data-i18n="missions.gaia.agency">European Space Agency (ESA)</span><span class="mission-tagline" data-i18n="missions.gaia.tagline">Helps measure where stars are and how they move.</span></span>
+            <svg class="mission-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+          </summary>
+          <div class="mission-content">
+            <dl>
+              <div><dt data-i18n="missions.what">What it does</dt><dd data-i18n="missions.gaia.what">Its catalogs bring together highly precise measurements of stellar positions and motions.</dd></div>
+              <div><dt data-i18n="missions.observations">What it observes</dt><dd data-i18n="missions.gaia.observations">Measures positions, motions and parallaxes: small apparent shifts caused by a change in the observer’s viewpoint. Parallax helps estimate distances.</dd></div>
+              <div><dt data-i18n="missions.helps">What this mission can help us understand</dt><dd data-i18n="missions.gaia.helps">Its catalogs can provide a reference for interpreting stars on the map. These are position and motion measurements, rather than a sequence of infrared images like SPHEREx observations.</dd></div>
+            </dl>
+            <a class="mission-source" href="https://archive.stsci.edu/missions-and-data/gaia" target="_blank" rel="noopener noreferrer" aria-label="Official source · MAST: Gaia (opens in a new tab)" data-i18n-nodes="{&quot;0&quot;:&quot;missions.source.mast&quot;}" data-i18n-aria-label="missions.sourceLabel.mast">Official source · MAST <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7m0-7L10 14M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"></path></svg></a>
+          </div>
+        </details>
+        <details class="mission-card">
+          <summary>
+            <svg class="mission-symbol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><ellipse cx="12" cy="12" rx="10" ry="5" transform="rotate(-35 12 12)"></ellipse><path d="m17 3 3 1-1 3"></path></svg>
+            <span class="mission-summary"><strong class="mission-name" translate="no">WISE / NEOWISE</strong><span class="mission-agency" data-i18n="missions.wise.agency">NASA · historical observations</span><span class="mission-tagline" data-i18n="missions.wise.tagline">Reveals the infrared sky and records its changes.</span></span>
+            <svg class="mission-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+          </summary>
+          <div class="mission-content">
+            <dl>
+              <div><dt data-i18n="missions.what">What it does</dt><dd data-i18n="missions.wise.what">WISE mapped the sky in infrared. Its later phase, NEOWISE, resumed using the telescope with a focus on studying asteroids and comets.</dd></div>
+              <div><dt data-i18n="missions.observations">What it observes</dt><dd data-i18n="missions.wise.observations">Produced infrared images and brightness measurements on different dates. Data collection ended in 2024: the available records are historical, with no live feed.</dd></div>
+              <div><dt data-i18n="missions.helps">What this mission can help us understand</dt><dd data-i18n="missions.wise.helps">Comparing the records helps study changes in brightness and track moving objects, such as asteroids and comets.</dd></div>
+            </dl>
+            <a class="mission-source" href="https://science.nasa.gov/mission/neowise/" target="_blank" rel="noopener noreferrer" aria-label="Official source · NASA: WISE and NEOWISE (opens in a new tab)" data-i18n-nodes="{&quot;0&quot;:&quot;missions.source.nasa&quot;}" data-i18n-aria-label="missions.sourceLabel.nasa">Official source · NASA <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7m0-7L10 14M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"></path></svg></a>
+          </div>
+        </details>
+        <details class="mission-card">
+          <summary>
+            <svg class="mission-symbol" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 9 6 6m-6-6 4-4 6 6-4 4-6-6Zm-2 0L3 5l2-2 4 4m6 10 4 4 2-2-4-4M5 15l4 4m-6 2 4-4m-3-4a7 7 0 0 1 7 7"></path></svg>
+            <span class="mission-summary"><strong class="mission-name" translate="no">NEOSSat</strong><span class="mission-agency" data-i18n="missions.neossat.agency">Canadian Space Agency (CSA)</span><span class="mission-tagline" data-i18n="missions.neossat.tagline">Observes small objects and tracks their motion.</span></span>
+            <svg class="mission-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+          </summary>
+          <div class="mission-content">
+            <dl>
+              <div><dt data-i18n="missions.what">What it does</dt><dd data-i18n="missions.neossat.what">The Canadian telescope observes asteroids and comets. It also tracks satellites and space debris: fragments of objects in orbit.</dd></div>
+              <div><dt data-i18n="missions.observations">What it observes</dt><dd data-i18n="missions.neossat.observations">Records images to track objects in selected areas of the sky and around Earth. It is not an all-sky infrared survey.</dd></div>
+              <div><dt data-i18n="missions.helps">What this mission can help us understand</dt><dd data-i18n="missions.neossat.helps">Its observations help study the paths of small bodies and the behavior of satellites and debris, supporting safety in space.</dd></div>
+            </dl>
+            <a class="mission-source" href="https://www.asc-csa.gc.ca/eng/satellites/neossat/" target="_blank" rel="noopener noreferrer" aria-label="Official source · CSA: NEOSSat (opens in a new tab)" data-i18n-nodes="{&quot;0&quot;:&quot;missions.source.csa&quot;}" data-i18n-aria-label="missions.sourceLabel.csa">Official source · CSA <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7m0-7L10 14M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"></path></svg></a>
+          </div>
+        </details>
+      </div>
+      <section class="mission-resources" aria-labelledby="mission-resources-title">
+        <h3 id="mission-resources-title" data-i18n="resources.title">Explore the resources</h3>
+        <p data-i18n="resources.external">External links. They open in a new tab.</p>
+        <ul>
+          <li><a href="https://irsa.ipac.caltech.edu/Missions/spherex.html" target="_blank" rel="noopener noreferrer"><span><strong translate="no">IRSA</strong><span data-i18n="resources.irsa">Access to astronomical data.</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg><span class="missions-sr-only" data-i18n="common.newTab">Opens in a new tab.</span></a></li>
+          <li><a href="http://byw.tools/wiseview" target="_blank" rel="noopener noreferrer"><span><strong translate="no">WiseView</strong><span data-i18n="resources.wiseview">WISE observations over time.</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg><span class="missions-sr-only" data-i18n="common.newTab">Opens in a new tab.</span></a></li>
+          <li><a href="https://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/en/" target="_blank" rel="noopener noreferrer"><span><strong translate="no">CADC</strong><span data-i18n="resources.cadc">Archive of astronomical observations.</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg><span class="missions-sr-only" data-i18n="common.newTab">Opens in a new tab.</span></a></li>
+          <li><a href="https://caltech-ipac.github.io/irsa-tutorials/spherex/" target="_blank" rel="noopener noreferrer"><span><strong data-i18n-nodes="{&quot;0&quot;:&quot;resources.tutorials&quot;}">Tutorials <span translate="no">SPHEREx</span></strong><span data-i18n="resources.python">Examples of accessing data with Python.</span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"></path></svg><span class="missions-sr-only" data-i18n="common.newTab">Opens in a new tab.</span></a></li>
+        </ul>
+      </section>
+      <footer class="missions-note">
+        <p data-i18n="missions.dataNote">This panel is educational. Not all of the data described here are integrated into the map.</p>
+        <p data-i18n="missions.independent">An independent project developed for the challenge. It does not represent NASA or imply its endorsement.</p>
+      </footer>
+    </div>
+  </dialog>
+  <noscript data-i18n="page.noscript">Enable JavaScript to load the sky viewer.</noscript>
+
+
+</body></html>

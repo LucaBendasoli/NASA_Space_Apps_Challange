@@ -16,7 +16,7 @@ export function setupWorkspace() {
   controls.addEventListener('click', () => showControls(controls.getAttribute('aria-expanded') !== 'true'));
   document.getElementById('controls-dismiss').addEventListener('click', () => { showControls(false); controls.focus(); });
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && document.body.classList.contains('controls-open')) { showControls(false); controls.focus(); }
+    if (event.key === 'Escape' && !document.querySelector('dialog[open]') && document.body.classList.contains('controls-open')) { showControls(false); controls.focus(); }
   });
   compact.addEventListener('change', () => showControls(false));
   showControls(false);

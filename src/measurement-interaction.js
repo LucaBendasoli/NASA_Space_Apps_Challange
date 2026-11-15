@@ -1,4 +1,11 @@
-export const formatMeasurement = row => `${row.bandId} · Comprimento de onda: ${String(row.wavelength)} ${row.wavelengthUnit} · Radiância: ${row.radiance==null?'Ausente':String(row.radiance)} ${row.radianceUnit}${row.uncertainty!=null?` ± ${String(row.uncertainty)}`:''} · Qualidade: ${typeof row.quality==='string'?row.quality:JSON.stringify(row.quality??'Não informada')}`;
+import { t } from './i18n/index.js';
+import { localizeText } from './i18n/science.js';
+export const formatMeasurement = (row,locale='pt-BR') => t('science.measurement', {
+  p0:row.bandId,p1:String(row.wavelength),p2:row.wavelengthUnit,
+  p3:row.radiance==null?t('science.absent',{},locale):String(row.radiance),p4:row.radianceUnit,
+  p5:row.uncertainty!=null?' ± '+String(row.uncertainty):'',
+  p6:typeof row.quality==='string'?row.quality:JSON.stringify(row.quality??t('science.notProvided',{},locale)),
+},locale);
 // Delegação no painel estável: funciona para pontos SVG e linhas de tabela.
 export function setupMeasurementInteraction(host) {
   const tip=document.createElement('div');tip.id='measurement-tooltip';tip.className='measurement-tooltip';tip.setAttribute('role','tooltip');tip.hidden=true;document.body.append(tip);
@@ -7,7 +14,7 @@ export function setupMeasurementInteraction(host) {
   function show(node){
     hide();anchor=node;const band=node.dataset.band;
     for(const n of host.querySelectorAll('[data-band]'))if(n.dataset.band===band&&n.dataset.series===node.dataset.series)n.classList.add('band-active');
-    tip.textContent=node.dataset.measurement;tip.hidden=false;node.setAttribute('aria-describedby',tip.id);
+    tip.textContent=localizeText(node.dataset.measurement);tip.hidden=false;node.setAttribute('aria-describedby',tip.id);
     const rect=node.getBoundingClientRect(),bounds=tip.getBoundingClientRect();
     tip.style.left=`${Math.max(8,Math.min(innerWidth-bounds.width-8,rect.left+rect.width/2-bounds.width/2))}px`;
     tip.style.top=`${Math.max(8,Math.min(innerHeight-bounds.height-8,rect.top>bounds.height+16?rect.top-bounds.height-8:rect.bottom+8))}px`;
@@ -19,7 +26,7 @@ export function setupMeasurementInteraction(host) {
   host.addEventListener('focusout',e=>{if(anchor&&!anchor.contains(e.relatedTarget))hide();},opts);
   host.addEventListener('click',e=>{const n=e.target.closest('[data-measurement]');if(n)show(n);},opts);
   document.addEventListener('pointerdown',e=>{if(anchor&&!anchor.contains(e.target))hide();},opts);
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!tip.hidden){hide();e.preventDefault();}},{...opts,capture:true});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!tip.hidden&&!document.querySelector('dialog[open]')){hide();e.preventDefault();}},{...opts,capture:true});
   host.addEventListener('scroll',()=>{if(anchor&&(anchor.contains(document.activeElement)||anchor.matches(':hover')))show(anchor);else hide();},{...opts,capture:true});window.addEventListener('resize',hide,opts);
-  return {hide,dispose(){events.abort();hide();tip.remove();}};
+  return {hide,refresh(){if(anchor)show(anchor);},dispose(){events.abort();hide();tip.remove();}};
 }

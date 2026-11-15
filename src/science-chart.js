@@ -1,3 +1,5 @@
+import { getLanguage } from './i18n/index.js';
+import { localizeScienceTree } from './i18n/science.js';
 import {formatMeasurement} from './measurement-interaction.js';
 import {measurementSegments} from './chart-trace.js';
 import {chartGeometry,formatChartTick} from './chart-geometry.js';
@@ -18,14 +20,14 @@ function prune(nodes,used){for(const [key,node] of nodes)if(!used.has(key)){node
 
 function layout(record){
   const {svg,series,width,height,axes,axisNodes,groups,rows}=record;
-  const g=chartGeometry(series,width,height),{x,y,left,right,top,bottom}=g;
+  const locale=getLanguage(),g=chartGeometry(series,width,height,locale),{x,y,left,right,top,bottom}=g;
   attributes(svg,{viewBox:`0 0 ${width} ${height}`});
   const usedAxes=new Set(),axis=(key,tag,attrs,text)=>patch(axes,axisNodes,usedAxes,key,tag,attrs,text);
   for(const value of g.yTicks){
     axis(`grid:${value}`,'line',{x1:left,y1:y(value),x2:right,y2:y(value),class:'chart-grid'});
-    axis(`y:${value}`,'text',{x:left-8,y:y(value)+4,'text-anchor':'end',class:'chart-tick'},formatChartTick(value));
+    axis(`y:${value}`,'text',{x:left-8,y:y(value)+4,'text-anchor':'end',class:'chart-tick'},formatChartTick(value,locale));
   }
-  for(const value of g.xTicks)axis(`x:${value}`,'text',{x:x(value),y:bottom+20,'text-anchor':'middle',class:'chart-tick'},formatChartTick(value));
+  for(const value of g.xTicks)axis(`x:${value}`,'text',{x:x(value),y:bottom+20,'text-anchor':'middle',class:'chart-tick'},formatChartTick(value,locale));
   if(g.loY<=0&&g.hiY>=0)axis('zero','line',{x1:left,x2:right,y1:y(0),y2:y(0),class:'chart-zero','aria-label':'Referência de radiância zero'});
   axis('frame','path',{d:`M${left} ${top} V${bottom} H${right}`,class:'chart-axis'});
   axis('x-title','text',{x:(left+right)/2,y:height-7,'text-anchor':'middle',class:'chart-axis-title'},`Comprimento de onda (${rows[0]?.wavelengthUnit||''})`);
@@ -52,12 +54,13 @@ function layout(record){
         const yy=y(r.radiance+r.uncertainty),yb=y(r.radiance-r.uncertainty),xx=x(r.wavelength);
         mark(`error:${r.bandId}`,'path',{d:`M${xx} ${yy} V${yb} M${xx-4} ${yy} H${xx+4} M${xx-4} ${yb} H${xx+4}`,class:'chart-error','data-band':r.bandId,'data-series':s.key});
       }
-      const description=`${s.description||s.name} · ${formatMeasurement(r)}`;
+      const description=`${s.description||s.name} · ${formatMeasurement(r,getLanguage())}`;
       mark(`point:${r.bandId}`,'circle',{cx:x(r.wavelength),cy:y(r.radiance),r:2.5,tabindex:0,'aria-label':description,'data-series':s.key,'data-band':r.bandId,'data-measurement':description,class:'chart-point'});
     }
     prune(nodes,used);
   }
   for(const [key,group] of groups)if(!usedGroups.has(key)){group.node.remove();groups.delete(key);}
+  localizeScienceTree(svg);
 }
 
 export function chart(rows,series=[{key:'primary',name:'Astro principal',rows}]){

@@ -1,3 +1,4 @@
+import { t, onLanguageChange } from './i18n/index.js';
 import { createPresentationState } from './presentation-state.js';
 import { tracePlan } from './chart-trace.js';
 
@@ -32,12 +33,12 @@ export function createPanelPresentation(root) {
     if(animateSize&&gsap&&!reduced.matches)layoutMotion=gsap.to(root,{...dimensions,duration:.28,ease:'power3.out',autoRound:false,overwrite:'auto'});
     else for(const [name,value] of Object.entries(dimensions))root.style.setProperty(name,value);
     const button=root.querySelector('#science-size');
-    if(button){button.disabled=!state.value.expanded&&(mobile.matches||expandedWidth<=compactWidth+1);button.title=button.disabled?'O painel já ocupa a largura disponível':state.value.expanded?'Restaurar largura compacta':'Ampliar o painel para a esquerda';}
+    if(button){button.disabled=!state.value.expanded&&(mobile.matches||expandedWidth<=compactWidth+1);button.title=button.disabled?t('science.sizeFull'):state.value.expanded?t('science.sizeRestore'):t('science.sizeExpandLeft');}
     root.dataset.side=side;document.body.dataset.panelSide=side;
   }
   function animate(open) {
     entrance?.kill();root.inert=!open;root.setAttribute('aria-hidden',String(!open));root.style.pointerEvents=open?'auto':'none';
-    toggle.setAttribute('aria-expanded',String(open));toggle.textContent=open?'Fechar medições':'Abrir medições';
+    toggle.setAttribute('aria-expanded',String(open));toggle.textContent=open?t('science.close'):t('science.open');
     if(!gsap || reduced.matches){finish();return;}
     const wasHidden=root.hidden;
     if(open){root.hidden=false;if(wasHidden)gsap.set(root,{opacity:0,x:mobile.matches?0:20,y:mobile.matches?28:0});}
@@ -48,7 +49,7 @@ export function createPanelPresentation(root) {
   }
   const state=createPresentationState(next=>{
     const expanded=root.dataset.expanded==='true';root.dataset.expanded=String(next.expanded);
-    const button=root.querySelector('#science-size');if(button){button.textContent=next.expanded?'Compactar':'Ampliar';button.setAttribute('aria-expanded',String(next.expanded));}
+    const button=root.querySelector('#science-size');if(button){button.textContent=next.expanded?t('science.compact'):t('science.expand');button.setAttribute('aria-expanded',String(next.expanded));}
     if(expanded!==next.expanded && next.open){position(null,true);return;}
     animate(next.open);
   });
@@ -79,7 +80,7 @@ export function createPanelPresentation(root) {
   const mm=gsap?.matchMedia();
   if(mm)mm.add({mobile:'(max-width: 760px)',desktop:'(min-width: 761px)',reduce:'(prefers-reduced-motion: reduce)'},()=>{finish();});
   else reduced.addEventListener('change',finish,options);
-  root.hidden=true;root.inert=true;root.setAttribute('aria-hidden','true');toggle.setAttribute('aria-expanded','false');toggle.textContent='Abrir medições';
+  root.hidden=true;root.inert=true;root.setAttribute('aria-hidden','true');toggle.setAttribute('aria-expanded','false');toggle.textContent=t('science.open');
   function reveal(forceAll=false){
       const plot=root.querySelector('.science-plot');if(!plot)return;
       const all=forceAll||plot.dataset.reveal!=='series';
@@ -101,8 +102,13 @@ export function createPanelPresentation(root) {
         lines.forEach((line,i)=>motion.fromTo(line,{strokeDasharray:'1 1',strokeDashoffset:1},{strokeDashoffset:0,autoRound:false,duration:timing[i].duration,ease:'power1.inOut',clearProps:'strokeDasharray,strokeDashoffset'},.04+timing[i].start));
       }
   }
+  const removeLanguage=onLanguageChange(()=>{
+    toggle.textContent=t(state.value.open?'science.close':'science.open');
+    const button=root.querySelector('#science-size');
+    if(button){button.textContent=t(state.value.expanded?'science.compact':'science.expand');button.title=t(button.disabled?'science.sizeFull':state.value.expanded?'science.sizeRestore':'science.sizeExpandLeft');}
+  });
   return {
     open,close,reveal,expand(){if(!state.value.expanded)state.expand();},
-    dispose(){disposed=true;state.close();events.abort();clearTimeout(resizeTimer);finish();mm?.revert();root.hidden=true;root.inert=true;root.setAttribute('aria-hidden','true');},
+    dispose(){removeLanguage();disposed=true;state.close();events.abort();clearTimeout(resizeTimer);finish();mm?.revert();root.hidden=true;root.inert=true;root.setAttribute('aria-hidden','true');},
   };
 }
