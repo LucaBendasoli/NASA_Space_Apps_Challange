@@ -1,0 +1,7 @@
+.DS_Store
+._*
+__pycache__/
+.venv/
+.eyelid/
+dist/temporal-tiles/
+dist/expanded-epochs/

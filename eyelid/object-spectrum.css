@@ -1,0 +1,50 @@
+.spectrum-widget {
+      --bg:#151515; --panel:#202020; --border:#494949; --muted:#b5b5b5;
+      --text:#f5f5f3; --purple:#8bb7ff;
+      font: 14px Inter,system-ui,sans-serif;
+    }
+    .spectrum-card { background:none; border:0; border-radius:0; }
+    .chart-header { padding:4px 4px 11px; align-items:center; gap:8px; }
+    .chart-header h2 { font:600 19px/1.2 Quicksand,Inter,sans-serif; gap:7px; flex-wrap:wrap; }
+    .chart-header p { display:none; }
+    .badge { background:#303030; color:#dedede; border:0; letter-spacing:0; font-size:10px; border-radius:6px; }
+    .button { background:#202020; border:1px solid #494949; border-radius:9px; min-height:38px; color:#f5f5f3; font-size:12px; padding:7px 9px; }
+    .button:hover { background:#303030; border-color:#8b8b8b; }
+    .button svg { color:#b5b5b5; }
+    .export { font-size:11px; }
+    .chart-toolbar { padding:0 4px; }
+    .toolbar-detail { display:none; }
+    .tabs { background:none; border:0; border-radius:0; gap:12px; padding:0; width:auto; }
+    .tabs button { color:#b5b5b5; font-size:12px; padding:8px 4px; min-height:40px; border-radius:0; border-bottom:2px solid transparent; white-space:nowrap; }
+    .tabs button.selected { color:#f5f5f3; background:none; border-bottom-color:#8bb7ff; box-shadow:none; font-weight:700; }
+    .selection-row { padding:8px 4px 6px; align-items:center; gap:6px; }
+    .legend { gap:4px 12px; flex-direction:row; max-width:100%; }
+    .legend>span { color:#e3e3e3; font-size:11px; }
+    .selection-row .button { font-size:11px; min-height:38px; }
+    .plot-wrap slot[name="chart-help"] { position:absolute; top:6px; right:6px; z-index:3; }
+    .plot-wrap ::slotted(.spectrum-help) { display:grid; place-items:center; min-height:22px !important; width:22px; padding:0 !important; font:700 11px Inter,sans-serif !important; background:#202020; color:#dedede; border:1px solid #656565; border-radius:50%; cursor:pointer; }
+    .picker { color:#f5f5f3; background:#202020; border-color:#8b8b8b; width:min(265px,calc(100vw - 36px)); }
+    .picker small,.picker .object-label { color:#b5b5b5; }
+    .picker input { accent-color:#8bb7ff; }
+    .picker select,.catalog-search { background:#151515; border-color:#494949; border-radius:8px; }
+    .plot-heading { padding:5px 9px; font-size:11px; color:#d5d5d5; }
+    .plot-heading>span:first-child>span,.plot-heading>span:last-child { color:#b5b5b5; }
+    .plot-wrap { margin:0; padding:4px; background:#151515; border:1px solid #494949; border-radius:12px; }
+    .plot-wrap svg { min-height:0; }
+    .plot-wrap text { fill:#bdbdbd; font-size:13px; }
+    .plot-wrap line[stroke="#292b39"],.plot-wrap line[stroke="#232532"] { stroke:#414141; }
+    .tooltip { background:#242424; border-color:#6d6d6d; color:#f5f5f3; }
+    .tooltip strong { color:#b8d4ff; }
+    .tooltip small { color:#b5b5b5; }
+    .range-panel { margin:9px 0 5px; padding:11px; background:#181818; border-color:#494949; border-radius:12px; }
+    .range-heading { gap:7px; font-size:11px; }
+    .range-heading label,.range-heading button,.range-inputs label,.range-scale,.range-scale>span:nth-child(2) { color:#b5b5b5; }
+    .range-heading>span { background:#303030; color:#f5f5f3; }
+    .range-heading>span>span { color:#b5b5b5; }
+    .range-inputs { margin-top:8px; }
+    .range-inputs input { accent-color:#8bb7ff; }
+    .chart-footnote { border:0; padding:5px 3px; color:#b5b5b5; font-size:10px; }
+    @media (pointer:coarse) { .button,.tabs button { min-height:44px; } }
+
+/* Available radiance is from one combined mosaic per source. */
+.chart-toolbar,.selection-row .button { display:none; }
