@@ -68,7 +68,8 @@ function renderProfileBadges(profile,refreshFavorite){
  const label=document.createElement('p');
  label.className='badge-status';
  label.setAttribute('role','status');
- if(profile.own&&!profile.editable)label.textContent=t('Use uma conta pessoal para conquistar insígnias.');
+ if(profile.profile.role==='judge')label.textContent=t('Insígnias de exemplo para a demonstração.');
+ else if(profile.own&&!profile.editable)label.textContent=t('Use uma conta pessoal para conquistar insígnias.');
  root.append(label,grid);
  for(const badge of badgeCatalog.values()){
   const value=state?.progress[badge.id]??0;
@@ -90,7 +91,7 @@ function renderProfileBadges(profile,refreshFavorite){
   progress.value=value;
   progress.setAttribute('aria-label',badge.name+' · '+t('Progresso'));
   const counts=document.createElement('span');
-  counts.textContent=earned?t('Conquistada'):value+' / '+badge.total;
+  counts.textContent=state?.awarded?.includes(badge.id)?t('Concedida'):earned?t('Conquistada'):value+' / '+badge.total;
   card.append(image,title,description,progress,counts);
   if(profile.editable&&earned){
    const button=document.createElement('button');
