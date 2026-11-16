@@ -1,5 +1,7 @@
 """Email accounts and sessions for the public Eyelid explorer."""
 from contextlib import closing
+import base64
+import binascii
 import hashlib
 import hmac
 from http.cookies import CookieError, SimpleCookie
@@ -35,6 +37,9 @@ def database():
         CREATE TABLE IF NOT EXISTS accounts (
             id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL,
             salt BLOB NOT NULL, password_hash BLOB NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS account_photos (
+            account_id TEXT PRIMARY KEY REFERENCES accounts(id), jpeg BLOB NOT NULL
         );
         CREATE TABLE IF NOT EXISTS sessions (
             token_hash TEXT PRIMARY KEY, account_id TEXT REFERENCES accounts(id),
@@ -73,8 +78,15 @@ def current_token(handler):
     return None
 
 
-def public_account(row):
-    return {'id': row['id'], 'name': row['name'], 'email': row['email'], 'role': 'member'}
+def photo_url(account_id):
+    return f'/api/auth/photo/{account_id}'
+
+
+def public_account(db, row):
+    account = {'id': row['id'], 'name': row['name'], 'email': row['email'], 'role': 'member'}
+    if db.execute('SELECT 1 FROM account_photos WHERE account_id=?', (row['id'],)).fetchone():
+        account['avatar_url'] = photo_url(row['id'])
+    return account
 
 
 def session_account(db, token):
@@ -86,7 +98,7 @@ def session_account(db, token):
         WHERE token_hash = ? AND expires > ?
     """, (token, int(time.time()))).fetchone()
     if row:
-        return public_account(row) if row['account_id'] else JUDGE
+        return public_account(db, row) if row['account_id'] else JUDGE
     return None
 
 
@@ -138,7 +150,7 @@ def authenticate(db, action, body):
     digest = password_hash(password, row['salt'] if row else bytes(16))
     if not row or not hmac.compare_digest(row['password_hash'], digest):
         raise AuthError(401, 'credentials')
-    return public_account(row)
+    return public_account(db, row)
 
 
 def auth_response(handler, body, status=200, token=None):
@@ -162,6 +174,21 @@ def auth_get(handler, path):
         handler.send_header('Cache-Control', 'no-store')
         handler.send_header('Content-Length', '0')
         handler.end_headers()
+        return True
+    if match := re.fullmatch(r'/api/auth/photo/([0-9a-f]{32})', path):
+        with closing(database()) as db:
+            row = db.execute('SELECT jpeg FROM account_photos WHERE account_id=?', (match[1],)).fetchone()
+        if not row:
+            auth_response(handler, {'error': 'missing'}, 404)
+            return True
+        jpeg = row['jpeg']
+        handler.send_response(200)
+        handler.send_header('Content-Type', 'image/jpeg')
+        handler.send_header('X-Content-Type-Options', 'nosniff')
+        handler.send_header('Cache-Control', 'no-cache')
+        handler.send_header('Content-Length', str(len(jpeg)))
+        handler.end_headers()
+        handler.wfile.write(jpeg)
         return True
     if path != '/api/auth/session':
         return False
@@ -193,17 +220,40 @@ def read_same_origin_json(handler, max_bytes=4096):
     return body
 
 
+def update_photo(db, account, body):
+    if not account:
+        raise AuthError(401, 'login')
+    if account['role'] != 'member':
+        raise AuthError(403, 'member')
+    photo = body.get('photo')
+    if photo is None:
+        db.execute('DELETE FROM account_photos WHERE account_id=?', (account['id'],))
+        account.pop('avatar_url', None)
+        return
+    try:
+        jpeg = base64.b64decode(photo, validate=True)
+    except (ValueError, TypeError, binascii.Error) as error:
+        raise AuthError(400, 'invalid') from error
+    if not 4 < len(jpeg) <= 32768 or not jpeg.startswith(b'\xff\xd8\xff') or not jpeg.endswith(b'\xff\xd9'):
+        raise AuthError(400, 'invalid')
+    db.execute('INSERT OR REPLACE INTO account_photos VALUES (?, ?)', (account['id'], jpeg))
+    account['avatar_url'] = photo_url(account['id'])
+
+
 def auth_post(handler, path):
     action = path.removeprefix('/api/auth/')
-    if action not in ('register', 'login', 'judge', 'logout') or path != '/api/auth/' + action:
+    if action not in ('register', 'login', 'judge', 'logout', 'photo') or path != '/api/auth/' + action:
         return False
     try:
-        body = read_same_origin_json(handler)
+        body = read_same_origin_json(handler, 45000 if action == 'photo' else 4096)
         previous = current_token(handler)
         with closing(database()) as db, db:
             if action == 'logout':
                 db.execute('DELETE FROM sessions WHERE token_hash = ?', (previous,))
                 account, token = None, ''
+            elif action == 'photo':
+                account, token = session_account(db, previous), None
+                update_photo(db, account, body)
             else:
                 account = JUDGE if action == 'judge' else authenticate(db, action, body)
                 token = start_session(db, account, previous)

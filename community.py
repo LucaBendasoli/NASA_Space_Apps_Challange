@@ -5,7 +5,7 @@ import json
 import re
 from urllib.parse import parse_qs
 
-from accounts import AuthError, auth_response, current_token, database, read_same_origin_json, session_account
+from accounts import AuthError, auth_response, current_token, database, photo_url, read_same_origin_json, session_account
 
 POSTS = '/api/community/posts'
 POST_PATH = re.compile(r'/api/community/posts/([1-9][0-9]{0,17})')
@@ -13,6 +13,9 @@ LIMIT = 30
 
 POST_FIELDS = """
     p.id, a.name AS author, p.body, p.created_at, p.sky_view,
+    (SELECT account_id FROM account_photos WHERE account_id=a.id) AS photo_id,
+    COALESCE((SELECT sum(value) FROM community_votes WHERE post_id=p.id), 0) AS score,
+    COALESCE((SELECT value FROM community_votes WHERE post_id=p.id AND account_id=:viewer), 0) AS vote,
     (SELECT count(*) FROM community_posts r WHERE r.parent_id=p.id) AS replies
 """
 
@@ -25,6 +28,10 @@ def open_community():
             parent_id INTEGER REFERENCES community_posts(id),
             body TEXT NOT NULL, created_at TEXT NOT NULL, sky_view TEXT
         );
+        CREATE TABLE IF NOT EXISTS community_votes (
+            post_id INTEGER REFERENCES community_posts(id), account_id TEXT REFERENCES accounts(id),
+            value INTEGER NOT NULL CHECK(value IN (-1, 1)), PRIMARY KEY(post_id, account_id)
+        );
         CREATE INDEX IF NOT EXISTS community_posts_parent ON community_posts(parent_id, id);
     """)
     return db
@@ -32,6 +39,8 @@ def open_community():
 
 def serialize(row):
     post = dict(row)
+    account_id = post.pop('photo_id')
+    post['avatar_url'] = photo_url(account_id) if account_id else None
     post['view'] = json.loads(post.pop('sky_view') or 'null')
     return post
 
@@ -63,19 +72,21 @@ def community_get(handler, url):
         return False
     query = parse_qs(url.query)
     with closing(open_community()) as db:
+        account = session_account(db, current_token(handler))
+        params = {'viewer': account['id'] if account else None}
         if match:
             post_id = int(match[1])
             post = db.execute(f"""
                 SELECT {POST_FIELDS} FROM community_posts p JOIN accounts a ON a.id=p.author_id
-                WHERE p.id=? AND p.parent_id IS NULL
-            """, (post_id,)).fetchone()
+                WHERE p.id=:post_id AND p.parent_id IS NULL
+            """, dict(params, post_id=post_id)).fetchone()
             if not post:
                 auth_response(handler, {'error': 'missing'}, 404)
                 return True
             replies = db.execute(f"""
                 SELECT {POST_FIELDS} FROM community_posts p JOIN accounts a ON a.id=p.author_id
-                WHERE p.parent_id=? ORDER BY p.id
-            """, (post_id,))
+                WHERE p.parent_id=:post_id ORDER BY p.id
+            """, dict(params, post_id=post_id))
             result = {'post': serialize(post), 'replies': [serialize(row) for row in replies]}
         else:
             before = query.get('before', [''])[0]
@@ -83,12 +94,12 @@ def community_get(handler, url):
                 auth_response(handler, {'error': 'invalid'},400)
                 return True
             trending = query.get('sort') == ['trending']
-            order = 'replies DESC, p.id DESC' if trending else 'p.id DESC'
+            order = 'score DESC, replies DESC, p.id DESC' if trending else 'p.id DESC'
             cursor = db.execute(f"""
                 SELECT {POST_FIELDS} FROM community_posts p JOIN accounts a ON a.id=p.author_id
-                WHERE p.parent_id IS NULL AND (? IS NULL OR p.id < ?)
-                ORDER BY {order} LIMIT ?
-            """, (int(before) if before else None, int(before) if before else None, LIMIT+1))
+                WHERE p.parent_id IS NULL AND (:before IS NULL OR p.id < :before)
+                ORDER BY {order} LIMIT :limit
+            """, dict(params, before=int(before) if before else None, limit=LIMIT+1))
             posts = [serialize(row) for row in cursor]
             contributors = db.execute('''
                 SELECT a.name, count(*) AS contributions
@@ -102,7 +113,34 @@ def community_get(handler, url):
     return True
 
 
+def community_vote(handler, post_id):
+    try:
+        body = read_same_origin_json(handler)
+        vote = body.get('vote')
+        if type(vote) is not int or vote not in (-1, 0, 1):
+            raise AuthError(400, 'invalid')
+        with closing(open_community()) as db, db:
+            account = session_account(db, current_token(handler))
+            if not account:
+                raise AuthError(401, 'login')
+            if account['role'] != 'member':
+                raise AuthError(403, 'member')
+            if not db.execute('SELECT 1 FROM community_posts WHERE id=?', (post_id,)).fetchone():
+                raise AuthError(404, 'missing')
+            if vote:
+                db.execute('INSERT OR REPLACE INTO community_votes VALUES (?, ?, ?)', (post_id, account['id'], vote))
+            else:
+                db.execute('DELETE FROM community_votes WHERE post_id=? AND account_id=?', (post_id, account['id']))
+            score = db.execute('SELECT COALESCE(sum(value), 0) FROM community_votes WHERE post_id=?', (post_id,)).fetchone()[0]
+        auth_response(handler, {'score': score, 'vote': vote})
+    except AuthError as error:
+        auth_response(handler, {'error': error.code}, error.status)
+    return True
+
+
 def community_post(handler, path):
+    if path.endswith('/vote') and (target := POST_PATH.fullmatch(path.removesuffix('/vote'))):
+        return community_vote(handler, int(target[1]))
     match = POST_PATH.fullmatch(path)
     if path != POSTS and not match:
         return False

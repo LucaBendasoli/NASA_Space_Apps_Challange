@@ -4,10 +4,22 @@
  const error = byId('account-error');
  const sidebarLogout = byId('sidebar-logout');
  const profileButton = document.querySelector('.eyelid-account');
+ const photoControls = byId('account-photo-controls');
+ const photoFile = byId('account-photo-file');
+ const photoPreview = byId('account-photo');
+ const removePhoto = byId('remove-account-photo');
+ const photoStatus = byId('account-photo-status');
+ let activeUser;
  let returnToMap = false;
  let sessionVersion = 0;
 
  function showAccount(user){
+  activeUser = user;
+  photoControls.hidden = user?.role !== 'member';
+  photoPreview.hidden = !user?.avatar_url;
+  removePhoto.hidden = !user?.avatar_url;
+  if(user?.avatar_url)photoPreview.src = user.avatar_url;
+  else photoPreview.removeAttribute('src');
   byId('account-status').textContent = user?.name ?? 'Você está explorando como visitante';
   byId('account-email').hidden = !user?.email;
   byId('account-email').textContent = user?.email ?? '';
@@ -18,6 +30,42 @@
   profileButton.setAttribute('aria-label',user ? 'Meu perfil' : 'Perfil de visitante');
   document.dispatchEvent(new CustomEvent('eyelid-account-changed',{detail:user}));
  }
+
+ async function savePhoto(file){
+  const owner = activeUser?.id;
+  photoFile.disabled = removePhoto.disabled = true;
+  photoStatus.textContent = '';
+  try {
+   let photo = null;
+   if(file){
+    if(file.size > 10 * 1024 * 1024)throw Error('Selecione uma imagem de até 10 MB.');
+    const image = await createImageBitmap(file).catch(()=>{throw Error('Selecione uma imagem válida.')});
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 128;
+    const size = Math.min(image.width,image.height);
+    canvas.getContext('2d').drawImage(image,(image.width-size)/2,(image.height-size)/2,size,size,0,0,128,128);
+    image.close();
+    photo = canvas.toDataURL('image/jpeg',.8).split(',')[1];
+   }
+   if(activeUser?.id !== owner)return;
+   const response = await fetch('/api/auth/photo',{
+    method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({photo})
+   });
+   if(!response.ok)throw Error('Não foi possível salvar a foto.');
+   const {user} = await response.json();
+   if(activeUser?.id !== owner)return;
+   if(user.avatar_url)user.avatar_url += '?v='+Date.now();
+   showAccount(user);
+   photoStatus.textContent = file?'Foto atualizada.':'Foto removida.';
+  } catch(error){
+   photoStatus.textContent = error.message;
+  } finally {
+   photoFile.value = '';
+   photoFile.disabled = removePhoto.disabled = false;
+  }
+ }
+ photoFile.onchange = ()=>{if(photoFile.files[0])savePhoto(photoFile.files[0])};
+ removePhoto.onclick = ()=>savePhoto(null);
 
  async function account(action){
   const version = ++sessionVersion;

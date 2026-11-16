@@ -2,7 +2,7 @@
  const endpoint = '/api/community/posts';
  const home = byId('community-home');
  const mapFeed = byId('community-map');
- let view;
+ let view, user;
  document.addEventListener('atlas-coverage',event=>{view=event.detail});
 
  function element(tag,text,css){
@@ -20,28 +20,57 @@
   return response.json();
  }
 
- function showDraft(send,{attach=false,reply=false}={}){
+ function avatar(name,url){
+  const initials = name?.trim().split(/\s+/).slice(0,2).map(word=>word[0]).join('').toUpperCase() || '◉';
+  const badge = element('span',initials,'community-avatar');
+  badge.setAttribute('aria-hidden','true');
+  if(url){
+   const image = element('img');
+   image.alt = '';
+   image.src = url;
+   image.onerror = ()=>image.remove();
+   badge.append(image);
+  }
+  return badge;
+ }
+
+ function icon(path){
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns,'svg');
+  svg.setAttribute('viewBox','0 0 24 24');
+  svg.setAttribute('aria-hidden','true');
+  const shape = document.createElementNS(ns,'path');
+  shape.setAttribute('d',path);
+  svg.append(shape);
+  return svg;
+ }
+
+ function showDraft(send,{attach=false,reply=false,fromMap=false}={}){
   const form = element('form',null,'community-compose');
-  const label = element('label',reply?'Sua resposta':'Sua publicação');
   const field = element('textarea');
   field.required = true;
   field.maxLength = 2000;
   field.rows = 2;
   field.placeholder = reply?'Escreva uma resposta':'O que você observou?';
-  label.append(field);
+  field.setAttribute('aria-label',field.placeholder);
   const option = element('label','Anexar a vista atual do céu','community-attach');
   const check = element('input');
   check.type = 'checkbox';
-  check.checked = true;
-  option.prepend(check);
+  check.checked = fromMap;
+  option.prepend(check,icon('M20 10c0 5-8 10-8 10S4 15 4 10a8 8 0 1 1 16 0ZM12 7v6m-3-3h6'));
   const submit = element('button',reply?'Responder':'Publicar');
   submit.type = 'submit';
   const status = element('p',null,'community-status');
   status.setAttribute('role','status');
-  if(!attach)form.prepend(element('span','◉','community-avatar'));
-  form.append(label);
-  if(attach)form.append(option);
-  form.append(submit,status);
+  const photo = element('div',null,'community-compose-avatar');
+  const refreshAvatar = ()=>photo.replaceChildren(avatar(user?.name,user?.avatar_url));
+  refreshAvatar();
+  const body = element('div',null,'community-compose-body');
+  const actions = element('div',null,'community-compose-actions');
+  if(attach)actions.append(option);
+  actions.append(submit);
+  body.append(field,actions,status);
+  form.append(photo,body);
   form.onsubmit = async event=>{
    event.preventDefault();
    const body = field.value.trim();
@@ -76,6 +105,40 @@
   return form;
  }
 
+ function votes(item){
+  const group = element('span',null,'community-votes');
+  const score = element('output',String(item.score ?? 0));
+  score.setAttribute('aria-live','polite');
+  const status = element('span',null,'community-status');
+  status.setAttribute('role','status');
+  let current = item.vote ?? 0;
+  const buttons = [1,-1].map(value=>{
+   const button = element('button');
+   button.type = 'button';
+   button.setAttribute('aria-label',value===1?'Votar a favor':'Votar contra');
+   button.setAttribute('aria-pressed',String(current===value));
+   button.append(icon(value===1?'M12 19V5m-6 6 6-6 6 6':'M12 5v14m-6-6 6 6 6-6'));
+   button.onclick = async ()=>{
+    buttons.forEach(control=>control.disabled=true);
+    status.textContent = '';
+    try{
+     const result = await request(endpoint+'/'+item.id+'/vote',{vote:current===value?0:value});
+     current = result.vote;
+     score.textContent = result.score;
+     buttons.forEach((control,index)=>control.setAttribute('aria-pressed',String(current===[1,-1][index])));
+    }catch(error){
+     if(error.message==='401')document.dispatchEvent(new Event('eyelid-community-login'));
+     else status.textContent = error.message==='403'?'Use uma conta pessoal para votar.':'Não foi possível registrar o voto.';
+    }finally{
+     buttons.forEach(control=>control.disabled=false);
+    }
+   };
+   return button;
+  });
+  group.append(buttons[0],score,buttons[1],status);
+  return group;
+ }
+
  function entry(item,open){
   const card = element('article',null,'community-post');
   const text = element('p',item.body,'community-message');
@@ -83,10 +146,8 @@
   time.dateTime = item.created_at;
   const byline = element('div',null,'community-byline');
   byline.append(element('strong',item.author),time);
-  const avatar = element('span',item.author.split(/\s+/).slice(0,2).map(word=>word[0]).join('').toUpperCase(),'community-avatar');
-  avatar.setAttribute('aria-hidden','true');
   const content = element('div',null,'community-post-content');
-  card.append(avatar,content);
+  card.append(avatar(item.author,item.avatar_url),content);
   content.append(byline,text);
   if(item.view){
    const link = element('a','Abrir vista no mapa');
@@ -98,16 +159,22 @@
    link.textContent = '';
    const viewName = element('span','Vista compartilhada');
    viewName.append(element('small','SPHEREx · canal '+item.view.canal+(item.view.data?' · '+item.view.data:'')));
-   link.append(viewName,element('span','Abrir vista →'));
+   const action = element('span','Abrir vista','community-view-action');
+   action.prepend(icon('M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20Zm4-14-2 6-6 2 2-6 6-2Z'));
+   link.append(viewName,action);
    content.append(link);
   }
+  const actions = element('div',null,'community-post-actions');
   if(open){
-   const button = element('button',item.replies===1?'1 resposta':item.replies+' respostas');
+   const count = element('span',item.replies===1?'1 resposta':item.replies+' respostas','community-reply-count');
+   count.prepend(icon('M20 11a8 8 0 0 1-12 7l-4 1 1-4a8 8 0 1 1 15-4Z'));
+   const button = element('button','Ver discussão');
    button.type = 'button';
    button.onclick = open;
-   button.setAttribute('aria-label','Abrir discussão. '+button.textContent);
-   content.append(button);
+   actions.append(count,button);
   }
+  actions.append(votes(item));
+  content.append(actions);
   return card;
  }
 
@@ -146,10 +213,10 @@
     }
    } catch {
     if(version!==feedVersion)return;
-    const retry = element('button','Tentar carregar novamente');
-    retry.type = 'button';
-    retry.onclick = ()=>refresh();
-    listing.replaceChildren(retry);
+    const status = element('p','Não foi possível carregar as publicações.','community-load-status');
+    status.setAttribute('role','status');
+    if(!append)listing.replaceChildren(status);
+    else listing.append(status);
     more.hidden = true;
    } finally {
     if(version===feedVersion)more.disabled = false;
@@ -189,13 +256,19 @@
    const result = await request(endpoint,body);
    await refresh();
    await openThread(result.id);
-  },{attach:fromMap});
+  },{attach:true,fromMap});
   more.onclick = ()=>refresh(true);
   feed.append(compose,listing,more);
   host.append(feed);
   if(!fromMap)host.append(thread);
   return {
    refresh,
+   updateAccount(){
+    compose.querySelector('.community-compose-avatar').replaceChildren(avatar(user?.name,user?.avatar_url));
+    const draftAvatar = thread.querySelector('.community-compose-avatar');
+    if(draftAvatar)draftAvatar.replaceChildren(avatar(user?.name,user?.avatar_url));
+    refresh();
+   },
    tab(section){
     trending = section==='trending';
     threadVersion++;
@@ -214,6 +287,10 @@
  for(const button of [byId('restore-object'),document.querySelector('[data-sky-panel=community]')]){
   button.addEventListener('click',()=>skyFeed.refresh());
  }
+ document.addEventListener('eyelid-account-changed',event=>{
+  user = event.detail;
+  homeFeed.updateAccount();
+  skyFeed.updateAccount();
+ });
  homeFeed.refresh();
- skyFeed.refresh();
 }

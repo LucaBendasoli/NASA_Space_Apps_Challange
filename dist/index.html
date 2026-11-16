@@ -140,6 +140,13 @@ body{background:radial-gradient(ellipse at 15% 0%,#1b2941 0,transparent 48%),var
  <section class="eyelid-surface eyelid-profile">
   <h2 id="account-status">Você está explorando como visitante</h2>
   <p id="account-email" hidden></p>
+  <div id="account-photo-controls" hidden>
+   <img id="account-photo" alt="Sua foto de perfil" hidden>
+   <label for="account-photo-file">Foto de perfil</label>
+   <input id="account-photo-file" type="file" accept="image/*">
+   <button id="remove-account-photo" type="button" hidden>Remover foto</button>
+   <p id="account-photo-status" role="status"></p>
+  </div>
   <p id="account-error" role="status" hidden></p>
   <div id="account-guest">
    <button type="button" data-auth-mode="login">Entrar</button>
