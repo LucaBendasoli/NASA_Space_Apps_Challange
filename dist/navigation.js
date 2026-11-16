@@ -30,10 +30,12 @@
    if (button.dataset.page === page) button.setAttribute('aria-current','page');
    else button.removeAttribute('aria-current');
   }
+  document.dispatchEvent(new CustomEvent('eyelid-page',{detail:page}));
   if (focus) (pages[page].querySelector('h1')??pages[page]).focus({preventScroll:true});
  }
 
- if(openingTarget || openingQuery.get('acesso')==='jurados')showPage('map',false);
+ if(openingQuery.has('perfil'))showPage('profile',false);
+ else if(openingTarget || openingQuery.get('acesso')==='jurados')showPage('map',false);
 
  function disclosure(button, panel){
   panel.hidden = !panel.hidden;
@@ -50,7 +52,14 @@
 
  shell.addEventListener('click',event => {
   const page = event.target.closest('[data-page]')?.dataset.page;
-  if (page && pages[page]) showPage(page);
+  if (page && pages[page]){
+   if (page==='profile' || openingQuery.has('perfil')){
+    const url = new URL(location.href);
+    url.searchParams.delete('perfil');
+    history.replaceState(history.state,'',url);
+   }
+   showPage(page);
+  }
   const section = event.target.closest('[data-section]')?.dataset.section;
   if (section === 'saved'){
    showPage('map');

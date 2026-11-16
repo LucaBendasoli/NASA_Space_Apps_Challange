@@ -4,6 +4,7 @@ import base64
 import binascii
 import hashlib
 import hmac
+from io import BytesIO
 from http.cookies import CookieError, SimpleCookie
 import json
 import os
@@ -13,6 +14,7 @@ import secrets
 import sqlite3
 from threading import BoundedSemaphore
 import time
+from PIL import Image
 from urllib.parse import parse_qs, urlencode, urlsplit
 
 DATABASE = Path(os.environ.get('EYELID_ACCOUNTS_DB', Path(__file__).parent / '.eyelid' / 'accounts.sqlite3'))
@@ -40,6 +42,10 @@ def database():
         );
         CREATE TABLE IF NOT EXISTS account_photos (
             account_id TEXT PRIMARY KEY REFERENCES accounts(id), jpeg BLOB NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS account_profiles (
+            account_id TEXT PRIMARY KEY REFERENCES accounts(id), bio TEXT NOT NULL,
+            cover BLOB
         );
         CREATE TABLE IF NOT EXISTS sessions (
             token_hash TEXT PRIMARY KEY, account_id TEXT REFERENCES accounts(id),
@@ -189,13 +195,15 @@ def auth_get(handler, url):
         destination = '/?' + url.query if url.query else '/'
         redirect(handler, '/login.html?' + urlencode({'next': destination}) if url.query else '/login.html')
         return True
-    if match := re.fullmatch(r'/api/auth/photo/([0-9a-f]{32})', path):
+    if match := re.fullmatch(r'/api/auth/(photo|cover)/([0-9a-f]{32})', path):
         with closing(database()) as db:
-            row = db.execute('SELECT jpeg FROM account_photos WHERE account_id=?', (match[1],)).fetchone()
+            query = ('SELECT jpeg FROM account_photos WHERE account_id=?' if match[1] == 'photo'
+                     else 'SELECT cover FROM account_profiles WHERE account_id=? AND cover IS NOT NULL')
+            row = db.execute(query, (match[2],)).fetchone()
         if not row:
             auth_response(handler, {'error': 'missing'}, 404)
             return True
-        jpeg = row['jpeg']
+        jpeg = row[0]
         handler.send_response(200)
         handler.send_header('Content-Type', 'image/jpeg')
         handler.send_header('X-Content-Type-Options', 'nosniff')
@@ -244,30 +252,64 @@ def update_photo(db, account, body):
         db.execute('DELETE FROM account_photos WHERE account_id=?', (account['id'],))
         account.pop('avatar_url', None)
         return
-    try:
-        jpeg = base64.b64decode(photo, validate=True)
-    except (ValueError, TypeError, binascii.Error) as error:
-        raise AuthError(400, 'invalid') from error
-    if not 4 < len(jpeg) <= 32768 or not jpeg.startswith(b'\xff\xd8\xff') or not jpeg.endswith(b'\xff\xd9'):
-        raise AuthError(400, 'invalid')
+    jpeg = profile_image(photo, 32768, (128, 128))
     db.execute('INSERT OR REPLACE INTO account_photos VALUES (?, ?)', (account['id'], jpeg))
     account['avatar_url'] = photo_url(account['id'])
 
 
+def profile_image(value, limit, dimensions):
+    try:
+        jpeg = base64.b64decode(value, validate=True)
+        if not 4 < len(jpeg) <= limit:
+            raise ValueError()
+        with Image.open(BytesIO(jpeg), formats=['JPEG']) as image:
+            if image.width > dimensions[0] or image.height > dimensions[1]:
+                raise ValueError()
+            clean = BytesIO()
+            image.convert('RGB').save(clean, format='JPEG', quality=82)
+    except (OSError, ValueError, TypeError, binascii.Error, Image.DecompressionBombError) as error:
+        raise AuthError(400, 'invalid') from error
+    return clean.getvalue()
+
+
+def update_profile(db, account, body):
+    if not account:
+        raise AuthError(401, 'login')
+    if account['role'] != 'member':
+        raise AuthError(403, 'member')
+    if body.keys() - {'name', 'bio', 'photo', 'cover'}:
+        raise AuthError(400, 'invalid')
+    name, bio = body.get('name'), body.get('bio')
+    if not isinstance(name, str) or not 1 <= len(name.strip()) <= 60 or not isinstance(bio, str) or len(bio.strip()) > 280:
+        raise AuthError(400, 'invalid')
+    account_id = account['id']
+    db.execute('UPDATE accounts SET name=? WHERE id=?', (name.strip(), account_id))
+    db.execute("""
+        INSERT INTO account_profiles (account_id,bio) VALUES (?,?)
+        ON CONFLICT(account_id) DO UPDATE SET bio=excluded.bio
+    """, (account_id, bio.strip()))
+    if 'cover' in body:
+        cover = profile_image(body['cover'], 96000, (640, 200)) if body['cover'] is not None else None
+        db.execute('UPDATE account_profiles SET cover=? WHERE account_id=?', (cover, account_id))
+    if 'photo' in body:
+        update_photo(db, account, body)
+    account['name'] = name.strip()
+
+
 def auth_post(handler, path):
     action = path.removeprefix('/api/auth/')
-    if action not in ('register', 'login', 'judge', 'logout', 'photo') or path != '/api/auth/' + action:
+    if action not in ('register', 'login', 'judge', 'logout', 'photo', 'profile') or path != '/api/auth/' + action:
         return False
     try:
-        body = read_same_origin_json(handler, 45000 if action == 'photo' else 4096)
+        body = read_same_origin_json(handler, 180000 if action == 'profile' else 45000 if action == 'photo' else 4096)
         previous = current_token(handler)
         with closing(database()) as db, db:
             if action == 'logout':
                 db.execute('DELETE FROM sessions WHERE token_hash = ?', (previous,))
                 account, token = None, ''
-            elif action == 'photo':
+            elif action in ('photo', 'profile'):
                 account, token = session_account(db, previous), None
-                update_photo(db, account, body)
+                (update_profile if action == 'profile' else update_photo)(db, account, body)
             else:
                 account = JUDGE if action == 'judge' else authenticate(db, action, body)
                 token = start_session(db, account, previous)

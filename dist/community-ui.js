@@ -145,7 +145,9 @@
   const time = element('time',new Intl.DateTimeFormat('pt-BR',{dateStyle:'medium',timeStyle:'short'}).format(new Date(item.created_at)));
   time.dateTime = item.created_at;
   const byline = element('div',null,'community-byline');
-  byline.append(element('strong',item.author),time);
+  const name = element('a',item.author,'community-author');
+  name.href = '/?'+new URLSearchParams({perfil:item.author_id});
+  byline.append(name,time);
   const content = element('div',null,'community-post-content');
   card.append(avatar(item.author,item.avatar_url),content);
   content.append(byline,text);
@@ -206,7 +208,9 @@
     if(!fromMap){
      byId('community-contributors').replaceChildren(...result.contributors.map(item=>{
       const row = element('li');
-      row.append(element('strong',item.name),element('span',item.contributions+(item.contributions===1?' contribuição':' contribuições')));
+      const name = element('a',item.name,'community-author');
+      name.href = '/?'+new URLSearchParams({perfil:item.id});
+      row.append(name,element('span',item.contributions+(item.contributions===1?' contribuição':' contribuições')));
       return row;
      }));
      byId('community-contributors-empty').hidden = Boolean(result.contributors.length);
@@ -263,6 +267,7 @@
   if(!fromMap)host.append(thread);
   return {
    refresh,
+   openThread,
    updateAccount(){
     compose.querySelector('.community-compose-avatar').replaceChildren(avatar(user?.name,user?.avatar_url));
     const draftAvatar = thread.querySelector('.community-compose-avatar');
@@ -282,6 +287,7 @@
 
  const homeFeed = makeFeed(home,false);
  const skyFeed = makeFeed(mapFeed,true);
+ document.addEventListener('eyelid-open-thread',event=>homeFeed.openThread(event.detail));
  document.addEventListener('eyelid-community-tab',event=>homeFeed.tab(event.detail));
  document.querySelector('#eyelid-navigation [data-page=home]').addEventListener('click',()=>homeFeed.refresh());
  for(const button of [byId('restore-object'),document.querySelector('[data-sky-panel=community]')]){
