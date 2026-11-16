@@ -1,34 +1,34 @@
-# Revisão visual — gráficos e bancada de observação
+# Visual review of the charts and observation workspace
 
-A revisão mantém HTML, módulos ES, SVG, GSAP e o motor oficial Aladin Lite. Não altera medições, contratos científicos, cache ou identidade das séries.
+The review retained HTML, ES modules, SVG, GSAP, and official Aladin Lite. Measurements, science contracts, caches, and series identities stayed the same.
 
-## Ajustes
+## Changes
 
-- Título da radiância alinhado à área da grade; margem inferior separa números e título do comprimento de onda. A quantidade de ticks acompanha a altura útil. Expoentes negativos recebem margem lateral adicional.
-- Legenda, contexto, gráfico e notas usam alinhamento e espaçamento consistentes. Imagem de fundo e conjunto científico continuam identificados separadamente.
-- Tabela sempre aberta, com cabeçalhos íntegros, números alinhados à direita e unidades em uma segunda linha intencional. Valores completos não são arredondados. Quando as colunas não cabem, a região permite rolagem horizontal por toque ou teclado, sem alargar a página.
-- Observação e coordenadas permanecem depois da tabela, sempre abertas, em uma lista de campos. IDs, coordenadas e datas ISO completos são preservados.
-- Melhor legibilidade e foco da busca, controles laterais e compartilhamento. O menu móvel usa uma coluna; o cabeçalho reserva espaço real para os botões, inclusive com texto maior.
-- Em paisagem baixa, controles mais compactos e gráfico com menor densidade. Detalhes permanecem em rolagem interna. Com texto muito ampliado, pode ser necessário rolar internamente até o gráfico.
-- O aviso nativo de carregamento do Aladin acompanha o contraste do mapa e não sobrepõe o aviso de imagens em paisagem. Não foi modificado nenhum arquivo upstream.
-- Abrir o diálogo “Sobre o projeto” ou o menu de controles não fecha involuntariamente a análise ao mover o foco.
+- The radiance title aligns with the grid. Bottom spacing separates tick labels from the wavelength title. Tick count follows the available height, and negative exponents get extra margin.
+- The legend, context, chart, and notes use consistent alignment and spacing. Background imagery and the science dataset are identified separately.
+- The table stays open, with intact headers, right-aligned numbers, and units on a dedicated second line. Full values remain available. When columns overflow, the region scrolls horizontally by touch or keyboard within the page.
+- Observation and coordinate details follow the table in an always-open list. Full IDs, coordinates, and ISO dates are preserved.
+- Search, side controls, and sharing have clearer text and focus indicators. The mobile menu uses one column, and the header reserves room for buttons at larger text sizes.
+- Short landscape layouts use compact controls and fewer chart ticks. Details scroll internally. Very large text may require internal scrolling to reach the chart.
+- The native Aladin loading notice follows map contrast and leaves room for the image notice in landscape. Upstream files stayed untouched.
+- Opening the About dialog or controls menu preserves the analysis when focus moves.
 
-## Validação executada
+## Validation performed
 
-Navegador real Microsoft Edge via Playwright, com Aladin real e provedor **explicitamente demonstrativo** (`?science=demo`). A instrumentação de teste apenas expõe a instância do Aladin para localizar a fonte por `world2pix`; o clique usa o mouse sobre o canvas, sem substituir a renderização.
+Microsoft Edge ran through Playwright with real Aladin and the explicitly selected demo provider (`?science=demo`). Test instrumentation exposes the instance only to locate sources with `world2pix`, and actual mouse clicks target the canvas.
 
-Foram verificadas abertura com uma série, comparação entre astros e datas, identidade do SVG e da linha principal após adicionar comparação e ampliar, tabela, metadados, diálogo, foco, Escape, teclado nos modos, menu móvel e reabertura com movimento reduzido. Viewports: 1440 × 900, 390 × 844 e 844 × 390. Texto base de 200% foi simulado alterando o tamanho raiz em CSS; isso não equivale a testar todos os mecanismos de zoom do navegador ou tecnologias assistivas.
+Checks covered opening one series, object and date comparisons, preserving the SVG and main path when adding comparisons or expanding, the table and metadata, dialog and focus behavior, Escape, keyboard mode switching, the mobile menu, and reopening with reduced motion. Viewports were 1440 × 900, 390 × 844, and 844 × 390. The 200% text check used CSS root font size. Native browser zoom and assistive technology were outside that check.
 
-O fluxo visual concluiu 21 verificações. Outras 9 verificaram primeiro acesso sem provedor, ação explícita de demonstração, foco da busca, busca local e por coordenadas, ativação dos controles de grade e catálogo didático, troca de espelho sem trocar levantamento, URL de compartilhamento e Escape do diálogo. A ativação desses controles não comprova disponibilidade dos tiles de imagem.
+The visual flow completed 21 checks. Nine more covered first access with the provider off, explicit demo activation, search focus, local and coordinate search, grid and educational catalog controls, mirror switching within a survey, the shared URL, and Escape closing the dialog. These checks exercised the UI controls while tile availability remained unverified.
 
-Título e gráfico ficaram no viewport móvel, e o gráfico compacto ficou dentro do painel em paisagem. `scrollX` e `scrollY` permaneceram em 0; não houve transbordamento horizontal da página. Um fixture isolado com radiâncias negativas da ordem de 10⁻¹² e comprimentos de onda pequenos verificou os limites dos rótulos SVG, sem cortes.
+The title and chart stayed within the mobile viewport, and the compact chart fit inside the panel in landscape. `scrollX` and `scrollY` stayed at zero and the page had no horizontal overflow. An isolated fixture with negative radiance of order 10⁻¹² and small wavelengths checked SVG label bounds without clipping.
 
-Capturas ficam em `output/playwright/polish-*.png`, incluindo desktop claro/escuro, ampliado, celular claro/escuro, tabela, metadados, paisagem e texto ampliado. Os scripts locais da revisão ficam no mesmo diretório ignorado pelo Git.
+Captures are under `output/playwright/polish-*.png`, including light and dark desktop and mobile, expanded layout, table, metadata, landscape, and enlarged text. The local scripts are in the same Git-ignored directory.
 
-Os testes unitários cobrem margens, densidade da grade, escalas e preservação dos valores, além dos testes existentes de seleção, comparação e concorrência. Resultado: `npm.cmd test` — 59 testes aprovados; `npm.cmd run verify:upstream` — 429/429 arquivos intactos; `git diff --check` — sem erros.
+Unit tests cover margins, grid density, scales, value preservation, selection, comparison, and concurrency. `npm.cmd test` passed 59 tests, `npm.cmd run verify:upstream` verified all 429 files, and `git diff --check` passed.
 
-## Limitações observadas
+## Observed limits
 
-Servidores externos de imagens apresentaram `ERR_NAME_NOT_RESOLVED`, timeouts e respostas 404. Marcadores nativos e gráficos foram renderizados; não foi possível validar o acabamento sobre tiles HiPS carregados. Em uma sequência de redimensionamentos com as imagens indisponíveis, o Aladin informou campo vertical de 180°, acionando corretamente a proteção de consulta ampla; o teste independente de texto ampliado reinicializou a vista. Não foi introduzida uma aproximação geométrica para contornar esse estado.
+External image servers returned `ERR_NAME_NOT_RESOLVED`, timeouts, and 404s. Native markers and charts rendered, while checking the final layout against loaded HiPS imagery remained pending. During a resize sequence with imagery unavailable, Aladin reported a 180° vertical field and correctly triggered the wide-query guard. The independent enlarged-text test reset the view. The test retained the engine's reported geometry.
 
-Não houve teste com backend científico real, aparelho físico ou leitor de tela. Os dados demonstrativos e o fixture de eixos não comprovam integração científica em produção.
+The review used simulated data for the demo and axis fixture. It did not exercise a real science backend, physical device, or screen reader.
