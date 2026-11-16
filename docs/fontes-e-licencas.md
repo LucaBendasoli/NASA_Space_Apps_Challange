@@ -1,38 +1,38 @@
-# Fontes, identidade e licenças
+# Sources, project identity, and licenses
 
-## Proveniência
+## Provenance
 
-| Fonte primária | Uso e evidência |
+| Primary source | Use and evidence |
 | --- | --- |
-| [Página solicitada](https://aladin.cds.unistra.fr/AladinLite/) | URL exata indicada pelo usuário. Extração textual de controles de catálogos, VizieR e arquivo local |
-| [Portal e aviso do CDS](https://aladin.cds.unistra.fr/) | Aviso atualizado em 09/11/2026; identifica a página como previewer de contingência e lista espelhos |
-| [Repositório oficial](https://github.com/cds-astro/aladin-lite) | README liga diretamente à página solicitada; documentação liga ao repositório |
-| [Commit importado](https://github.com/cds-astro/aladin-lite/tree/60c5cf414d6d56a10b406761e62e8c2ce9f2a760) | Snapshot fixo usado na leitura e cópia dos fontes |
-| [package.json original](https://github.com/cds-astro/aladin-lite/blob/60c5cf414d6d56a10b406761e62e8c2ce9f2a760/package.json) | Nome aladin-lite, versão 3.9.0-beta, autores, repositório e licença |
-| [API oficial](https://cds-astro.github.io/aladin-lite/Aladin.html) | Métodos de câmera, coordenadas, camadas e eventos |
-| [Entrada da API](https://cds-astro.github.io/aladin-lite/A.html) | Inicialização, catálogos e fontes |
-| [Padrão HiPS — IVOA](https://www.ivoa.net/documents/HiPS/) | Referência normativa indicada pelo projeto para aprofundamento; não alegamos auditoria integral do padrão |
+| [Requested page](https://aladin.cds.unistra.fr/AladinLite/) | Exact URL supplied for the investigation. Text extraction identified catalog, VizieR, and local-file controls |
+| [CDS portal and notice](https://aladin.cds.unistra.fr/) | Notice updated on November 9, 2026, identifying the contingency previewer and listing mirrors |
+| [Official repository](https://github.com/cds-astro/aladin-lite) | The README links to the requested page, and the documentation links back to the repository |
+| [Imported commit](https://github.com/cds-astro/aladin-lite/tree/60c5cf414d6d56a10b406761e62e8c2ce9f2a760) | Pinned source snapshot inspected and copied |
+| [Original package.json](https://github.com/cds-astro/aladin-lite/blob/60c5cf414d6d56a10b406761e62e8c2ce9f2a760/package.json) | Package name aladin-lite, version 3.9.0-beta, authors, repository, and license |
+| [Official API](https://cds-astro.github.io/aladin-lite/Aladin.html) | Camera, coordinates, layers, and events |
+| [API entry point](https://cds-astro.github.io/aladin-lite/A.html) | Initialization, catalogs, and sources |
+| [IVOA HiPS standard](https://www.ivoa.net/documents/HiPS/) | Normative reference identified by the project. The investigation did not audit the entire standard |
 
-O aviso do CDS aponta o arquivo [aladin_3.9.0-beta.js](https://aladin.cds.unistra.fr/aladin_3.9.0-beta.js), utilizado como primeira origem remota da demonstração. O segundo endereço segue a convenção de URL versionada documentada no README. Não usamos `latest`, para evitar mudança silenciosa de versão.
+The CDS notice links to [aladin_3.9.0-beta.js](https://aladin.cds.unistra.fr/aladin_3.9.0-beta.js), the first remote source for the demonstration. The second follows the versioned URL convention in the README. Pinning the version avoids silent updates through `latest`.
 
-**Limite da garantia:** estes são os fontes oficiais do projeto Aladin Lite correspondente à ferramenta solicitada. Não confirmamos que o wrapper da página atual esteja incluído nesse repositório, nem que o bundle hospedado corresponda byte a byte ao commit. Versão declarada igual e vínculos oficiais comprovam a identidade do projeto, não uma equivalência de todos os artefatos publicados. O bundle não foi baixado com sucesso nesta sessão.
+Official project links and the declared version establish the identity of the imported Aladin Lite source. The session did not confirm that the current public page wrapper is in the repository or that the hosted bundle matches the commit byte for byte. The bundle download was unsuccessful in that session.
 
-## O que está copiado
+## Snapshot contents
 
-`upstream/aladin-lite/` contém 429 arquivos recuperados pelo conector GitHub, do commit fixo, sem alterações: todos os blobs de `src/`, `assets/`, `scripts/`, `tutorials/` e os arquivos da raiz. A raiz contém inclusive `LICENSE`, `COPYING` e `AUTHORS`. Exemplos, testes e workflows não foram incluídos. É um snapshot selecionado, não um clone Git completo; não contém histórico ou `.git`.
+`upstream/aladin-lite/` contains 429 unmodified files retrieved through the GitHub connector at the pinned commit. It includes all blobs in `src/`, `assets/`, `scripts/`, and `tutorials/`, plus root files such as `LICENSE`, `COPYING`, and `AUTHORS`. Examples, tests, and workflows were excluded. This selected snapshot has no Git history or `.git` directory.
 
-`upstream/files.json` guarda caminho, hash de blob Git e tamanho. `npm.cmd run verify:upstream` recalcula `SHA1("blob " + tamanho + NUL + bytes)` e compara com os hashes devolvidos pelo GitHub. Isso verifica a cópia byte a byte em relação à origem consultada. Não equivale a assinatura criptográfica dos autores.
+`upstream/files.json` records paths, Git blob hashes, and sizes. `npm.cmd run verify:upstream` recalculates `SHA1("blob " + size + NUL + bytes)` and compares against the GitHub blob hashes. This verifies byte-for-byte integrity against the fetched source. Author signatures are outside that check.
 
-## Licença da biblioteca
+## Library license
 
-O package.json e os cabeçalhos atuais dos fontes declaram **LGPL-3.0-or-later**. `LICENSE` traz a LGPLv3 e `COPYING` contém a GPLv3 incorporada pela LGPL. A documentação histórica menciona GPLv3; por isso a licença foi aferida nos arquivos do commit importado, sem presumir que todas as versões usem a mesma licença.
+The package manifest and source headers declare **LGPL-3.0-or-later**. `LICENSE` contains LGPLv3 and `COPYING` contains the GPLv3 incorporated by the LGPL. Historical documentation mentions GPLv3, so the license was checked against the files in the imported commit.
 
-Os avisos de autoria e licenças dos arquivos foram preservados. Subcomponentes de terceiros podem conter seus próprios avisos; o snapshot os mantém. A interface preserva o logo e o link produzidos pela biblioteca e também apresenta atribuição ao CDS. Não escondemos o logo por CSS.
+Copyright and license notices were preserved, including notices from individual third-party components. The interface retains the library logo and link and displays CDS attribution. The logo stays visible in CSS.
 
-Não modificamos nem rebatizamos o motor oficial. Em eventual redistribuição do bundle ou de uma biblioteca modificada, mantenha as licenças, a atribuição e o acesso aos fontes correspondentes e cumpra as condições aplicáveis àquela distribuição. A presente organização separa o material de terceiros, mas não substitui a leitura das licenças.
+The official engine retains its original code and name. When redistributing a bundle or modified library, retain licensing and attribution, provide access to the corresponding source, and meet the applicable distribution conditions. The license files specify the obligations for each distribution.
 
-## Código e dados próprios
+## Project code and data
 
-`index.html`, `src/`, `scripts/`, `tests/`, documentação em `docs/` e `iniciar.cmd` são trabalho novo desta demonstração. Não são apresentados como código recuperado do CDS. O motor só é usado por sua API pública.
+`index.html`, `src/`, `scripts/`, `tests/`, `docs/`, and `iniciar.cmd` were written for this demonstration. It uses the CDS engine through its public API.
 
-A lista de oito objetos é um conjunto didático pequeno de posições aproximadas de objetos conhecidos, sem consulta remota na navegação local. Não é uma exportação de um catálogo do CDS. As imagens HiPS continuam nos provedores; não foram copiadas para o projeto. Créditos, referências e condições dos dados devem ser consultados no arquivo `properties` de cada levantamento, acessível pela interface.
+The eight objects are an educational list of approximate positions for known targets, available when navigating without a remote query. The list was assembled independently of CDS catalog exports. HiPS images remain with their providers. Each survey's `properties` file, linked in the interface, contains its credits, references, and data terms.
