@@ -38,7 +38,7 @@
  <section class="profile-shell" aria-labelledby="profile-title">
   <div class="profile-top">
    <button type="button" data-page="home" aria-label="Voltar ao início">←</button>
-   <h1 id="profile-title" tabindex="-1">Perfil</h1>
+   <div><h1 id="profile-title" tabindex="-1">Perfil</h1><p id="profile-post-count"></p></div>
   </div>
   <p id="account-error" role="status" hidden></p>
   <div id="profile-content" hidden>
@@ -46,14 +46,14 @@
    <div class="profile-summary">
     <div class="profile-identity">
      <div class="profile-avatar"><span id="profile-initials" aria-hidden="true"></span><img id="profile-photo" alt="" hidden></div>
-     <h2 id="account-status"></h2>
      <div class="profile-actions">
       <button id="edit-profile" type="button" hidden>Editar perfil</button>
-      <button type="button" id="account-logout">Sair</button>
+      <button type="button" id="profile-preferences" hidden>Preferências</button>
      </div>
     </div>
+    <h2 id="account-status"></h2>
     <p id="profile-bio" hidden></p>
-    <p class="profile-stat"><strong id="profile-count">0</strong> <span>Contribuições</span></p>
+
    </div>
    <div class="eyelid-home-tabs profile-tabs" role="group" aria-label="Atividade do perfil">
     <button type="button" data-profile-tab="posts" aria-pressed="true">Publicações</button>
@@ -65,7 +65,13 @@
 </section>
 <dialog id="edit-profile-dialog" aria-labelledby="edit-profile-title">
  <form id="edit-profile-form">
-  <h2 id="edit-profile-title">Editar perfil</h2>
+  <div class="profile-edit-actions">
+   <button type="button" id="cancel-profile-edit" aria-label="Cancelar">×</button>
+   <h2 id="edit-profile-title">Editar perfil</h2>
+   <button type="submit">Salvar</button>
+  </div>
+  <div class="profile-edit-banner"><img id="preview-profile-cover" alt=""></div>
+  <div class="profile-edit-avatar"><img id="preview-profile-photo" alt="" hidden></div>
   <label>Nome de exibição<input name="name" required maxlength="60" autocomplete="nickname"></label>
   <label>Bio<textarea name="bio" rows="3" maxlength="280"></textarea></label>
   <label>Foto de perfil<input name="photo" type="file" accept="image/*"></label>
@@ -73,10 +79,18 @@
   <label>Imagem de capa<input name="cover" type="file" accept="image/*"></label>
   <label class="profile-remove"><input name="removeCover" type="checkbox"> Voltar à capa padrão</label>
   <p id="edit-profile-status" role="status"></p>
-  <div class="profile-edit-actions">
-   <button type="button" id="cancel-profile-edit">Cancelar</button>
-   <button type="submit">Salvar</button>
-  </div>
+
+ </form>
+</dialog>
+<dialog id="profile-preferences-dialog" aria-labelledby="profile-preferences-title">
+ <form method="dialog" class="profile-preference-form">
+  <h2 id="profile-preferences-title">Preferências</h2>
+  <label for="platform-language">Idioma</label>
+  <select id="platform-language">
+   <option value="en">English</option>
+   <option value="pt-BR">Português (Brasil)</option>
+  </select>
+  <button type="button" id="account-logout">Sair</button>
  </form>
 </dialog>
 <dialog id="eyelid-auth-dialog" aria-label="Entrar no Eyelid">

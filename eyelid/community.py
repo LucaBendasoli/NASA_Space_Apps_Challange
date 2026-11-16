@@ -83,15 +83,16 @@ def profile_get(handler, path):
         """, (account_id,)).fetchone()
         if not row:
             if match[1] == 'self':
-                auth_response(handler, {'profile': {'name': viewer['name'] if viewer else 'Visitante'},
-                                        'own': True, 'editable': False, 'posts': [], 'replies': [], 'count': 0})
+                auth_response(handler, {'profile': {'name': viewer['name'] if viewer else 'Visitante',
+                                                                  'role': viewer['role'] if viewer else 'guest'},
+                                        'own': True, 'editable': False, 'posts': [], 'replies': [], 'count': 0, 'post_count': 0})
             else:
                 auth_response(handler, {'error': 'missing'}, 404)
             return True
         profile = dict(row)
         profile['avatar_url'] = photo_url(account_id) if profile.pop('has_photo') else None
         profile['cover_url'] = f'/api/auth/cover/{account_id}' if profile.pop('has_cover') else None
-        count = db.execute('SELECT count(*) FROM community_posts WHERE author_id=?', (account_id,)).fetchone()[0]
+        counts = db.execute('SELECT count(*), count(*) FILTER (WHERE parent_id IS NULL) FROM community_posts WHERE author_id=?', (account_id,)).fetchone()
         activity = []
         for condition in ('IS NULL', 'IS NOT NULL'):
             rows = db.execute(f"""
@@ -105,7 +106,7 @@ def profile_get(handler, path):
                 items.append(item)
             activity.append(items)
     auth_response(handler, {'profile': profile, 'own': own, 'editable': own,
-                            'posts': activity[0], 'replies': activity[1], 'count': count})
+                            'posts': activity[0], 'replies': activity[1], 'count': counts[0], 'post_count': counts[1]})
     return True
 
 

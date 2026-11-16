@@ -88,19 +88,19 @@ function gaiaSpectralSummary(id){
   [{value,channel:i+1,wave:data.wavelengths[i]}]:[])??[];
  if(!samples.length)return '';
  const bands=[
-  ['Faixas curtas',.75,1.5],
-  ['Faixas médias',1.5,3],
-  ['Faixas longas',3,5.001]
+  [t('Faixas curtas'),.75,1.5],
+  [t('Faixas médias'),1.5,3],
+  [t('Faixas longas'),3,5.001]
  ].map(([name,min,max])=>{
   const inside=wave=>wave>=min&&wave<max;
   const total=Object.values(data.bands).filter(inside).length;
   const count=samples.filter(sample=>inside(sample.wave)).length;
-  return `<div class="band"><span>${name}</span><meter min="0" max="${total}" value="${count}" aria-label="${name}, ${count} de ${total} canais com medição"></meter><strong>${count}/${total}</strong></div>`;
+  return t`<div class="band"><span>${name}</span><meter min="0" max="${total}" value="${count}" aria-label="${name}, ${count} de ${total} canais com medição"></meter><strong>${count}/${total}</strong></div>`;
  }).join('');
  const brightest=samples.reduce((peak,sample)=>sample.value>peak.value?sample:peak);
- return `<details class="evidence" data-section="infrared"><summary>Onde o brilho foi medido</summary>
+ return t`<details class="evidence" data-section="infrared"><summary>Onde o brilho foi medido</summary>
   <div class="bands">${bands}</div><p>${samples.length} canais com medição no mosaico SPHEREx.
-  ${brightest.value>0?`Maior brilho medido no canal ${brightest.channel} (${fmt(brightest.wave)} µm).`:''}</p>
+  ${brightest.value>0?t`Maior brilho medido no canal ${brightest.channel} (${fmt(brightest.wave)} µm).`:''}</p>
   <p class="caption">As barras indicam cobertura das medições.</p></details>`;
 }
 
@@ -111,43 +111,43 @@ function renderGaiaOverview(source){
  const state=gaiaDetails.get(source.id)??loadGaiaDetails(source.id);
  const details=state.result;
  const [ra,dec]=gaiaPosition(source);
- const position=source.pmra==null||source.pmdec==null?'Posição do catálogo na época J2016.0.':
-  gaiaDate?'Posição estimada para '+gaiaDate.slice(0,10).split('-').reverse().join('/')+' pelo movimento próprio.':
-  'Posição estimada para a época de referência do mosaico, J'+data.gaia_epoch+'.';
- const classes=[['Estrela',details?.classprob_dsc_combmod_star],
-  ['Galáxia',details?.classprob_dsc_combmod_galaxy],['Quasar',details?.classprob_dsc_combmod_quasar]];
+ const position=source.pmra==null||source.pmdec==null?t('Posição do catálogo na época J2016.0.'):
+  gaiaDate?t('Posição estimada para ')+new Intl.DateTimeFormat(locale,{dateStyle:'medium',timeZone:'UTC'}).format(new Date(gaiaDate.slice(0,10)+'T00:00:00Z'))+t(' pelo movimento próprio.'):
+  t('Posição estimada para a época de referência do mosaico, J')+data.gaia_epoch+'.';
+ const classes=[[t('Estrela'),details?.classprob_dsc_combmod_star],
+  [t('Galáxia'),details?.classprob_dsc_combmod_galaxy],['Quasar',details?.classprob_dsc_combmod_quasar]];
  const best=classes.reduce((leading,entry)=>(entry[1]??0)>(leading[1]??0)?entry:leading);
- const classification=best[1]>=.8?`${best[0]} · ${fmt(best[1]*100,1)}% no classificador Gaia`:'Fonte catalogada';
+ const classification=best[1]>=.8?t`${best[0]} · ${fmt(best[1]*100,1)}% no classificador Gaia`:t('Fonte catalogada');
  const measurement=(label,value,unit,digits=2,error)=>Number.isFinite(value)?
   `<div><dt>${label}</dt><dd>${fmt(value,digits)}${Number.isFinite(error)?' ± '+fmt(error,digits):''} ${unit}</dd></div>`:'';
  const properMotion=Number.isFinite(source.pmra)&&Number.isFinite(source.pmdec)?Math.hypot(source.pmra,source.pmdec):null;
- const summary=measurement('Brilho aparente (G)',source.mag,'mag')+
-  measurement('Temperatura estimada',details?.teff_gspphot,'K',0)+
-  measurement('Distância estimada',details?.distance_gspphot,'pc',0)+
-  measurement('Movimento no céu',properMotion,'mas/ano');
- const technical=measurement('Paralaxe',details?.parallax,'mas',3,details?.parallax_error)+
-  measurement('Velocidade radial',details?.radial_velocity,'km/s',2,details?.radial_velocity_error)+
-  measurement('Magnitude azul (BP)',details?.phot_bp_mean_mag,'mag')+
-  measurement('Magnitude vermelha (RP)',details?.phot_rp_mean_mag,'mag')+
-  measurement('Cor BP − RP',details?.bp_rp,'mag')+
-  measurement('Qualidade astrométrica (RUWE)',details?.ruwe,'',2);
+ const summary=measurement(t('Brilho aparente (G)'),source.mag,'mag')+
+  measurement(t('Temperatura estimada'),details?.teff_gspphot,'K',0)+
+  measurement(t('Distância estimada'),details?.distance_gspphot,'pc',0)+
+  measurement(t('Movimento no céu'),properMotion,t('mas/ano'));
+ const technical=measurement(t('Paralaxe'),details?.parallax,'mas',3,details?.parallax_error)+
+  measurement(t('Velocidade radial'),details?.radial_velocity,'km/s',2,details?.radial_velocity_error)+
+  measurement(t('Magnitude azul (BP)'),details?.phot_bp_mean_mag,'mag')+
+  measurement(t('Magnitude vermelha (RP)'),details?.phot_rp_mean_mag,'mag')+
+  measurement(t('Cor BP − RP'),details?.bp_rp,'mag')+
+  measurement(t('Qualidade astrométrica (RUWE)'),details?.ruwe,'',2);
  const wise=details?.allwise;
  const wiseId=wise&&/^J[0-9.]+[+-][0-9.]+$/.test(wise.id)?wise.id:null;
- const wisePhotometry=measurement('Faixa W1 · 3,4 µm',wise?.w1,'mag',3)+
-  measurement('Faixa W2 · 4,6 µm',wise?.w2,'mag',3);
- const allwise=wiseId?`<p>Fonte AllWISE ${wiseId}${Number.isFinite(wise.separation)?' · separação de '+fmt(wise.separation,2)+'″':''}.</p>
+ const wisePhotometry=measurement(t('Faixa W1 · 3,4 µm'),wise?.w1,'mag',3)+
+  measurement(t('Faixa W2 · 4,6 µm'),wise?.w2,'mag',3);
+ const allwise=wiseId?t`<p>Fonte AllWISE ${wiseId}${Number.isFinite(wise.separation)?t(' · separação de ')+fmt(wise.separation,2)+'″':''}.</p>
   ${wisePhotometry?`<dl class="source-facts">${wisePhotometry}</dl>`:''}
-  ${wise.mates>0?`<p>Esta correspondência também está associada a ${fmt(wise.mates,0)} outra(s) fonte(s) Gaia.</p>`:''}`:
-  '<p>O cruzamento do catálogo Gaia DR3 não lista uma correspondência AllWISE para esta fonte.</p>';
- const catalogStatus=state.status==='loading'?'<p class="caption" role="status">Consultando dados do Gaia DR3…</p>':
-  state.status==='error'?'<p class="caption" role="status">Consulta ao Gaia DR3 indisponível. <button type="button" class="id gaia-retry">Tentar novamente</button></p>':'';
+  ${wise.mates>0?t`<p>Esta correspondência também está associada a ${fmt(wise.mates,0)} outra(s) fonte(s) Gaia.</p>`:''}`:
+  t('<p>O cruzamento do catálogo Gaia DR3 não lista uma correspondência AllWISE para esta fonte.</p>');
+ const catalogStatus=state.status==='loading'?t('<p class="caption" role="status">Consultando dados do Gaia DR3…</p>'):
+  state.status==='error'?t('<p class="caption" role="status">Consulta ao Gaia DR3 indisponível. <button type="button" class="id gaia-retry">Tentar novamente</button></p>'):'';
  const sourceNumber=source.id.slice(5);
- host.innerHTML=`<div class="hero"><h2>${classification}</h2>
+ host.innerHTML=t`<div class="hero"><h2>${classification}</h2>
   ${summary?`<dl class="source-facts">${summary}</dl>`:''}
-  ${details?.variable?'<p>O Gaia registrou variação de brilho nesta fonte.</p>':''}
+  ${details?.variable?t('<p>O Gaia registrou variação de brilho nesta fonte.</p>'):''}
   ${catalogStatus}</div>
-  ${gaiaSpectralSummary(source.id)||'<p class="caption">O Eyelid ainda não tem um espectro SPHEREx processado para esta fonte.</p>'}
-  ${details?`<details class="evidence" data-section="allwise"><summary>Correspondência no WISE</summary>${allwise}</details>`:''}
+  ${gaiaSpectralSummary(source.id)||t('<p class="caption">O Eyelid ainda não tem um espectro SPHEREx processado para esta fonte.</p>')}
+  ${details?t`<details class="evidence" data-section="allwise"><summary>Correspondência no WISE</summary>${allwise}</details>`:''}
   <details class="evidence" data-section="catalog"><summary>Medições e posição no Gaia</summary>
    <p>Ascensão reta ${fmt(ra,7)}° · Declinação ${fmt(dec,7)}°</p><p>${position}</p>
    ${technical?`<dl class="source-facts">${technical}</dl>`:''}

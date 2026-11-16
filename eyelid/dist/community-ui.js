@@ -51,14 +51,14 @@
   field.required = true;
   field.maxLength = 2000;
   field.rows = 2;
-  field.placeholder = reply?'Escreva uma resposta':'O que você observou?';
+  field.placeholder = reply?t('Escreva uma resposta'):t('O que você observou?');
   field.setAttribute('aria-label',field.placeholder);
-  const option = element('label','Anexar a vista atual do céu','community-attach');
+  const option = element('label',t('Anexar a vista atual do céu'),'community-attach');
   const check = element('input');
   check.type = 'checkbox';
   check.checked = fromMap;
   option.prepend(check,icon('M20 10c0 5-8 10-8 10S4 15 4 10a8 8 0 1 1 16 0ZM12 7v6m-3-3h6'));
-  const submit = element('button',reply?'Responder':'Publicar');
+  const submit = element('button',reply?t('Responder'):t('Publicar'));
   submit.type = 'submit';
   const status = element('p',null,'community-status');
   status.setAttribute('role','status');
@@ -81,7 +81,7 @@
     const message = {body};
     if(attach&&check.checked){
      if(!view){
-      status.textContent = 'Aguarde o mapa carregar para anexar a vista.';
+      status.textContent = t('Aguarde o mapa carregar para anexar a vista.');
       return;
      }
      message.view = {
@@ -93,12 +93,12 @@
     field.value = '';
    } catch(error){
     if(error.message==='401'){
-     status.textContent = 'Entre na sua conta para enviar. Seu texto continua aqui.';
+     status.textContent = t('Entre na sua conta para enviar. Seu texto continua aqui.');
      document.dispatchEvent(new Event('eyelid-community-login'));
     } else {
      status.textContent = error.message==='403'
-      ? 'Use uma conta pessoal para participar.'
-      : 'Não foi possível enviar. Seu texto foi preservado.';
+      ? t('Use uma conta pessoal para participar.')
+      : t('Não foi possível enviar. Seu texto foi preservado.');
     }
    } finally {submit.disabled = false}
   };
@@ -115,7 +115,7 @@
   const buttons = [1,-1].map(value=>{
    const button = element('button');
    button.type = 'button';
-   button.setAttribute('aria-label',value===1?'Votar a favor':'Votar contra');
+   button.setAttribute('aria-label',value===1?t('Votar a favor'):t('Votar contra'));
    button.setAttribute('aria-pressed',String(current===value));
    button.append(icon(value===1?'M12 19V5m-6 6 6-6 6 6':'M12 5v14m-6-6 6 6 6-6'));
    button.onclick = async ()=>{
@@ -128,7 +128,7 @@
      buttons.forEach((control,index)=>control.setAttribute('aria-pressed',String(current===[1,-1][index])));
     }catch(error){
      if(error.message==='401')document.dispatchEvent(new Event('eyelid-community-login'));
-     else status.textContent = error.message==='403'?'Use uma conta pessoal para votar.':'Não foi possível registrar o voto.';
+     else status.textContent = error.message==='403'?t('Use uma conta pessoal para votar.'):t('Não foi possível registrar o voto.');
     }finally{
      buttons.forEach(control=>control.disabled=false);
     }
@@ -142,7 +142,7 @@
  function entry(item,open){
   const card = element('article',null,'community-post');
   const text = element('p',item.body,'community-message');
-  const time = element('time',new Intl.DateTimeFormat('pt-BR',{dateStyle:'medium',timeStyle:'short'}).format(new Date(item.created_at)));
+  const time = element('time',new Intl.DateTimeFormat(locale,{dateStyle:'medium',timeStyle:'short'}).format(new Date(item.created_at)));
   time.dateTime = item.created_at;
   const byline = element('div',null,'community-byline');
   const name = element('a',item.author,'community-author');
@@ -152,25 +152,25 @@
   card.append(avatar(item.author,item.avatar_url),content);
   content.append(byline,text);
   if(item.view){
-   const link = element('a','Abrir vista no mapa');
+   const link = element('a',t('Abrir vista no mapa'));
    link.href = '/?'+new URLSearchParams(item.view);
    link.target = '_blank';
    link.rel = 'noopener';
    link.className = 'community-view-link';
-   link.setAttribute('aria-label','Abrir vista no mapa');
+   link.setAttribute('aria-label',t('Abrir vista no mapa'));
    link.textContent = '';
-   const viewName = element('span','Vista compartilhada');
-   viewName.append(element('small','SPHEREx · canal '+item.view.canal+(item.view.data?' · '+item.view.data:'')));
-   const action = element('span','Abrir vista','community-view-action');
+   const viewName = element('span',t('Vista compartilhada'));
+   viewName.append(element('small',t('SPHEREx · canal ')+item.view.canal+(item.view.data?' · '+item.view.data:'')));
+   const action = element('span',t('Abrir vista'),'community-view-action');
    action.prepend(icon('M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20Zm4-14-2 6-6 2 2-6 6-2Z'));
    link.append(viewName,action);
    content.append(link);
   }
   const actions = element('div',null,'community-post-actions');
   if(open){
-   const count = element('span',item.replies===1?'1 resposta':item.replies+' respostas','community-reply-count');
+   const count = element('span',item.replies===1?t('1 resposta'):item.replies+t(' respostas'),'community-reply-count');
    count.prepend(icon('M20 11a8 8 0 0 1-12 7l-4 1 1-4a8 8 0 1 1 15-4Z'));
-   const button = element('button','Ver discussão');
+   const button = element('button',t('Ver discussão'));
    button.type = 'button';
    button.onclick = open;
    actions.append(count,button);
@@ -185,7 +185,7 @@
   const thread = fromMap ? byId('community-map-thread') : element('div');
   if(!fromMap)thread.hidden = true;
   const feed = element('div');
-  const more = element('button','Ver mais');
+  const more = element('button',t('Ver mais'));
   more.type = 'button';
   more.hidden = true;
   let before, trending = false, feedVersion = 0, threadVersion = 0;
@@ -201,7 +201,7 @@
     if(version!==feedVersion)return;
     const cards = result.posts.map(item=>entry(item,()=>openThread(item.id)));
     if(!append)listing.replaceChildren();
-    if(!cards.length&&!append)listing.append(element('p','Ainda não há publicações.'));
+    if(!cards.length&&!append)listing.append(element('p',t('Ainda não há publicações.')));
     listing.append(...cards);
     before = result.next;
     more.hidden = !before;
@@ -210,14 +210,14 @@
       const row = element('li');
       const name = element('a',item.name,'community-author');
       name.href = '/?'+new URLSearchParams({perfil:item.id});
-      row.append(name,element('span',item.contributions+(item.contributions===1?' contribuição':' contribuições')));
+      row.append(name,element('span',item.contributions+(item.contributions===1?t(' contribuição'):t(' contribuições'))));
       return row;
      }));
      byId('community-contributors-empty').hidden = Boolean(result.contributors.length);
     }
    } catch {
     if(version!==feedVersion)return;
-    const status = element('p','Não foi possível carregar as publicações.','community-load-status');
+    const status = element('p',t('Não foi possível carregar as publicações.'),'community-load-status');
     status.setAttribute('role','status');
     if(!append)listing.replaceChildren(status);
     else listing.append(status);
@@ -231,7 +231,7 @@
    const version = ++threadVersion;
    if(fromMap)document.querySelector('[data-sky-panel=discussion]').click();
    else {feed.hidden = true;thread.hidden = false}
-   const back = element('button','Voltar à comunidade');
+   const back = element('button',t('Voltar à comunidade'));
    back.type = 'button';
    back.onclick = ()=>{
     threadVersion++;
@@ -239,20 +239,20 @@
     else {thread.hidden = true;feed.hidden = false}
     refresh();
    };
-   thread.replaceChildren(back,element('p','Carregando discussão…'));
+   thread.replaceChildren(back,element('p',t('Carregando discussão…')));
    try {
     const data = await request(endpoint+'/'+id);
     if(version!==threadVersion)return;
-    thread.replaceChildren(back,entry(data.post),element('h3','Respostas'));
+    thread.replaceChildren(back,entry(data.post),element('h3',t('Respostas')));
     for(const reply of data.replies)thread.append(entry(reply));
-    if(!data.replies.length)thread.append(element('p','Ainda não há respostas.'));
+    if(!data.replies.length)thread.append(element('p',t('Ainda não há respostas.')));
     thread.append(showDraft(async body=>{
      await request(endpoint+'/'+id,body);
      if(version===threadVersion)await openThread(id);
      refresh();
     },{reply:true}));
    } catch {
-    if(version===threadVersion)thread.replaceChildren(back,element('p','Não foi possível carregar a discussão.'));
+    if(version===threadVersion)thread.replaceChildren(back,element('p',t('Não foi possível carregar a discussão.')));
    }
   }
 

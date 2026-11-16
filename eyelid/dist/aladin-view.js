@@ -11,9 +11,9 @@ function spectralSurvey(channel) {
  return new URL('spectral-map/' + channel, location.href).href;
 }
 const SURVEYS={
- sdss:{label:'Luz visível · SDSS DR9',scale:'0,40',url:'https://irsa.ipac.caltech.edu/data/hips/CDS/SDSS/DR9/color'},
- dss:{label:'Luz visível · DSS',scale:'0,80',url:'https://casda.csiro.au/hips/DSS2/color'},
- wise:{label:'Infravermelho · AllWISE',scale:'1,61',url:'https://irsa.ipac.caltech.edu/data/hips/CDS/AllWISE/RGB-W4-W2-W1'}
+ sdss:{label:t('Luz visível · SDSS DR9'),scale:'0,40',url:'https://irsa.ipac.caltech.edu/data/hips/CDS/SDSS/DR9/color'},
+ dss:{label:t('Luz visível · DSS'),scale:'0,80',url:'https://casda.csiro.au/hips/DSS2/color'},
+ wise:{label:t('Infravermelho · AllWISE'),scale:'1,61',url:'https://irsa.ipac.caltech.edu/data/hips/CDS/AllWISE/RGB-W4-W2-W1'}
 };
 const fieldOfView = 0.18;
 const hitRadius = 16;
@@ -52,10 +52,10 @@ export async function createAladin(host, center, channel, onSelect, onError, onC
    ctx.restore();
  }
  const gaiaCatalog=A.catalog({name:'Gaia DR3', readOnly:true, shape:drawSource});
- const candidateCatalog=A.catalog({name:'Candidatos da triagem', readOnly:true, shape:drawSource});
+ const candidateCatalog=A.catalog({name:t('Candidatos da triagem'), readOnly:true, shape:drawSource});
  view.addCatalog(gaiaCatalog);
  view.addCatalog(candidateCatalog);
- const scanOverlay=A.graphicOverlay({name:'Recorte da triagem',color:'#ff9ca3',lineWidth:1,lineDash:[5,5]});
+ const scanOverlay=A.graphicOverlay({name:t('Recorte da triagem'),color:'#ff9ca3',lineWidth:1,lineDash:[5,5]});
  view.addOverlay(scanOverlay);
  let footprintKey;
 
@@ -72,7 +72,7 @@ export async function createAladin(host, center, channel, onSelect, onError, onC
   onSelect(closest?.id);
  });
 
- const dateLocator=A.graphicOverlay({name:'Local da exposição',color:'#ff9ca3',lineWidth:1.5});
+ const dateLocator=A.graphicOverlay({name:t('Local da exposição'),color:'#ff9ca3',lineWidth:1.5});
  view.addOverlay(dateLocator);
  let current, layerNumber=0, exposureLayer, pendingExposure, exposureFootprint;
  let rgbDetail, pendingDetail;

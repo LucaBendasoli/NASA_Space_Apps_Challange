@@ -11,13 +11,13 @@
  const saved = byId('eyelid-sky-saved');
  const normalize = value => value.normalize('NFD').replace(/\p{Diacritic}/gu,'').trim().toLowerCase();
  const juryRegions = [
-  {name:'Barnard’s Star', aliases:['Barnard','Estrela de Barnard','Gl 699','Gl699'], center:[269.452083,4.693370], fov:.09, channel:20},
-  {name:'Epsilon Indi B', aliases:['ε Indi B','Eps Ind B'], description:'Par de anãs marrons', center:[331.09566,-56.80086], fov:.09, channel:20},
-  {name:'WISE 0855', aliases:['WISE 0855−0714'], description:'Anã marrom de movimento rápido', center:[133.7951291667,-7.2451472222], fov:.09},
-  {name:'RW Aurigae', aliases:['RW Aur'], description:'Estrela variável', center:[76.9565260346,30.4014381739], fov:.09},
-  {name:'R Draconis', aliases:['R Dra'], description:'Estrela variável', center:[248.1676075,66.7549841667], fov:.09}
+  {name:'Barnard’s Star', aliases:['Barnard',t('Estrela de Barnard'),'Gl 699','Gl699'], center:[269.452083,4.693370], fov:.09, channel:20},
+  {name:'Epsilon Indi B', aliases:['ε Indi B','Eps Ind B'], description:t('Par de anãs marrons'), center:[331.09566,-56.80086], fov:.09, channel:20},
+  {name:'WISE 0855', aliases:['WISE 0855−0714'], description:t('Anã marrom de movimento rápido'), center:[133.7951291667,-7.2451472222], fov:.09},
+  {name:'RW Aurigae', aliases:['RW Aur'], description:t('Estrela variável'), center:[76.9565260346,30.4014381739], fov:.09},
+  {name:'R Draconis', aliases:['R Dra'], description:t('Estrela variável'), center:[248.1676075,66.7549841667], fov:.09}
  ];
- const andromeda = {name:'Galáxia de Andrômeda', aliases:['Andrômeda','Andromeda Galaxy','M31','M 31'], center:[10.684793,41.269065]};
+ const andromeda = {name:t('Galáxia de Andrômeda'), aliases:['Andrômeda','Andromeda Galaxy','M31','M 31'], center:[10.684793,41.269065]};
  const targets = [...juryRegions,andromeda,...Object.values(regions)];
  const mapUrl = target => '/?'+new URLSearchParams({
   ra:target.center[0],dec:target.center[1],fov:target.fov??.18,canal:target.channel??63
@@ -35,7 +35,7 @@
  }
 
  if(openingQuery.has('perfil'))showPage('profile',false);
- else if(openingTarget || openingQuery.get('acesso')==='jurados')showPage('map',false);
+ else if(openingTarget || Object.hasOwn(regions,openingQuery.get('regiao')) || openingQuery.get('acesso')==='jurados')showPage('map',false);
 
  function disclosure(button, panel){
   panel.hidden = !panel.hidden;
@@ -45,7 +45,7 @@
  collapse.onclick = () => {
   const expanded = !shell.classList.toggle('navigation-collapsed');
   collapse.setAttribute('aria-expanded',String(expanded));
-  const label = expanded ? 'Recolher navegação' : 'Expandir navegação';
+  const label = expanded ? t('Recolher navegação') : t('Expandir navegação');
   collapse.setAttribute('aria-label',label);
   collapse.title = label;
  };
@@ -121,11 +121,11 @@
   const match = /^([+-]?\d+(?:\.\d+)?)\s*°?\s*(?:[,;]\s*|\s+)([+-]?\d+(?:\.\d+)?)\s*°?$/.exec(input);
   const center = target?.center ?? (point ? [point.ra_icrs_deg ?? point.ra,point.dec_icrs_deg ?? point.dec] : match?.slice(1).map(Number));
   if (!center || center[0] < 0 || center[0] > 360 || Math.abs(center[1]) > 90){
-   searchStatus.textContent = 'Digite coordenadas em graus ou use o nome de uma região ou o ID de um objeto que está no mapa.';
+   searchStatus.textContent = t('Digite coordenadas em graus ou use o nome de uma região ou o ID de um objeto que está no mapa.');
    return;
   }
   if (!focusTarget(center)){
-   searchStatus.textContent = 'Aguarde o mapa carregar e tente novamente.';
+   searchStatus.textContent = t('Aguarde o mapa carregar e tente novamente.');
    return;
   }
   if (point) select(point.id);

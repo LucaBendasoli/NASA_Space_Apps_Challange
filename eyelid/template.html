@@ -95,7 +95,7 @@ function passesCandidateFilter(row){
  return !byId('both').checked||row.wise.some(k=>k.endsWith('W1'))&&row.wise.some(k=>k.endsWith('W2'));
 }
 let selected, panelOpen=false, panelTab='community';
-const fmt=(n,k=3)=>Number(n).toLocaleString('pt-BR',{minimumFractionDigits:k,maximumFractionDigits:k});
+const fmt=(n,k=3)=>Number(n).toLocaleString(locale,{minimumFractionDigits:k,maximumFractionDigits:k});
 const pos=(x,y)=>[60.5+Number(x)/3,60.5-Number(y)/3];
 byId('sky-image').src='data:image/png;base64,'+data.image;
 for(const r of rows){const b=document.createElement('button'),p=pos(r.leste_arcsec,r.norte_arcsec);b.className='pin';b.id='pin-'+r.id;b.textContent=r.id;b.style.left=p[0]/1.21+'%';b.style.top=p[1]/1.21+'%';b.onclick=()=>select(r.id);byId('sky').append(b)}
@@ -151,7 +151,7 @@ function render(){
  if(!gaia&&!rows.some(r=>r.id===selected))selected=undefined;
  syncObjectPanel();
  const mapCandidates=byId('map-candidates');
- mapCandidates.replaceChildren(new Option(rows.length?rows.length+' disponíveis':'Nenhum candidato',''));
+ mapCandidates.replaceChildren(new Option(rows.length?rows.length+t(' disponíveis'):t('Nenhum candidato'),''));
  for(const row of rows)mapCandidates.add(new Option(row.id,row.id));
  mapCandidates.value=rows.some(r=>r.id===selected)?selected:'';
  mapCandidates.disabled=!rows.length;
@@ -160,17 +160,17 @@ function render(){
  for(const r of filtered){
   const line=document.createElement('div');line.className='r'+(r.id===selected?' current':'');
   const button=document.createElement('button');button.className='id';button.textContent=r.id;button.setAttribute('aria-pressed',r.id===selected);button.onclick=()=>{focusCandidate(r);byId('chart').querySelector('[aria-pressed=true]')?.focus()};
-  const cells=document.createElement('div');cells.className='tiles';cells.setAttribute('aria-label',r.channels.length+' canais com pico');
+  const cells=document.createElement('div');cells.className='tiles';cells.setAttribute('aria-label',r.channels.length+t(' canais com pico'));
   for(let c=1;c<=102;c++){
    const el=document.createElement('span'),present=r.channels.includes(c),blank=!data.bands[c];
    el.className='cell '+(blank?'blank':present?'yes':'');
-   el.title=r.id+' · canal '+c+(blank?' · vazio':' · '+fmt(data.bands[c])+' µm · '+(present?'pico registrado':'sem pico registrado'));
+   el.title=r.id+t(' · canal ')+c+(blank?t(' · vazio'):' · '+fmt(data.bands[c])+' µm · '+(present?t('pico registrado'):t('sem pico registrado')));
    el.onpointerenter=()=>{byId('focus').textContent=el.title};
    el.onclick=()=>{const t=el.title;focusCandidate(r);byId('focus').textContent=t};
    cells.append(el);
   }
   const wise=document.createElement('div');wise.className='wise';
-  for(const key of wiseKeys){const mark=document.createElement('span'),ok=r.wise.includes(key);mark.className=ok?'yes':'';mark.textContent=ok?'✓':'–';mark.title=key+(ok?' · pico registrado':' · sem pico registrado');wise.append(mark)}
+  for(const key of wiseKeys){const mark=document.createElement('span'),ok=r.wise.includes(key);mark.className=ok?'yes':'';mark.textContent=ok?'✓':'–';mark.title=key+(ok?' · '+t('pico registrado'):' · '+t('sem pico registrado'));wise.append(mark)}
   line.append(button,cells,wise);chart.append(line);
  }
  const r=rows.find(v=>v.id===selected);
@@ -179,7 +179,7 @@ function render(){
  renderSpectrum([...filtered,...gaiaById.values()].filter(source=>data.radiance[source.id]?.some(Number.isFinite)),gaia??r);
  updateGaiaSelection();
  document.dispatchEvent(new Event('atlas-selection'));
- byId('details').innerHTML=r?`<h2>${r.id}</h2><div class="stats"><span><strong>${r.channels.length}</strong> canais SPHEREx</span><span><strong>${fmt(r.dist_gaia_arcsec,1)}″</strong> até o Gaia mais próximo</span><span>${r.wise.length? r.wise.join(' · '):'Sem pico WISE'}</span></div><p>RA ${fmt(r.ra_icrs_deg,6)}° · Dec ${fmt(r.dec_icrs_deg,6)}°</p><div class="channels"><strong>Canais:</strong> ${ranges(r.channels)}</div>`:'Nenhum candidato nesse filtro.';
+ byId('details').innerHTML=r?t`<h2>${r.id}</h2><div class="stats"><span><strong>${r.channels.length}</strong> canais SPHEREx</span><span><strong>${fmt(r.dist_gaia_arcsec,1)}″</strong> até o Gaia mais próximo</span><span>${r.wise.length? r.wise.join(' · '):t('Sem pico WISE')}</span></div><p>RA ${fmt(r.ra_icrs_deg,6)}° · Dec ${fmt(r.dec_icrs_deg,6)}°</p><div class="channels"><strong>Canais:</strong> ${ranges(r.channels)}</div>`:t('Nenhum candidato nesse filtro.');
 }
 function renderOverview(filtered,r,gaia){
  const picker=byId('picker');
@@ -191,25 +191,25 @@ function renderOverview(filtered,r,gaia){
   picker.append(b);
  }
  if(gaia){renderGaiaOverview(gaia);return}
- if(!r){byId('overview').textContent='Nenhum candidato nesse filtro.';return}
+ if(!r){byId('overview').textContent=t('Nenhum candidato nesse filtro.');return}
  const w1=r.wise.some(k=>k.endsWith('W1')),w2=r.wise.some(k=>k.endsWith('W2'));
  const both=w1&&w2;
  const windows=[
-  ['Faixas curtas','0,75–<1,5 µm',.75,1.5],
-  ['Faixas médias','1,5–<3,0 µm',1.5,3],
-  ['Faixas longas','3,0–5,0 µm',3,5.001]
+  [t('Faixas curtas'),t('0,75–<1,5 µm'),.75,1.5],
+  [t('Faixas médias'),t('1,5–<3,0 µm'),1.5,3],
+  [t('Faixas longas'),t('3,0–5,0 µm'),3,5.001]
  ];
  const bars=windows.map(([name,label,lo,hi])=>{
   const match=c=>data.bands[c]>=lo&&data.bands[c]<hi;
   const n=r.channels.filter(match).length,total=Object.keys(data.bands).filter(match).length;
-  return `<div class="band"><span>${name}<small>${label}</small></span><meter min="0" max="${total}" value="${n}" aria-label="${name}, ${n} de ${total} canais"></meter><strong>${n}/${total}</strong></div>`;
+  return t`<div class="band"><span>${name}<small>${label}</small></span><meter min="0" max="${total}" value="${n}" aria-label="${name}, ${n} de ${total} canais"></meter><strong>${n}/${total}</strong></div>`;
  }).join('');
  const rationale=r.triagem==='WISE + SPHEREx'
-  ?'A triagem exigiu picos nas bandas WISE W1 e W2 e em pelo menos três canais SPHEREx, além de distância superior a 5″ da fonte Gaia mais próxima.'
-  :'A triagem exigiu picos em pelo menos oito canais SPHEREx, distribuídos por pelo menos 0,35 µm, e distância superior a 8″ da fonte Gaia mais próxima.';
- const first=both?'Picos em SPHEREx e nas duas bandas WISE dão motivo para conferir uma possível fonte real nos arquivos originais.':'O sinal merece revisão nos quadros originais. Artefatos e fontes sobrepostas também podem gerar picos em vários canais.';
- const hypotheses=both?`<div class="hyp"><h3>Fonte fraca na luz visível</h3><p>Uma estrela com poeira na linha de visão ou uma galáxia compacta são possibilidades. Cruze com AllWISE e 2MASS e verifique se a fonte parece pontual ou estendida.</p></div><div class="hyp"><h3>Objeto frio</h3><p>Uma anã marrom é uma hipótese a testar se a fotometria calibrada e a forma do espectro forem compatíveis. Procure um padrão de absorção e compare com espectros de referência. <a href="https://www.jpl.nasa.gov/news/nasas-spherex-telescope-sees-menagerie-of-brown-dwarfs/">Exemplos do JPL</a></p></div>`:`<div class="hyp"><h3>Fonte fraca ou artefato?</h3><p>Confira se o pico é separado de fontes vizinhas e reaparece em exposições independentes. Depois, procure correspondência em AllWISE ou 2MASS.</p></div>`;
- byId('overview').innerHTML=`<div class="hero"><h2>${both?'Sinal nos dois telescópios':'Sinal a revisar no SPHEREx'}</h2><p>${r.channels.length} canais com pico · ${fmt(r.dist_gaia_arcsec,1)}″ até a fonte Gaia mais próxima</p><p>${first}</p><details class="evidence"><summary>Por que foi sinalizado</summary><p>${rationale} Os picos usados passaram pelo filtro de halos.</p></details></div><details class="evidence"><summary>Onde o sinal aparece e o que pode ser</summary><div class="bands">${bars}</div><p>WISE W1: ${w1?'pico registrado':'sem pico'} · W2: ${w2?'pico registrado':'sem pico'}</p><h2 style="margin:16px 0 7px">O que pode ser</h2>${hypotheses}<p class="caption">As barras contam canais com picos próximos. Para distinguir essas hipóteses, precisamos medir o fluxo por faixa e sua incerteza.</p></details>`;
+  ?t('A triagem exigiu picos nas bandas WISE W1 e W2 e em pelo menos três canais SPHEREx, além de distância superior a 5″ da fonte Gaia mais próxima.')
+  :t('A triagem exigiu picos em pelo menos oito canais SPHEREx, distribuídos por pelo menos 0,35 µm, e distância superior a 8″ da fonte Gaia mais próxima.');
+ const first=both?t('Picos em SPHEREx e nas duas bandas WISE dão motivo para conferir uma possível fonte real nos arquivos originais.'):t('O sinal merece revisão nos quadros originais. Artefatos e fontes sobrepostas também podem gerar picos em vários canais.');
+ const hypotheses=both?t`<div class="hyp"><h3>Fonte fraca na luz visível</h3><p>Uma estrela com poeira na linha de visão ou uma galáxia compacta são possibilidades. Cruze com AllWISE e 2MASS e verifique se a fonte parece pontual ou estendida.</p></div><div class="hyp"><h3>Objeto frio</h3><p>Uma anã marrom é uma hipótese a testar se a fotometria calibrada e a forma do espectro forem compatíveis. Procure um padrão de absorção e compare com espectros de referência. <a href="https://www.jpl.nasa.gov/news/nasas-spherex-telescope-sees-menagerie-of-brown-dwarfs/">Exemplos do JPL</a></p></div>`:t`<div class="hyp"><h3>Fonte fraca ou artefato?</h3><p>Confira se o pico é separado de fontes vizinhas e reaparece em exposições independentes. Depois, procure correspondência em AllWISE ou 2MASS.</p></div>`;
+ byId('overview').innerHTML=t`<div class="hero"><h2>${both?t('Sinal nos dois telescópios'):t('Sinal a revisar no SPHEREx')}</h2><p>${r.channels.length} canais com pico · ${fmt(r.dist_gaia_arcsec,1)}″ até a fonte Gaia mais próxima</p><p>${first}</p><details class="evidence"><summary>Por que foi sinalizado</summary><p>${rationale} Os picos usados passaram pelo filtro de halos.</p></details></div><details class="evidence"><summary>Onde o sinal aparece e o que pode ser</summary><div class="bands">${bars}</div><p>WISE W1: ${w1?t('pico registrado'):t('sem pico')} · W2: ${w2?t('pico registrado'):t('sem pico')}</p><h2 style="margin:16px 0 7px">O que pode ser</h2>${hypotheses}<p class="caption">As barras contam canais com picos próximos. Para distinguir essas hipóteses, precisamos medir o fluxo por faixa e sua incerteza.</p></details>`;
 }
 
 byId('both').onchange=render;byId('sort').onchange=render;render();

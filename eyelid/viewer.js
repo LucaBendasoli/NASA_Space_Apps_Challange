@@ -105,13 +105,13 @@ function initializeExposureViewer(){
   const {signal}=controller;
   const timeout=setTimeout(()=>{
    if(monoRequest!==controller)return;
-   monoStatus='IRSA demorou a responder';
+   monoStatus=t('IRSA demorou a responder');
    monoRequest=undefined;
    controller.abort();
    refresh();
    if(!nearMonoAnchor(anchor,.012))scheduleMonoDetail();
   },45000);
-  monoStatus='buscando exposição original';
+  monoStatus=t('buscando exposição original');
   refresh();
   try{
    const frame=await fetch('api/native-detail?'+query,{signal}).then(readArchive);
@@ -120,10 +120,10 @@ function initializeExposureViewer(){
     monoDetail=frame;
     monoAnchor=anchor;
    }
-   monoStatus=frame?'':'sem exposição disponível';
+   monoStatus=frame?'':t('sem exposição disponível');
   }catch{
    if(signal.aborted)return;
-   monoStatus='consulta ao IRSA indisponível';
+   monoStatus=t('consulta ao IRSA indisponível');
   }finally{
    clearTimeout(timeout);
    if(monoRequest===controller)monoRequest=undefined;
@@ -143,7 +143,7 @@ function initializeExposureViewer(){
   pending.decode().then(()=>{
    if(token!==previewToken)return;
    byId('epoch-preview-image').src=path;
-   byId('epoch-preview-caption').textContent=dayLabel(frame.utc.slice(0,10))+' · recorte SPHEREx';
+   byId('epoch-preview-caption').textContent=dayLabel(frame.utc.slice(0,10))+t(' · recorte SPHEREx');
    epochPreview.hidden=false;
   }).catch(()=>{
    if(token===previewToken)epochPreview.hidden=true;
@@ -183,12 +183,13 @@ function initializeExposureViewer(){
    }));
   }
  };
- const decimals=new Intl.NumberFormat('pt-BR',{minimumFractionDigits:3,maximumFractionDigits:3});
- const channelLabel=c=>'Canal '+c+' · '+decimals.format(data.wavelengths[c-1])+' µm';
- const dayLabel=d=>d.split('-').reverse().join('/');
+ const decimals=new Intl.NumberFormat(locale,{minimumFractionDigits:3,maximumFractionDigits:3});
+ const channelLabel=c=>t('Canal ')+c+' · '+decimals.format(data.wavelengths[c-1])+' µm';
+ const dayFormat = new Intl.DateTimeFormat(locale,{dateStyle:'medium',timeZone:'UTC'});
+ const dayLabel = day=>dayFormat.format(new Date(day+'T00:00:00Z'));
  const numeric=()=>Number(band.value);
  for(let c=1;c<=102;c++){
-  const option=new Option(channelLabel(c)+(available.includes(c)?'':' · sem dados'),c);
+  const option=new Option(channelLabel(c)+(available.includes(c)?'':t(' · sem dados')),c);
   band.add(option);
   if(!available.includes(c))continue;
   const label=document.createElement('label'), input=document.createElement('input');
@@ -238,7 +239,7 @@ function initializeExposureViewer(){
   const {signal}=controller;
   comparisonController=controller;
   comparisonTarget=target;
-  resolutionStatus.textContent=comparisonShown?comparisonShown+' · carregando outra imagem…':'Carregando imagem de comparação…';
+  resolutionStatus.textContent=comparisonShown?comparisonShown+t(' · carregando outra imagem…'):t('Carregando imagem de comparação…');
   try{
    let survey=await aladin.showComparison(target,signal);
    if(!survey&&!signal.aborted&&target==='sdss')survey=await aladin.showComparison('dss',signal);
@@ -248,19 +249,19 @@ function initializeExposureViewer(){
     if(!previous){
      surveyPicker.value='spherex';
      surveyPicker.onchange();
-     if(!colorMode())resolutionStatus.textContent='SPHEREx · imagem de comparação indisponível';
-    }else resolutionStatus.textContent=previous+' · outra imagem indisponível';
+     if(!colorMode())resolutionStatus.textContent=t('SPHEREx · imagem de comparação indisponível');
+    }else resolutionStatus.textContent=previous+t(' · outra imagem indisponível');
     return;
    }
    comparisonShown=survey.label;
-   resolutionStatus.textContent=survey.label+' · grade '+survey.scale+'″/pixel';
-   byId('frame-status').textContent=survey.label+' · mosaico HiPS.';
+   resolutionStatus.textContent=survey.label+t(' · grade ')+survey.scale+'″/pixel';
+   byId('frame-status').textContent=survey.label+t(' · mosaico HiPS.');
    const origin=byId('frame-origin');
    origin.hidden=false;
    origin.href=survey.url+'/properties';
-   origin.textContent='Sobre esta imagem';
+   origin.textContent=t('Sobre esta imagem');
   }catch(error){
-   if(!signal.aborted)resolutionStatus.textContent='Imagem de comparação indisponível';
+   if(!signal.aborted)resolutionStatus.textContent=t('Imagem de comparação indisponível');
   }
  }
  document.addEventListener('atlas-optical-coverage',()=>{if(surveyPicker.value==='optical')updateComparison()});
@@ -277,7 +278,7 @@ function initializeExposureViewer(){
    rgbDetailRequest?.abort();
    rgbGeneration++;
    showEpoch(null);
-   resolutionStatus.textContent='Carregando imagem de comparação…';
+   resolutionStatus.textContent=t('Carregando imagem de comparação…');
    updateComparison();
    return;
   }
@@ -285,7 +286,7 @@ function initializeExposureViewer(){
   comparisonShown=undefined;
   presentedFrame=undefined;
   resolutionStatus.textContent='';
-  byId('frame-origin').textContent='Abrir FITS original';
+  byId('frame-origin').textContent=t('Abrir FITS original');
   byId('frame-origin').hidden=true;
   if(colorMode())renderRGB();
   else{refresh();scheduleMonoDetail();scheduleSearch()}
@@ -297,7 +298,7 @@ function initializeExposureViewer(){
    clearMonoDetail();
    showEpoch(null);
    byId('frame-origin').hidden=true;
-   byId('frame-status').textContent='Falsa cor · três faixas do mosaico SPHEREx DR1, combinadas em vermelho, verde e azul.';
+   byId('frame-status').textContent=t('Falsa cor · três faixas do mosaico SPHEREx DR1, combinadas em vermelho, verde e azul.');
    renderRGB();
   }else{
    rgbGeneration++;
@@ -320,7 +321,7 @@ function initializeExposureViewer(){
   if(!closeZoom()){
    if(rgbDetailKey){
     clearRGBDetail();
-    byId('frame-status').textContent='Falsa cor · mosaico SPHEREx DR1.';
+    byId('frame-status').textContent=t('Falsa cor · mosaico SPHEREx DR1.');
    }
    resolutionStatus.textContent=rgbMosaicLabel;
    return;
@@ -330,8 +331,8 @@ function initializeExposureViewer(){
   if(rgbDetailKey===query)return;
   clearRGBDetail();
   rgbDetailKey=query;
-  resolutionStatus.textContent=rgbMosaicLabel+' · buscando exposições';
-  byId('frame-status').textContent='Falsa cor · mosaico SPHEREx DR1.';
+  resolutionStatus.textContent=rgbMosaicLabel+t(' · buscando exposições');
+  byId('frame-status').textContent=t('Falsa cor · mosaico SPHEREx DR1.');
   rgbTimer=setTimeout(async()=>{
    const controller=new AbortController();
    rgbDetailRequest=controller;
@@ -341,14 +342,14 @@ function initializeExposureViewer(){
     if(signal.aborted)return;
     if(frame&&await aladin.showRGBDetail(frame,signal)){
      const scale=fmt(frame.pixelScale,2);
-     resolutionStatus.textContent='RGB de exposições · '+scale+'″/pixel';
+     resolutionStatus.textContent=t('RGB de exposições · ')+scale+'″/pixel';
      const dates=frame.dates.map(dayLabel);
-     byId('frame-status').textContent=`Exposições SPHEREx · R ${dates[0]} · G ${dates[1]} · B ${dates[2]}`;
+     byId('frame-status').textContent=t`Exposições SPHEREx · R ${dates[0]} · G ${dates[1]} · B ${dates[2]}`;
      return;
     }
-    if(!signal.aborted)resolutionStatus.textContent=rgbMosaicLabel+(frame?' · recorte indisponível':' · sem exposições para as três faixas');
+    if(!signal.aborted)resolutionStatus.textContent=rgbMosaicLabel+(frame?t(' · recorte indisponível'):t(' · sem exposições para as três faixas'));
    }catch{
-    if(!signal.aborted)resolutionStatus.textContent=rgbMosaicLabel+' · exposições indisponíveis';
+    if(!signal.aborted)resolutionStatus.textContent=rgbMosaicLabel+t(' · exposições indisponíveis');
    }
   },420);
  }
@@ -358,16 +359,16 @@ function initializeExposureViewer(){
   rgbChannels=null;
   const generation=++rgbGeneration;
   const colors=rgbSelectors.map(picker=>Number(picker.value));
-  resolutionStatus.textContent='Preparando falsa cor…';
+  resolutionStatus.textContent=t('Preparando falsa cor…');
   const ready=await aladin.showRGB(colors);
   if(generation!==rgbGeneration||!colorMode())return;
   if(!ready){
-   resolutionStatus.textContent='Composição indisponível. A última imagem continua visível.';
+   resolutionStatus.textContent=t('Composição indisponível. A última imagem continua visível.');
    return;
   }
   rgbChannels=colors;
-  rgbMosaicLabel=`Falsa cor · R ${colors[0]} · G ${colors[1]} · B ${colors[2]} · mosaico 12,9″/pixel`;
-  byId('frame-status').textContent='Falsa cor · três faixas do mosaico SPHEREx DR1, combinadas em vermelho, verde e azul.';
+  rgbMosaicLabel=t`Falsa cor · R ${colors[0]} · G ${colors[1]} · B ${colors[2]} · mosaico 12,9″/pixel`;
+  byId('frame-status').textContent=t('Falsa cor · três faixas do mosaico SPHEREx DR1, combinadas em vermelho, verde e azul.');
   scheduleRGBDetail();
  }
  function scheduleSearch(){
@@ -390,12 +391,12 @@ function initializeExposureViewer(){
    }else if(gaiaKey){
     gaiaRequest=new AbortController();
     const signal=gaiaRequest.signal;
-    byId('gaia-status').textContent='Consultando Gaia DR3…';
+    byId('gaia-status').textContent=t('Consultando Gaia DR3…');
     fetch('api/gaia?'+gaiaKey,{signal}).then(readArchive).then(sources=>{
      if(signal.aborted)return;
      rememberGaiaField(gaiaKey,sources);
      showGaiaCount(sources);
-    }).catch(()=>{if(!signal.aborted){lastGaia='';byId('gaia-status').textContent='Consulta Gaia indisponível.'}});
+    }).catch(()=>{if(!signal.aborted){lastGaia='';byId('gaia-status').textContent=t('Consulta Gaia indisponível.')}});
    }else byId('gaia-status').textContent='';
   }
   if(comparing()||colorMode())return;
@@ -422,7 +423,7 @@ function initializeExposureViewer(){
   }
   remoteRequest=new AbortController();
   const signal=remoteRequest.signal;
-  status.textContent='Consultando exposições e calibrando os canais no IRSA…';
+  status.textContent=t('Consultando exposições e calibrando os canais no IRSA…');
   try{
    const result=await fetch((tiledView()?'api/temporal-tiles?':'api/exposures?')+key,{signal}).then(readArchive);
    if(signal.aborted||searchKey()!==key)return;
@@ -432,9 +433,9 @@ function initializeExposureViewer(){
    archiveStatus='';
    resetDates();
    refresh();
-   status.textContent=[viewport.size*1.2>20?'Histórico limitado ao campo central de até 20°.':'',
-    result.partial?'Cobertura parcial. Algumas exposições do IRSA estão indisponíveis.':
-    result.failures?'Exposições do IRSA indisponíveis: '+result.failures+'.':''].filter(Boolean).join(' ');
+   status.textContent=[viewport.size*1.2>20?t('Histórico limitado ao campo central de até 20°.'):'',
+    result.partial?t('Cobertura parcial. Algumas exposições do IRSA estão indisponíveis.'):
+    result.failures?t('Exposições do IRSA indisponíveis: ')+result.failures+'.':''].filter(Boolean).join(' ');
    if(resumeDates&&chronologicalLoop().length>=2){resumeDates=false;toggle('date')}
    else resumeDates=false;
   }catch(error){
@@ -442,7 +443,7 @@ function initializeExposureViewer(){
    lastSearch='';
    archiveStatus='error';
    refresh();
-   status.textContent='Consulta IRSA indisponível. Mova o mapa ou troque de canal para tentar novamente.';
+   status.textContent=t('Consulta IRSA indisponível. Mova o mapa ou troque de canal para tentar novamente.');
   }
  }
  async function readArchive(response){
@@ -457,7 +458,7 @@ function initializeExposureViewer(){
   if(playbackView&&(running==='date'?searchKey():queryFor(viewport).toString())!==playbackView){
    resumeDates=running==='date';
    stop();
-   if(resumeDates)playlistStatus.textContent='Preparando as datas da nova área…';
+   if(resumeDates)playlistStatus.textContent=t('Preparando as datas da nova área…');
   }
   if(!running){
    scheduleMonoDetail();
@@ -482,23 +483,23 @@ function initializeExposureViewer(){
   syncSpectrumChannel(c);
   byId('sky').classList.toggle('no-frame',!path);
   if(path){
-   img.src=base+path;img.alt='Imagem SPHEREx · '+channelLabel(c);img.hidden=false;
+   img.src=base+path;img.alt=t('Imagem SPHEREx · ')+channelLabel(c);img.hidden=false;
   }else{
    img.removeAttribute('src');img.hidden=true;
   }
   const display=frame??native;
   const displayedChannel=native?.channel??(!day&&c===51?50:!day&&c===52?53:c);
-  const bandLabel=displayedChannel===c?'':` · canal ${displayedChannel} (pedido ${c})`;
+  const bandLabel=displayedChannel===c?'':t` · canal ${displayedChannel} (pedido ${c})`;
   const epoch=display?.utc ?? (day ? day+'T00:00:00Z' : null);
   const imagePath=datedPath(display);
   if(!display||!aladinActive)showEpoch(epoch);
-  const label=native?`Exposição SPHEREx · ${dayLabel(native.utc.slice(0,10))}${native.pixelScale?' · '+decimals.format(native.pixelScale)+'″/pixel':''}${bandLabel}`:
-   !day?'Mosaico SPHEREx'+(viewport?.size<=.25?' · 12,9″/pixel':'')+bandLabel+
-    (nativeMode()&&monoStatus?' · '+monoStatus:''):frame?`SPHEREx · ${dayLabel(day)} · canal ${c}${frame.source==='local'?' · acervo local':''}${frame.tiles?' · '+frame.tiles.length+' blocos':frame.expanded?' · recorte alinhado · '+decimals.format(frame.pixelScale)+'″/pixel':''}`:'';
+  const label=native?t`Exposição SPHEREx · ${dayLabel(native.utc.slice(0,10))}${native.pixelScale?' · '+decimals.format(native.pixelScale)+'″/pixel':''}${bandLabel}`:
+   !day?t('Mosaico SPHEREx')+(viewport?.size<=.25?t(' · 12,9″/pixel'):'')+bandLabel+
+    (nativeMode()&&monoStatus?' · '+monoStatus:''):frame?t`SPHEREx · ${dayLabel(day)} · canal ${c}${frame.source==='local'?t(' · acervo local'):''}${frame.tiles?' · '+frame.tiles.length+t(' blocos'):frame.expanded?t(' · recorte alinhado · ')+decimals.format(frame.pixelScale)+'″/pixel':''}`:'';
   if(presentedFrame?.imagePath!==imagePath||presentedFrame?.label!==label){
    presentedFrame={imagePath,label};
    if(!display)resolutionStatus.textContent=label;
-   else if(frame)resolutionStatus.textContent='Carregando exposição · '+dayLabel(day);
+   else if(frame)resolutionStatus.textContent=t('Carregando exposição · ')+dayLabel(day);
   }
   const wideExposure=Boolean(frame&&!frame.tiles&&viewport?.size>.75);
   const focus=byId('exposure-focus');
@@ -508,7 +509,7 @@ function initializeExposureViewer(){
   document.dispatchEvent(new CustomEvent('atlas-frame',{detail:{datedPath:imagePath,channel:displayedChannel,rendered:success=>{
    if(!display||presentedFrame!==presentation)return;
    if(success){showEpoch(epoch);if(wideExposure)updateEpochPreview(frame)}
-   resolutionStatus.textContent=success?label:'Exposição original indisponível';
+   resolutionStatus.textContent=success?label:t('Exposição original indisponível');
    if(success&&native)byId('frame-status').textContent=label;
   }}}));
   const dateCount=chronologicalLoop().length;
@@ -518,28 +519,28 @@ function initializeExposureViewer(){
   }
   const alternative=[...counts].filter(([channel,count])=>channel!==c&&count>=2)
    .sort(([a],[b])=>Math.abs(a-c)-Math.abs(b-c))[0]?.[0];
-  byId('date-status').textContent=frame?.tiles?'Áreas sem cobertura na data mostram o mosaico de fundo.':wideExposure?'A data se aplica ao recorte marcado. O restante mostra o mosaico.':
+  byId('date-status').textContent=frame?.tiles?t('Áreas sem cobertura na data mostram o mosaico de fundo.'):wideExposure?t('A data se aplica ao recorte marcado. O restante mostra o mosaico.'):
    day||!viewport||archiveStatus||dateCount>=2?'':[
-   dateCount===1?'Uma data confirmada neste canal.':'Nenhuma data confirmada neste canal.',
-   alternative?'O canal '+alternative+' tem datas para comparar.':'Experimente outra faixa.'
+   dateCount===1?t('Uma data confirmada neste canal.'):t('Nenhuma data confirmada neste canal.'),
+   alternative?t('O canal ')+alternative+t(' tem datas para comparar.'):t('Experimente outra faixa.')
   ].join(' ');
   const source=byId('frame-origin');
   source.hidden=!display;
-  if(display){source.href=display.url;source.textContent='Abrir FITS original'}
+  if(display){source.href=display.url;source.textContent=t('Abrir FITS original')}
   const status=byId('frame-status');
-  if(loadError)status.textContent='Imagens locais indisponíveis. Recarregue para tentar novamente.';
-  else if(!available.includes(c))status.textContent='O canal '+c+' não tem dados no SPHEREx DR1.';
-  else if(frame)status.textContent=dayLabel(day)+' às '+frame.utc.slice(11,19)+' UTC · '+decimals.format(frame.wave)+' µm no centro do campo. O canal nominal é '+c+'.';
-  else if(day)status.textContent='Sem exposição neste canal para '+dayLabel(day)+'. Selecione um canal disponível nessa data.';
-  else status.textContent='Mosaico SPHEREx DR1 · observações combinadas.'+(viewport&&date.length===1?' Nenhuma data confirmada para este canal.':'');
+  if(loadError)status.textContent=t('Imagens locais indisponíveis. Recarregue para tentar novamente.');
+  else if(!available.includes(c))status.textContent=t('O canal ')+c+t(' não tem dados no SPHEREx DR1.');
+  else if(frame)status.textContent=dayLabel(day)+t(' às ')+frame.utc.slice(11,19)+' UTC · '+decimals.format(frame.wave)+t(' µm no centro do campo. O canal nominal é ')+c+'.';
+  else if(day)status.textContent=t('Sem exposição neste canal para ')+dayLabel(day)+t('. Selecione um canal disponível nessa data.');
+  else status.textContent=t('Mosaico SPHEREx DR1 · observações combinadas.')+(viewport&&date.length===1?t(' Nenhuma data confirmada para este canal.'):'');
   for(const opt of band.options){
    const k=Number(opt.value);
-   opt.textContent=channelLabel(k)+(!available.includes(k)?' · sem dados':day&&!dates()[day]?.[k]?' · indisponível nesta data':'');
+   opt.textContent=channelLabel(k)+(!available.includes(k)?t(' · sem dados'):day&&!dates()[day]?.[k]?t(' · indisponível nesta data'):'');
   }
   timeButton.disabled=dateCount<2;
-  timeButton.title=timeButton.disabled?'Este canal tem menos de duas datas disponíveis':'Reproduzir datas mantendo o canal';
+  timeButton.title=timeButton.disabled?t('Este canal tem menos de duas datas disponíveis'):t('Reproduzir datas mantendo o canal');
   bandButton.disabled=spectralLoop().length<2;
-  byId('playlist-summary').textContent='Selecionar canais do loop · '+chosen.size+' selecionados';
+  byId('playlist-summary').textContent=t('Selecionar canais do loop · ')+chosen.size+t(' selecionados');
   if((running==='date'&&timeButton.disabled)||(running==='band'&&bandButton.disabled))stop();
  }
  function stop(){
@@ -547,7 +548,7 @@ function initializeExposureViewer(){
   playbackView=null;
   clearTimeout(timer);timer=null;running='';
   playlistStatus.textContent='';
-  timeButton.textContent='▶ Datas';bandButton.textContent='▶ Canais';
+  timeButton.textContent=t('▶ Datas');bandButton.textContent=t('▶ Canais');
   timeButton.setAttribute('aria-pressed','false');bandButton.setAttribute('aria-pressed','false');
  }
  async function advance(axis,values,signal,notBefore=0){
@@ -582,7 +583,7 @@ function initializeExposureViewer(){
   }else{
    urls=values.map(c=>base+collection.mosaics[c]);
   }
-  if(!urls?.length)throw Error('Sem blocos do mapa');
+  if(!urls?.length)throw Error(t('Sem blocos do mapa'));
   let cached=new Set();
   if(aladinActive&&window.caches){
    try{
@@ -633,8 +634,8 @@ function initializeExposureViewer(){
   if(values.length<2){stop();return}
   if(axis==='band'){
    if(!date.value)refresh();
-   button.textContent='Cancelar preparo';
-   playlistStatus.textContent='Preparando imagens dos canais…';
+   button.textContent=t('Cancelar preparo');
+   playlistStatus.textContent=t('Preparando imagens dos canais…');
    clearTimeout(searchTimer);
    playbackView=viewport&&queryFor(viewport).toString();
    preparation=new AbortController();
@@ -648,11 +649,11 @@ function initializeExposureViewer(){
     let message;
     if(state.done===state.total&&!buffering){
      message=state.unavailable.size
-      ?state.ready.size+' canais preparados · '+state.unavailable.size+' indisponíveis.'
-      :state.ready.size+' canais preparados para esta vista.';
+      ?state.ready.size+t(' canais preparados · ')+state.unavailable.size+t(' indisponíveis.')
+      :state.ready.size+t(' canais preparados para esta vista.');
     }else{
-     message=(buffering?'Aguardando o próximo canal':timer===null?'Preparando imagens':'Baixando próximos canais')+
-      ' · '+percent+'% · '+state.ready.size+' de '+values.length+' canais';
+     message=(buffering?t('Aguardando o próximo canal'):timer===null?t('Preparando imagens'):t('Baixando próximos canais'))+
+      ' · '+percent+'% · '+state.ready.size+t(' de ')+values.length+t(' canais');
     }
     if(playlistStatus.textContent!==message)playlistStatus.textContent=message;
    }
@@ -670,7 +671,7 @@ function initializeExposureViewer(){
      if(!success){state.unavailable.add(following);state.ready.delete(following)}
      if(state.done===state.total&&state.ready.size<2){
       stop();
-      playlistStatus.textContent='Menos de dois canais puderam ser exibidos.';
+      playlistStatus.textContent=t('Menos de dois canais puderam ser exibidos.');
       return;
      }
     }
@@ -683,24 +684,24 @@ function initializeExposureViewer(){
      const finished=state.done===state.total;
      if(finished&&state.ready.size<2){
       stop();
-      playlistStatus.textContent='Menos de dois canais puderam ser preparados. Tente novamente.';
+      playlistStatus.textContent=t('Menos de dois canais puderam ser preparados. Tente novamente.');
       return;
      }
      const available=ordered.filter(channel=>!state.unavailable.has(channel));
      const buffer=Math.min(2,available.length);
      if(timer===null&&buffer>=2&&available.slice(0,buffer).every(channel=>state.ready.has(channel))){
-      button.textContent='❚❚ Pausar';
+      button.textContent=t('❚❚ Pausar');
       timer=setInterval(tick,650);
       tick();
      }
      updateStatus();
     });
    }catch(error){
-    if(!signal.aborted){stop();playlistStatus.textContent='O preparo falhou. Aguarde o mapa carregar e tente novamente.';}
+    if(!signal.aborted){stop();playlistStatus.textContent=t('O preparo falhou. Aguarde o mapa carregar e tente novamente.');}
    }
    return;
   }
-  button.textContent='❚❚ Pausar';
+  button.textContent=t('❚❚ Pausar');
   clearTimeout(searchTimer);
   playbackView=searchKey();
   preparation=new AbortController();
@@ -709,13 +710,13 @@ function initializeExposureViewer(){
   async function tick(notBefore=0){
    if(signal.aborted)return;
    const following=playable[(playable.indexOf(date.value)+1)%playable.length];
-   playlistStatus.textContent='Preparando '+dayLabel(following)+'…';
+   playlistStatus.textContent=t('Preparando ')+dayLabel(following)+'…';
    const success=await advance('date',playable,signal,notBefore);
    if(signal.aborted)return;
    if(!success)playable=playable.filter(day=>day!==following);
    if(playable.length<2){
     stop();
-    playlistStatus.textContent='Menos de duas datas puderam ser exibidas.';
+    playlistStatus.textContent=t('Menos de duas datas puderam ser exibidas.');
     return;
    }
    playlistStatus.textContent='';
@@ -764,8 +765,8 @@ function syncAladinPoints(){
 const gaiaFields=new Map();
 let remoteGaia=[];
 function showGaiaCount(sources){
- byId('gaia-status').textContent=sources.length===500?'Gaia DR3 · 500 fontes mais brilhantes neste campo.':
-  'Gaia DR3 · '+sources.length+' fontes retornadas.';
+ byId('gaia-status').textContent=sources.length===500?t('Gaia DR3 · 500 fontes mais brilhantes neste campo.'):
+  'Gaia DR3 · '+sources.length+t(' fontes retornadas.');
 }
 function rememberGaiaField(key,sources){
  gaiaFields.delete(key);
@@ -794,7 +795,7 @@ async function openSkyViewer(){
  try{
   const {createAladin}=await import('./aladin-view.js');
   aladin=await createAladin(aladinHost,data.center,aladinFrame.channel,select,()=>{
-   navigationStatus.textContent='A exposição datada não pôde ser aberta. Mantivemos a última imagem disponível.';
+   navigationStatus.textContent=t('A exposição datada não pôde ser aberta. Mantivemos a última imagem disponível.');
   },area=>{
    document.dispatchEvent(new CustomEvent('atlas-coverage',{detail:area}));
   },openingTarget??data.center);
@@ -802,7 +803,7 @@ async function openSkyViewer(){
   if(openingTarget&&sharedFov>=.00001&&sharedFov<=360)aladin.setFieldOfView(sharedFov);
   aladinActive=true;
   document.dispatchEvent(new Event('atlas-aladin-ready'));
-  if(navigationStatus.textContent==='Carregando mapa do céu…')navigationStatus.textContent='';
+  if(navigationStatus.textContent===t('Carregando mapa do céu…'))navigationStatus.textContent='';
   syncMarkerOpacity();
   renderScanStatus();
   aladin.show(aladinFrame.channel,aladinFrame.datedPath).then(aladinFrame.rendered);
@@ -811,7 +812,7 @@ async function openSkyViewer(){
   console.warn('Aladin Lite:',error);
   aladinHost.hidden=true;
   byId('sky').classList.remove('aladin-active');
-  navigationStatus.textContent='Mapa interativo indisponível neste navegador. Exibindo o recorte SPHEREx.';
+  navigationStatus.textContent=t('Mapa interativo indisponível neste navegador. Exibindo o recorte SPHEREx.');
  }
 }
 document.addEventListener('atlas-frame',event=>{
@@ -880,18 +881,18 @@ function renderScanStatus(){
  const plan=scanArea.size<=.75?scanPlan(scanArea):[];
  const pending=plan.filter(center=>!hasScan(center));
  aladin?.scanFootprint(scanJob?.center??null);
- scanButton.textContent=scanJob?'Parar após este recorte':'Analisar área do mapa';
+ scanButton.textContent=scanJob?t('Parar após este recorte'):t('Analisar área do mapa');
  scanButton.disabled=scanJob?scanJob.stopping:loadingScans||!pending.length;
  if(scanJob){
   const {done,total,failed,found,stopping}=scanJob;
-  scanStatus.textContent=(stopping?'Parando após o recorte atual':'Analisando área')+' · '+
-   done+' de '+total+' recortes · '+found+' novos candidatos'+(failed?' · '+failed+' indisponíveis':'');
- }else if(loadingScans)scanStatus.textContent='Carregando áreas já analisadas…';
+  scanStatus.textContent=(stopping?t('Parando após o recorte atual'):t('Analisando área'))+' · '+
+   done+t(' de ')+total+t(' recortes · ')+found+t(' novos candidatos')+(failed?' · '+failed+t(' indisponíveis'):'');
+ }else if(loadingScans)scanStatus.textContent=t('Carregando áreas já analisadas…');
  else if(scanError)scanStatus.textContent=scanError;
  else if(scanSummary)scanStatus.textContent=scanSummary;
- else if(!plan.length)scanStatus.textContent='Aproxime o zoom para analisar o campo.';
- else if(!pending.length)scanStatus.textContent='Área já analisada. Os candidatos salvos aparecem no mapa.';
- else scanStatus.textContent=pending.length+' recortes de 6′ × 6′ para analisar. Os resultados aparecem conforme ficam prontos.';
+ else if(!plan.length)scanStatus.textContent=t('Aproxime o zoom para analisar o campo.');
+ else if(!pending.length)scanStatus.textContent=t('Área já analisada. Os candidatos salvos aparecem no mapa.');
+ else scanStatus.textContent=pending.length+t(' recortes de 6′ × 6′ para analisar. Os resultados aparecem conforme ficam prontos.');
 }
 document.addEventListener('atlas-coverage',event=>{
  scanArea=event.detail;
@@ -906,7 +907,7 @@ fetch('api/scans',{cache:'no-store'}).then(response=>{
  for(const field of fields)registerField(field,field.key);
  render();
 }).catch(()=>{
- scanError='Não foi possível carregar as análises salvas.';
+ scanError=t('Não foi possível carregar as análises salvas.');
 }).finally(()=>{
  loadingScans=false;
  renderScanStatus();
@@ -944,9 +945,9 @@ scanButton.onclick=async()=>{
   }
  }finally{
   scanJob=undefined;
-  scanSummary=(job.stopping?'Análise interrompida':'Análise concluída')+' · '+
-   (job.done-job.failed)+' de '+job.total+' recortes concluídos · '+job.found+' novos candidatos'+
-   (job.failed?' · '+job.failed+' recortes indisponíveis. Você pode tentar novamente.':'.');
+  scanSummary=(job.stopping?t('Análise interrompida'):t('Análise concluída'))+' · '+
+   (job.done-job.failed)+t(' de ')+job.total+t(' recortes concluídos · ')+job.found+t(' novos candidatos')+
+   (job.failed?' · '+job.failed+t(' recortes indisponíveis. Você pode tentar novamente.'):'.');
   renderScanStatus();
  }
 };

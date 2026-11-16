@@ -12,7 +12,7 @@ for (const [screen, action] of [['eyelid-login','login'],['eyelid-register','reg
  const judge = document.createElement('button');
  judge.type = 'button';
  judge.className = 'judge-login';
- judge.textContent = 'Login de jurados';
+ judge.textContent = root.lang === 'en' ? 'Judges’ login' : 'Login de jurados';
  form.after(judge);
  const status = document.createElement('p');
  status.className = 'status';
