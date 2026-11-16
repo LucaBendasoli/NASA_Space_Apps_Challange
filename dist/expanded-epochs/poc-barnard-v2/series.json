@@ -1,0 +1,37 @@
+{
+  "ra": 269.44631,
+  "dec": 4.76961,
+  "channel": 21,
+  "width": 73,
+  "scale": 6.15,
+  "cuts": [
+    0.33442710638046264,
+    38.559703735351505
+  ],
+  "frames": {
+    "2025-08-24": {
+      "channel": 21,
+      "wave": 1.181454666831056,
+      "width": 0.028597938462196604,
+      "pixelScale": 6.15,
+      "utc": "2025-08-24 11:50:46.077",
+      "source": "local",
+      "fits": "/expanded-epochs/poc-barnard-v2/2025-08-24.fits",
+      "preview": "/expanded-epochs/poc-barnard-v2/2025-08-24.png",
+      "url": "/api/local-original/daab3527e73038f36f7932f355f45af8",
+      "expanded": true
+    },
+    "2026-03-15": {
+      "channel": 21,
+      "wave": 1.1969798165547672,
+      "width": 0.028764006610839256,
+      "pixelScale": 6.15,
+      "utc": "2026-03-15 02:23:22.286",
+      "source": "local",
+      "fits": "/expanded-epochs/poc-barnard-v2/2026-03-15.fits",
+      "preview": "/expanded-epochs/poc-barnard-v2/2026-03-15.png",
+      "url": "/api/local-original/cf87682b328659017b5e694c72c739f2",
+      "expanded": true
+    }
+  }
+}

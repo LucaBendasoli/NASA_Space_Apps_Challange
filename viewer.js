@@ -5,6 +5,8 @@ const openingRa=Number(openingQuery.get('ra')),openingDec=Number(openingQuery.ge
 const openingTarget=openingQuery.has('ra')&&openingQuery.has('dec')&&
  Number.isFinite(openingRa)&&Number.isFinite(openingDec)&&openingRa>=0&&openingRa<=360&&Math.abs(openingDec)<=90?
  [openingRa,openingDec]:null;
+const openingPoc=pocTargets.find(target=>target.key===openingQuery.get('poc'));
+let pocField;
 const openingBand=Number(openingQuery.get('canal'));
 const initialBand=Number.isInteger(openingBand)&&openingBand>=1&&openingBand<=102?openingBand:63;
 function queryFor(area) {
@@ -32,6 +34,10 @@ function initializeExposureViewer(){
  let monoAnchor, monoAttempt, monoDetail, monoRequest, monoStatus='';
  let rgbGeneration=0, rgbChannels, rgbMosaicLabel, rgbDetailKey, rgbDetailRequest, rgbTimer;
  const mode=byId('image-mode'), rgbControls=byId('rgb-controls'), surveyPicker=byId('image-source');
+ const nearPoc=()=>openingPoc&&(!viewport||(
+  viewport.size<=.16&&Math.hypot(...offsetFrom(openingPoc.center,viewport.ra,viewport.dec))<=.008
+ ));
+ const preparedDates=()=>nearPoc()&&pocField&&numeric()===pocField.channel?pocField.dates:null;
  const comparing=()=>surveyPicker.value!=='spherex';
  let comparisonController, comparisonTarget, comparisonShown;
  const rgbSelectors=['red','green','blue'].map(color=>byId('rgb-'+color));
@@ -82,7 +88,7 @@ function initializeExposureViewer(){
   monoStatus='';
  }
  async function scheduleMonoDetail(){
-  if(comparing())return;
+  if(comparing()||preparedDates())return;
   if(!nativeMode()){
    if(monoAttempt||monoAnchor){clearMonoDetail();refresh()}
    return;
@@ -152,8 +158,8 @@ function initializeExposureViewer(){
  function showEpoch(epoch){
   if(epoch!==renderedEpoch){renderedEpoch=epoch;updateGaiaEpoch(epoch)}
  }
- const dates=()=>viewport&&datesKey===searchKey()&&Object.keys(remoteDates).length?remoteDates:
-  !viewport||viewport.nearPrepared?collection.dates:{};
+ const dates=()=>preparedDates()??(viewport&&datesKey===searchKey()&&Object.keys(remoteDates).length?remoteDates:
+  !viewport||viewport.nearPrepared?collection.dates:{});
  const datedPath=frame=>frame?.grid??frame?.fits??(frame?.file?base+frame.file:null);
  const resetDates=()=>{
   date.length=1;
@@ -380,7 +386,8 @@ function initializeExposureViewer(){
   const status=byId('navigation-status');
   const query=queryFor(viewport);
   const key=available.includes(numeric())?searchKey():'';
-  const gaiaKey=!viewport.prepared&&viewport.size<=0.75&&byId('gaia-toggle').checked?query.toString():'';
+  const localGaia=nearPoc()&&pocField?.gaia;
+  const gaiaKey=(!nearPoc()||(pocField&&!localGaia))&&!viewport.prepared&&viewport.size<=0.75&&byId('gaia-toggle').checked?query.toString():'';
   if(gaiaKey!==lastGaia){
    lastGaia=gaiaKey;
    gaiaRequest?.abort();
@@ -399,7 +406,16 @@ function initializeExposureViewer(){
     }).catch(()=>{if(!signal.aborted){lastGaia='';byId('gaia-status').textContent=t('Consulta Gaia indisponível.')}});
    }else byId('gaia-status').textContent='';
   }
+  if(localGaia)byId('gaia-status').textContent=t`Catálogo local · ${localGaia.length} fontes Gaia DR3`;
   if(comparing()||colorMode())return;
+  if(nearPoc()&&(!pocField||preparedDates())){
+   if(lastSearch!=='poc'){
+    remoteRequest?.abort();
+    lastSearch='poc';
+    if(preparedDates()){status.textContent='';resetDates();refresh()}
+   }
+   return;
+  }
   if(key===lastSearch){
    resetDates();
    if(!key){
@@ -740,6 +756,30 @@ function initializeExposureViewer(){
  byId('all-channels').onclick=()=>{if(running==='band')stop();for(const [c,i] of controls){chosen.add(c);i.checked=true}refresh()};
  byId('no-channels').onclick=()=>{if(running==='band')stop();for(const [c,i] of controls){chosen.delete(c);i.checked=false}refresh()};
 
+ if(openingPoc){
+  fetch('./poc-fields/'+openingPoc.key+'.json').then(readArchive).then(field=>{
+   pocField=field;
+   lastSearch='';
+   if(field.scan){
+    registerField(field.scan,field.scan.key,'POC-');
+    if(field.scan.partial){
+     const coverage=byId('poc-coverage');
+     coverage.textContent=t('Cobertura parcial. A triagem usa apenas os pixels com dados.');
+     coverage.hidden=false;
+    }
+   }
+   if(field.gaia)rememberGaiaField('poc-'+openingPoc.key,field.gaia);
+   if(!requestedDate&&preparedDates())requestedDate=Object.keys(preparedDates()).sort()[0]??'';
+   resetDates();
+   refresh();
+   render();
+   scheduleSearch();
+  }).catch(()=>{
+   pocField={};
+   scheduleSearch();
+  });
+ }
+
  fetch(base+'index.json').then(r=>{if(!r.ok)throw Error(r.status);return r.json()}).then(result=>{
   collection=result;
   resetDates();
@@ -748,16 +788,35 @@ function initializeExposureViewer(){
 }
 initializeExposureViewer();
 
+const pocObject=openingPoc&&{
+ id:'poc-'+openingPoc.key,poc:openingPoc,
+ ra:openingPoc.reference[0],dec:openingPoc.reference[1],epoch:openingPoc.reference[2],
+ pmra:openingPoc.reference[3],pmdec:openingPoc.reference[4]
+};
+if(pocObject){
+ gaiaById.set(pocObject.id,pocObject);
+ const targetButton=byId('open-poc-object');
+ targetButton.hidden=false;
+ targetButton.textContent=openingPoc.name;
+ targetButton.onclick=()=>{
+  if(aladinActive)aladin.focus(...gaiaPosition(pocObject));
+  select(pocObject.id);
+ };
+}
 const aladinHost=byId('aladin-sky');
 let aladin, aladinFrame={channel:initialBand,datedPath:null};
 let aladinActive=false;
 
 function syncAladinPoints(){
  if(!aladinActive||!aladin)return;
- const stars=byId('gaia-toggle').checked?[...data.gaia,...remoteGaia].map(source=>{
+ const stars=byId('gaia-toggle').checked?[...data.gaia,...remoteGaia].filter(source=>source.id!==openingPoc?.catalog).map(source=>{
   const [ra,dec]=gaiaPosition(source);
   return {id:source.id,ra,dec};
  }):[];
+ if(pocObject){
+  const [ra,dec]=gaiaPosition(pocObject);
+  stars.push({id:pocObject.id,ra,dec,featured:true});
+ }
  const candidates=(byId('candidate-toggle').checked?rows:[]).filter(row=>row.id===selected||passesCandidateFilter(row))
   .map(row=>({id:row.id,ra:row.ra_icrs_deg,dec:row.dec_icrs_deg}));
  aladin.points(stars,candidates,selected);
@@ -891,6 +950,10 @@ function renderScanStatus(){
  else if(scanError)scanStatus.textContent=scanError;
  else if(scanSummary)scanStatus.textContent=scanSummary;
  else if(!plan.length)scanStatus.textContent=t('Aproxime o zoom para analisar o campo.');
+ else if(pocField?.scan&&scanArea&&Math.hypot(...offsetFrom(pocField.scan.center,scanArea.ra,scanArea.dec))<.01&&!pending.length){
+  const count=pocField.scan.rows.length;
+  scanStatus.textContent=count?t`Área já analisada · ${count} candidatos no recorte.`:t('Sem candidatos no recorte analisado.');
+ }
  else if(!pending.length)scanStatus.textContent=t('Área já analisada. Os candidatos salvos aparecem no mapa.');
  else scanStatus.textContent=pending.length+t(' recortes de 6′ × 6′ para analisar. Os resultados aparecem conforme ficam prontos.');
 }
@@ -904,7 +967,10 @@ fetch('api/scans',{cache:'no-store'}).then(response=>{
  if(!response.ok)throw Error(response.status);
  return response.json();
 }).then(fields=>{
- for(const field of fields)registerField(field,field.key);
+ for(const field of fields){
+  if(openingPoc&&Math.hypot(...offsetFrom(openingPoc.center,...field.center))<.00002)continue;
+  registerField(field,field.key);
+ }
  render();
 }).catch(()=>{
  scanError=t('Não foi possível carregar as análises salvas.');

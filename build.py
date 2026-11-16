@@ -48,7 +48,9 @@ s=s.replace('</style>',"""#sky{background:#05070c} #sky-image{image-rendering:pi
 .playlist label{display:flex;align-items:center;background:#172436;border-radius:4px;font-size:12px}
 #frame-origin{color:var(--blue)} #frame-status{min-height:2.8em}</style>""",1)
 s=s.replace('</style>',(p/'gaia.css').read_text()+'</style>',1)
+targets=json.loads((p/'poc-targets.json').read_text())
 s=localize_markup(s,translations)
+s=s.replace('<script id="payload"', '<script>const pocTargets='+json.dumps(targets,ensure_ascii=False)+'</script><script id="payload"',1)
 s=s.replace('<title', '<script src="./i18n.js"></script><title',1)
 s=s.replace('<script id="payload"', '<script>localizeMarkup()</script><script id="payload"',1)
 (p/'dist'/'i18n.js').write_text('const eyelidTranslations = '+json.dumps(translations,ensure_ascii=False)+';\n'+(p/'i18n.js').read_text())

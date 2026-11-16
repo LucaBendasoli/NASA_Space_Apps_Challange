@@ -382,5 +382,17 @@
   "<div class=\"hyp\"><h3>Fonte fraca na luz visível</h3><p>Uma estrela com poeira na linha de visão ou uma galáxia compacta são possibilidades. Cruze com AllWISE e 2MASS e verifique se a fonte parece pontual ou estendida.</p></div><div class=\"hyp\"><h3>Objeto frio</h3><p>Uma anã marrom é uma hipótese a testar se a fotometria calibrada e a forma do espectro forem compatíveis. Procure um padrão de absorção e compare com espectros de referência. <a href=\"https://www.jpl.nasa.gov/news/nasas-spherex-telescope-sees-menagerie-of-brown-dwarfs/\">Exemplos do JPL</a></p></div>": "<div class=\"hyp\"><h3>Optically faint source</h3><p>Possibilities include a star obscured by dust or a compact galaxy. Crossmatch with AllWISE and 2MASS and check whether the source is point-like or extended.</p></div><div class=\"hyp\"><h3>Cold object</h3><p>A brown dwarf is one possibility if the calibrated photometry and spectral shape agree. Look for an absorption pattern and compare it with reference spectra. <a href=\"https://www.jpl.nasa.gov/news/nasas-spherex-telescope-sees-menagerie-of-brown-dwarfs/\">JPL examples</a></p></div>",
   "<div class=\"hyp\"><h3>Fonte fraca ou artefato?</h3><p>Confira se o pico é separado de fontes vizinhas e reaparece em exposições independentes. Depois, procure correspondência em AllWISE ou 2MASS.</p></div>": "<div class=\"hyp\"><h3>Faint source or artifact?</h3><p>Check whether the peak is distinct from nearby sources and reappears in independent exposures. Then look for an AllWISE or 2MASS match.</p></div>",
   "<div class=\"hero\"><h2>{0}</h2><p>{1} canais com pico · {2}″ até a fonte Gaia mais próxima</p><p>{3}</p><details class=\"evidence\"><summary>Por que foi sinalizado</summary><p>{4} Os picos usados passaram pelo filtro de halos.</p></details></div><details class=\"evidence\"><summary>Onde o sinal aparece e o que pode ser</summary><div class=\"bands\">{5}</div><p>WISE W1: {6} · W2: {7}</p><h2 style=\"margin:16px 0 7px\">O que pode ser</h2>{8}<p class=\"caption\">As barras contam canais com picos próximos. Para distinguir essas hipóteses, precisamos medir o fluxo por faixa e sua incerteza.</p></details>": "<div class=\"hero\"><h2>{0}</h2><p>{1} channels with peaks · {2}″ to the nearest Gaia source</p><p>{3}</p><details class=\"evidence\"><summary>Why this was flagged</summary><p>{4} The peaks passed halo filtering.</p></details></div><details class=\"evidence\"><summary>Where the signal appears</summary><div class=\"bands\">{5}</div><p>WISE W1: {6} · W2: {7}</p><h2 style=\"margin:16px 0 7px\">Possible explanations</h2>{8}<p class=\"caption\">The bars count channels with nearby peaks. Distinguishing these explanations requires measuring flux and its uncertainty in each band.</p></details>",
-  "Concluir": "Done"
+  "Concluir": "Done",
+  "Anã vermelha com movimento próprio rápido": "Red dwarf with high proper motion",
+  "Sistema jovem de estrelas variáveis": "Young variable star system",
+  "Estrela variável do tipo Mira": "Mira variable star",
+  "Alvo da demonstração": "Demo target",
+  "Ficha no SIMBAD": "SIMBAD entry",
+  "Identificação de catálogo": "Catalog identification",
+  "Fonte Gaia no campo": "Gaia source in this field",
+  "Posição estimada pelo movimento próprio do catálogo.": "Position estimated from catalog proper motion.",
+  "Catálogo local · {0} fontes Gaia DR3": "Local catalog · {0} Gaia DR3 sources",
+  "Sem candidatos no recorte analisado.": "No candidates in the analyzed cutout.",
+  "Área já analisada · {0} candidatos no recorte.": "Area analyzed · {0} candidates in the cutout.",
+  "Cobertura parcial. A triagem usa apenas os pixels com dados.": "Partial coverage. Screening only uses pixels with data."
 }

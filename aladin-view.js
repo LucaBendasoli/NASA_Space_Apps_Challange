@@ -40,14 +40,14 @@ export async function createAladin(host, center, channel, onSelect, onError, onC
    const {x, y} = source;
    ctx.beginPath();
    const gaia = source.data.gaia;
-   const radius = gaia ? (selected ? 8 : 3) : (selected ? 9 : 6);
+   const radius = source.data.featured ? 8 : gaia ? (selected ? 8 : 3) : (selected ? 9 : 6);
    ctx.arc(x, y, radius, 0, 2 * Math.PI);
    ctx.lineWidth = gaia && !selected ? 1 : 2;
-   ctx.strokeStyle = gaia
+   ctx.strokeStyle = source.data.featured ? '#ffe4a3' : gaia
     ? (selected ? '#ffe4a3' : '#acd9fa')
     : (selected ? '#ff9ca3' : '#ff525e');
    ctx.save();
-   ctx.globalAlpha=selected?1:gaia?gaiaOpacity:candidateOpacity;
+   ctx.globalAlpha=selected||source.data.featured?1:gaia?gaiaOpacity:candidateOpacity;
    ctx.stroke();
    ctx.restore();
  }

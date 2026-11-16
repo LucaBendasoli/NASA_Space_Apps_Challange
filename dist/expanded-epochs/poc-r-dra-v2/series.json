@@ -1,0 +1,61 @@
+{
+  "ra": 248.16761,
+  "dec": 66.75498,
+  "channel": 3,
+  "width": 55,
+  "scale": 6.16,
+  "cuts": [
+    0.18360012769699097,
+    69.95636535644482
+  ],
+  "frames": {
+    "2025-10-10": {
+      "channel": 3,
+      "wave": 0.7830736820964198,
+      "width": 0.018712253803822815,
+      "pixelScale": 6.16,
+      "utc": "2025-10-10 16:31:17.925",
+      "source": "local",
+      "fits": "/expanded-epochs/poc-r-dra-v2/2025-10-10.fits",
+      "preview": "/expanded-epochs/poc-r-dra-v2/2025-10-10.png",
+      "url": "/api/local-original/87d3730d0f4954a93d2e4dfffc354471",
+      "expanded": true
+    },
+    "2025-10-16": {
+      "channel": 3,
+      "wave": 0.7833776128162621,
+      "width": 0.018728879735751516,
+      "pixelScale": 6.16,
+      "utc": "2025-10-16 02:57:11.711",
+      "source": "local",
+      "fits": "/expanded-epochs/poc-r-dra-v2/2025-10-16.fits",
+      "preview": "/expanded-epochs/poc-r-dra-v2/2025-10-16.png",
+      "url": "/api/local-original/e300b1b271d04930ef8ae4d1eafda700",
+      "expanded": true
+    },
+    "2025-10-17": {
+      "channel": 3,
+      "wave": 0.7808164794060437,
+      "width": 0.01860994234687681,
+      "pixelScale": 6.16,
+      "utc": "2025-10-17 14:44:53.465",
+      "source": "local",
+      "fits": "/expanded-epochs/poc-r-dra-v2/2025-10-17.fits",
+      "preview": "/expanded-epochs/poc-r-dra-v2/2025-10-17.png",
+      "url": "/api/local-original/7d73e796b99f20eda483a5c376814b8c",
+      "expanded": true
+    },
+    "2026-07-26": {
+      "channel": 3,
+      "wave": 0.7845592203195291,
+      "width": 0.01945343178713054,
+      "pixelScale": 6.16,
+      "utc": "2026-07-26 02:24:26.605",
+      "source": "local",
+      "fits": "/expanded-epochs/poc-r-dra-v2/2026-07-26.fits",
+      "preview": "/expanded-epochs/poc-r-dra-v2/2026-07-26.png",
+      "url": "/api/local-original/b3539aad6541d173452a4f690140953e",
+      "expanded": true
+    }
+  }
+}

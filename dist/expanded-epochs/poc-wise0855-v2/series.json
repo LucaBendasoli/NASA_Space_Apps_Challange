@@ -1,0 +1,73 @@
+{
+  "ra": 133.76838,
+  "dec": -7.24281,
+  "channel": 29,
+  "width": 61,
+  "scale": 6.15,
+  "cuts": [
+    0.22885024249553682,
+    3.9400679473877
+  ],
+  "frames": {
+    "2025-11-07": {
+      "channel": 29,
+      "wave": 1.4466404553642944,
+      "width": 0.03538753285646102,
+      "pixelScale": 6.15,
+      "utc": "2025-11-07 20:33:36.172",
+      "source": "local",
+      "fits": "/expanded-epochs/poc-wise0855-v2/2025-11-07.fits",
+      "preview": "/expanded-epochs/poc-wise0855-v2/2025-11-07.png",
+      "url": "/api/local-original/6de3e4bd006d892a1825e1c16c9fface",
+      "expanded": true
+    },
+    "2025-12-13": {
+      "channel": 29,
+      "wave": 1.4464694367881612,
+      "width": 0.03537966480778658,
+      "pixelScale": 6.15,
+      "utc": "2025-12-13 08:50:04.313",
+      "source": "local",
+      "fits": "/expanded-epochs/poc-wise0855-v2/2025-12-13.fits",
+      "preview": "/expanded-epochs/poc-wise0855-v2/2025-12-13.png",
+      "url": "/api/local-original/46dff8657e6be180e5fcbece871a6ea6",
+      "expanded": true
+    },
+    "2026-05-02": {
+      "channel": 29,
+      "wave": 1.4445494750505876,
+      "width": 0.03535817139636442,
+      "pixelScale": 6.15,
+      "utc": "2026-05-02 16:10:03.800",
+      "source": "local",
+      "fits": "/expanded-epochs/poc-wise0855-v2/2026-05-02.fits",
+      "preview": "/expanded-epochs/poc-wise0855-v2/2026-05-02.png",
+      "url": "/api/local-original/b05e4bad357227a0f991a739fad28dad",
+      "expanded": true
+    },
+    "2026-05-03": {
+      "channel": 29,
+      "wave": 1.4391563188319068,
+      "width": 0.035153279504017386,
+      "pixelScale": 6.15,
+      "utc": "2026-05-03 05:12:46.848",
+      "source": "local",
+      "fits": "/expanded-epochs/poc-wise0855-v2/2026-05-03.fits",
+      "preview": "/expanded-epochs/poc-wise0855-v2/2026-05-03.png",
+      "url": "/api/local-original/782f2b7979d98e732c33d41ee07e1776",
+      "expanded": true
+    },
+    "2026-05-11": {
+      "channel": 29,
+      "wave": 1.4445885876568934,
+      "width": 0.03535867900056956,
+      "pixelScale": 6.15,
+      "utc": "2026-05-11 13:36:45.411",
+      "source": "local",
+      "fits": "/expanded-epochs/poc-wise0855-v2/2026-05-11.fits",
+      "preview": "/expanded-epochs/poc-wise0855-v2/2026-05-11.png",
+      "url": "/api/local-original/b7805f8d6e75a75401b2faedcfaac9e2",
+      "expanded": true
+    }
+  }
+}
