@@ -1,21 +1,21 @@
-# Linha de apoio com traçado animado
+# Animated guide line
 
-As bandas agora são conectadas por uma linha reta de apoio visual. Marcadores discretos continuam disponíveis para tooltip e teclado; barras de incerteza, valores, unidades e posições numéricas foram preservados. A linha não representa um espectro contínuo medido e não usa suavização.
+Straight guide lines connect the bands. Individual markers still support tooltips and keyboard access, and uncertainty bars, values, units, and numerical positions are preserved. The line represents a visual connection between discrete measurements and uses no smoothing.
 
-`chart-trace.js` ordena as bandas e separa sequências quando há valores ausentes ou não finitos. Só sequências de pelo menos duas medições geram caminho; uma medição isolada continua visível sem linha inventada. Bandas inexistentes no payload não são criadas nem inferidas pelo frontend.
+`chart-trace.js` sorts bands and breaks the line at missing or non-finite values. Only runs of at least two measurements produce a path. Isolated measurements remain visible on their own. The frontend neither creates nor infers bands missing from the payload.
 
-Cada caminho SVG usa `pathLength=1`. O GSAP revela o traço por `strokeDashoffset`, com aproximadamente 460 ms de desenho após uma breve sobreposição de 40 ms com os eixos. Quando existem vários segmentos, o tempo é distribuído proporcionalmente ao seu comprimento e a ordem segue os comprimentos de onda. Nenhum valor ou posição científica é animado.
+Each SVG path uses `pathLength=1`. GSAP reveals the line through `strokeDashoffset`, drawing it in about 460 ms with a brief 40 ms overlap with the axes. When there are several segments, drawing time is proportional to their length, and segments follow wavelength order. Measurement values and positions stay fixed throughout the animation.
 
-O traçado reinicia na abertura, reabertura e troca de astro, inclusive com cache. A estrutura do painel permanece estável. Fechar ou trocar rapidamente cancela a timeline anterior. Tema, redimensionamento e emissões repetidas não reiniciam a entrada. Movimento reduzido e ausência de GSAP exibem a linha completa imediatamente.
+The line replays when the panel opens, reopens, or changes objects, including on cache hits. The panel structure stays stable. Closing the panel or quickly switching objects cancels the previous timeline. Theme changes, resizes, and repeated state emissions leave the animation state intact. Reduced motion and unavailable GSAP both show the complete line immediately.
 
-Dois detalhes de implementação asseguram suavidade: `autoRound:false` evita arredondar deslocamentos normalizados de 1 a 0 para pixels inteiros; o caminho não usa `vector-effect:non-scaling-stroke`, evitando discrepância entre o dash normalizado e a escala responsiva. O tamanho da área interativa dos marcadores foi conservado apesar da redução visual deles.
+Two implementation details keep the animation smooth. `autoRound:false` prevents normalized offsets from 1 to 0 from being rounded to whole pixels. Omitting `vector-effect:non-scaling-stroke` keeps the normalized dash consistent with responsive scaling. The marker hit area stayed the same when the visible marker size was reduced.
 
-## Verificação
+## Validation
 
-- `npm.cmd test`: 38 testes aprovados, incluindo ordenação sem mutação, zero/negativos, interrupção nas ausências, medições isoladas e sequência temporal limitada.
-- `npm.cmd run verify:upstream`: 429/429 arquivos oficiais preservados. `git diff --check` sem erros.
-- Edge com o site e dados explicitamente demonstrativos: abertura, troca A/B, reabertura com geometria idêntica, trocas rápidas, fechamento durante traçado, celular e preferência reduzida foram exercitados. Deslocamentos chegaram ao estado final zero, e a preferência reduzida removeu o dash.
-- A inspeção posterior de início/meio/fim foi realizada no Edge com os módulos reais de gráfico, estado, provedor demo e apresentação carregados numa página isolada. Isso permitiu verificar o desenho sem depender da rede HiPS. No ponto intermediário (200 ms do tween), o deslocamento foi `0.6219`, com somente o trecho inicial desenhado; na troca/reabertura foram observados deslocamentos fracionários (`0.9576` e `0.9693`). Não se pausou a timeline global da aplicação no roteiro final.
-- Capturas locais ignoradas pelo Git: `output/playwright/line-isolated-start.png`, `line-isolated-mid.png`, `line-isolated-end.png`, além de `line-trace-desktop.png` e `line-trace-mobile.png`. Roteiros: `line-trace-check.js` e `line-isolated-check.js`.
+- `npm.cmd test` passed 38 tests covering sorting without mutation, zero and negative values, gaps, isolated measurements, and bounded animation timing.
+- `npm.cmd run verify:upstream` verified all 429 upstream files. `git diff --check` passed.
+- In Edge, using the site with explicitly selected demo data, testing covered opening, switching between A and B, reopening with identical geometry, rapid changes, closing mid-animation, a mobile viewport, and reduced motion. Offsets reached zero at completion, and reduced motion removed the dash.
+- A follow-up inspection in Edge loaded the real chart, state, demo provider, and presentation modules in an isolated page. This let the test inspect the drawing independently of the HiPS network. After 200 ms of the tween, the offset was `0.6219`, with only the initial section drawn. Offsets of `0.9576` and `0.9693` were observed when switching or reopening. The final test script left the application-wide timeline running.
+- Local screenshots excluded from Git include `output/playwright/line-isolated-start.png`, `line-isolated-mid.png`, `line-isolated-end.png`, `line-trace-desktop.png`, and `line-trace-mobile.png`. The test scripts were `line-trace-check.js` and `line-isolated-check.js`.
 
-Na repetição após a interrupção da tarefa, servidores HiPS apresentaram timeouts/DNS e a região ficou indisponível. Portanto, a inspeção final isolada comprova o SVG e sua apresentação, não uma nova validação de imagens ou alinhamento WebGL. Não houve teste com backend científico real ou aparelho físico. Sem commit ou push.
+When testing resumed after an interruption, HiPS servers returned timeouts and DNS failures, leaving the region unavailable. The final isolated check therefore covered the SVG rendering and presentation. Image rendering, WebGL alignment, a real science backend, and physical-device behavior were outside that check. This historical check did not include a commit or push.
