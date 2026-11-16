@@ -1,36 +1,36 @@
-# Bancada de observação e análise
+# Observation and analysis workspace
 
-Esta etapa de layout dividido foi sucedida pelo [painel flutuante animado](apresentacao-animada.md), que preserva a dimensão do mapa ao abrir e fechar. As decisões e medidas abaixo registram a etapa anterior.
+The [animated floating panel](apresentacao-animada.md) superseded this split layout and preserves the map size when opening and closing. The decisions and measurements here describe the earlier layout.
 
-## Decisão de interface
+## Interface decision
 
-O fluxo anterior colocava a análise depois de um mapa quase da altura da janela. Selecionar uma fonte obrigava a rolar a página e perder o contexto espacial. A bancada agora usa CSS Grid para manter imagem e medições simultâneas: mapa à esquerda, análise à direita e telemetria junto ao mapa. O Aladin permanece responsável por projeção, fontes, imagens e gestos.
+The previous workflow put analysis below a map that took up most of the viewport. Selecting a source required scrolling away from the sky. The workspace used CSS Grid so users could see imagery and measurements at once, with the map and telemetry on the left and analysis on the right. Aladin continued to handle projection, sources, images, and gestures.
 
-A identidade existente foi mantida: DM Sans, Space Grotesk, papel claro `#f5f6f2`, tinta `#1b2a32`, céu `#080f1a`, verde `#b8efbd`, superfície escura `#1b2b35` e fundo escuro `#111b25`. Informação científica tem prioridade sobre decoração.
+The layout kept DM Sans, Space Grotesk, light paper `#f5f6f2`, ink `#1b2a32`, sky `#080f1a`, green `#b8efbd`, dark surface `#1b2b35`, and dark background `#111b25`. Scientific information took priority in the layout.
 
-- **Focar no mapa / Abrir análise** recolhe ou restaura o painel sem limpar a seleção. Clicar em uma fonte reabre a análise sem deslocar a página.
-- **Ampliar / Compactar** distribui mais espaço para o gráfico mantendo o mapa disponível.
-- Em telas até 1100 px, os controles ficam em uma gaveta. Escape e clique fora a fecham; o foco vai à busca ao abrir e volta ao botão ao fechar. Conteúdo de fundo fica inerte enquanto a gaveta está aberta.
-- Até 760 px, mapa e análise dividem verticalmente a janela. O painel tem rolagem própria e cabeçalho persistente. A página não precisa rolar entre céu e gráfico.
-- Gráfico responsivo de 440 × 280 unidades SVG, rótulos numéricos compactos e unidades científicas explícitas. Não exige rolagem horizontal. Pontos continuam posicionados por comprimento de onda real, com barras de incerteza e alternativa por teclado.
-- Tabela e metadados ficam em seções expansíveis. A tabela mantém sua própria rolagem horizontal quando necessário. Bandas ausentes, resultados incompletos e erros permanecem explícitos.
-- Atualizações preservam foco, posição de leitura e tabela aberta. Selecionar outro astro volta ao topo somente dentro da análise, para mostrar o novo gráfico.
+- **Focus on map / Open analysis** collapses or restores the panel while retaining selection. Clicking a source reopens analysis without moving the page.
+- **Expand / Compact** provides more chart space while keeping the map visible.
+- At widths up to 1100 px, controls move into a drawer. Escape and outside clicks close it. Focus moves to search on open and back to the toggle on close. Background content is inert while the drawer is open.
+- At widths up to 760 px, the map and analysis share the viewport vertically. The analysis panel scrolls internally and keeps its heading visible.
+- The responsive chart uses 440 × 280 SVG units, compact numeric labels, and explicit scientific units. It fits without horizontal page scrolling. Valid points use real wavelengths, uncertainty bars, and keyboard access.
+- The table and metadata sit in expandable sections. The table scrolls horizontally when needed. The UI reports missing bands, incomplete results, and errors.
+- Updates preserve focus, reading position, and the open table. Changing the source scrolls to the top only within analysis so the new chart is visible.
 
-`src/workspace.js` controla apenas a organização visual; `science-state.js` continua responsável pelos dados. Não foram adicionados framework, biblioteca de gráfico ou dependências de aplicação. A revisão usou frontend-design e web-design-guidelines, adaptadas à identidade do projeto; Playwright foi usado para conferir o resultado real no navegador.
+`src/workspace.js` manages layout. `science-state.js` continues to handle data. The change added no application framework, charting library, or dependencies. The design review applied frontend-design and web-design-guidelines to the project, and Playwright checked it in a browser.
 
-## Verificação
+## Validation
 
-Edge com Aladin/WebGL real e provedor explicitamente demonstrativo:
+Edge used real Aladin and WebGL with an explicitly selected demo provider.
 
-- Clique na fonte nativa A exibiu seu gráfico sem rolagem da página.
-- Em 1440 × 900: mapa de aproximadamente 690 × 778 px e gráfico de 419 × 267 px, ambos dentro da janela.
-- Em 390 × 844: mapa de aproximadamente 370 × 321 px e gráfico de 338 × 215 px; modo ampliado mantém mapa com aproximadamente 209 px de altura.
-- Seleção por teclado atualizou para B; recolher/reabrir preservou medições; tabela expandiu; gaveta abriu e fechou por Escape; temas foram alternados.
-- Sem transbordamento horizontal ou vertical da página nos tamanhos acima. Capturas em `output/playwright/workspace-*.png`, incluindo `workspace-loaded.png` com imagens DSS carregadas. O roteiro local está em `output/playwright/workspace-check.js`.
-- `npm.cmd test`: 22 testes. `npm.cmd run verify:upstream`: 429 arquivos oficiais preservados.
+- Clicking native source A opened its chart without page scrolling.
+- At 1440 × 900, the map was about 690 × 778 px and the chart 419 × 267 px, both within the viewport.
+- At 390 × 844, the map was about 370 × 321 px and the chart 338 × 215 px. Expanded analysis retained about 209 px of map height.
+- Keyboard selection switched to B. Collapsing and reopening preserved measurements. Tests also covered the expandable table, Escape closing the drawer, and theme switching.
+- Neither viewport had horizontal or vertical page overflow. Local captures in `output/playwright/workspace-*.png` include `workspace-loaded.png` with rendered DSS imagery. The local test script is `output/playwright/workspace-check.js`.
+- `npm.cmd test` passed 22 tests, and `npm.cmd run verify:upstream` verified all 429 official files.
 
-O backend científico real e toque em aparelho físico continuam pendentes. A falha DNS do logger externo do Aladin não impediu a renderização das imagens. Não se atribui validade científica aos valores de demonstração.
+A real science backend and physical touch device were outside the test scope. The external Aladin logger's DNS error did not prevent imagery from rendering. The measurements came from the demo provider.
 
-## Próxima evolução sugerida
+## Follow-up
 
-Na etapa descrita neste documento, comparar dois astros ainda era uma melhoria futura. A comparação opcional entre a fonte principal e outra fonte visível foi implementada posteriormente; veja [comparação de astros](comparacao-astros.md). Validação com pesquisadores e confirmação do contrato científico real continuam pendentes.
+Comparison between the primary source and another visible source was implemented later. See [object comparison](comparacao-astros.md). Researcher validation and confirmation of the real science contract remain pending for this prototype.
