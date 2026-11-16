@@ -33,6 +33,8 @@
   if (focus) (pages[page].querySelector('h1')??pages[page]).focus({preventScroll:true});
  }
 
+ if(openingTarget || openingQuery.get('acesso')==='jurados')showPage('map',false);
+
  function disclosure(button, panel){
   panel.hidden = !panel.hidden;
   button.setAttribute('aria-expanded',String(!panel.hidden));
