@@ -1,22 +1,22 @@
-# Contrato provisório de infravermelho
+# Provisional infrared API contract
 
-Estes endpoints são **propostas**, não serviços existentes. Não foi encontrado backend científico neste repositório. A grandeza `radiance`, sua definição espectral/integrada e unidade científica precisam ser confirmadas pela equipe científica. Não há detecção, fotometria, conversão de magnitude/fluxo/contagens ou cálculo de radiância no frontend.
+This document records the endpoints proposed for the earlier standalone prototype. The prototype had no science backend. The science team needs to agree on the definition of `radiance`, whether it is spectral or integrated, and its units. Detection, photometry, magnitude, flux and count conversions, and radiance calculations are outside the frontend contract.
 
-A análise do mesmo astro em datas diferentes acrescenta o endpoint provisório `objects/{id}/observations` e os metadados opcionais `observedAt` e `imageId` nos objetos. Consulte [contrato de histórico, exemplo e regras científicas](analise-temporal.md). As medições por data reutilizam o endpoint abaixo com o respectivo `observationId`.
+The time comparison adds the proposed `objects/{id}/observations` endpoint and optional `observedAt` and `imageId` fields. See the [observation history contract and examples](analise-temporal.md). Time comparisons reuse the measurements endpoint with the relevant `observationId`.
 
-## Configuração
+## Configuration
 
-Execute `npm.cmd start`. Por padrão os dados científicos estão desligados. Abra `http://127.0.0.1:4174/?science=demo` para ativar explicitamente a demonstração, com três fontes simuladas perto de Andrômeda. A fonte B demonstra zero, negativo, banda ausente e resposta incompleta; a terceira não tem medições. Nenhuma delas identifica um objeto físico nos pixels HiPS.
+Run `npm.cmd start`. Science data is off by default. Open `http://127.0.0.1:4174/?science=demo` to explicitly enable the demonstration, which uses three simulated sources near Andromeda. Source B illustrates a zero, a negative value, a missing band, and an incomplete response. The third source has no measurements. The simulated sources have no physical identification in the HiPS imagery.
 
-Para HTTP, configure `baseURL` (com barra final) e, opcionalmente, `observationId` em `src/science-config.js`; abra `?science=http` ou defina `provider: 'http'` nesse arquivo. O navegador precisa de CORS no serviço externo e HTTPS quando a página usa HTTPS. Não coloque segredos nessa configuração pública. Não há fallback da API para demonstração. O espelho HiPS não participa da identidade científica.
+For HTTP, set `baseURL` with a trailing slash and optionally set `observationId` in `src/science-config.js`. Then open `?science=http` or set `provider: 'http'` in that file. External services must support CORS, and an HTTPS page requires HTTPS endpoints. Keep secrets out of the public configuration. API errors never enable demo data. The HiPS mirror is independent of scientific identity.
 
-## Consulta regional proposta
+## Proposed regional query
 
 `GET {baseURL}objects?surveyId=wise&ra=10.68&dec=41.27&width=3&height=2&radius=2.5&limit=500`
 
-Ângulos em graus ICRS. `observationId` opcional restringe observação. O backend deve mapear os IDs estáveis `dss`, `2mass`, `wise`, `sdss` aos levantamentos documentados em `src/sky-model.js` e fornecer associações científicas válidas. Uma tela HiPS não é uma fotografia individual. Cada fonte pertence a uma observação; múltiplas observações do mesmo astro podem gerar registros distintos pela chave `(surveyId, observationId, id)`.
+Angles are in ICRS degrees. An optional `observationId` restricts the query. The backend must map the stable IDs `dss`, `2mass`, `wise`, and `sdss` to the surveys in `src/sky-model.js` and provide valid scientific associations. A HiPS view can combine imagery from multiple exposures. Each source belongs to an observation, and multiple observations can produce distinct records keyed by `(surveyId, observationId, id)`.
 
-O cone é centrado na vista, considera ambas as dimensões do FoV e bordas obtidas pela API pública `getFoVCorners(8, 'ICRS')`. Não usa intervalo cartesiano de RA: a consulta esférica atravessa 0°/360°. Em falha da projeção ou cone acima de 10°, pede aproximação. O cone pode incluir fontes fora da tela. O backend deve aplicar limites espaciais também no servidor.
+The query cone is centered on the view and uses both field dimensions and the boundaries from the public `getFoVCorners(8, 'ICRS')` API. The query uses spherical geometry across 0°/360°. A projection error or a cone larger than 10° prompts the user to zoom in. The cone can include sources outside the viewport. The server must enforce spatial limits as well.
 
 ```json
 {
@@ -25,7 +25,7 @@ O cone é centrado na vista, considera ambas as dimensões do FoV e bordas obtid
   "nextCursor": null,
   "objects": [{
     "id": "object-123",
-    "name": "Nome opcional",
+    "name": "Optional name",
     "ra": 10.684708,
     "dec": 41.26875,
     "frame": "ICRS",
@@ -35,34 +35,34 @@ O cone é centrado na vista, considera ambas as dimensões do FoV e bordas obtid
 }
 ```
 
-`coverage`: `none`, `partial` ou `full`; `complete` é obrigatório. A aplicação exibe até 500 registros recebidos, não baixa páginas seguintes automaticamente. `complete:false` ou `nextCursor` informa resultado parcial e orienta restringir a região. O backend deve retornar todos os registros quando declarar `complete:true`. Paginação interativa futura exige acordo sobre estabilidade do cursor e escopo regional. Sem cobertura não significa ausência de astros no céu.
+`coverage` accepts `none`, `partial`, or `full`. The required `complete` field must be accurate. The app displays up to 500 records and leaves subsequent pages for an explicit future implementation. `complete:false` or `nextCursor` flags partial results and prompts the user to narrow the region. With `complete:true`, the backend must return every matching record. Interactive pagination will require stable cursor semantics and regional scope. Coverage describes the data available for a region.
 
-## Medições propostas
+## Proposed measurement endpoints
 
-### Recuperação por identidade (novo endpoint provisório)
+### Lookup by identity
 
 `GET {baseURL}objects/{id}?surveyId=wise&observationId=observation-456`
 
-Necessário para recuperar links compartilhados sem depender da lista regional ou de cache. É uma **proposta ainda não implementada por um backend neste repositório**. Retorna um objeto diretamente, com a mesma identidade solicitada; 404 quando indisponível. A implementação fica em `createProvider().object` e pode ser adaptada sem mudar catálogo ou gráfico.
+This proposed endpoint restores a shared link independently of the regional list or cache. It returns one object with the requested identity, or HTTP 404 when unavailable. The integration lives in `createProvider().object` and can be adapted independently of the catalog and chart.
 
 ```json
 {
   "id": "object-123",
-  "name": "Fonte de exemplo",
+  "name": "Example source",
   "ra": 10.684708,
   "dec": 41.26875,
   "frame": "ICRS",
   "surveyId": "wise",
   "observationId": "observation-456",
-  "observationName": "Observação de exemplo",
+  "observationName": "Example observation",
   "datasetId": "example-ir",
-  "datasetName": "Conjunto de medições de exemplo"
+  "datasetName": "Example measurement set"
 }
 ```
 
-`observationName`, `datasetId` e `datasetName` são novos campos opcionais, também aceitos nos registros da consulta regional. O conjunto que fornece medições é distinto da imagem de fundo; não se deduz dataset pela cor ou pelos pixels HiPS. Sem esses metadados, a interface informa que o conjunto não foi fornecido e preserva os IDs técnicos. O backend deve assegurar associação válida ao `surveyId` e confirmar a definição científica das unidades e incertezas.
+`observationName`, `datasetId`, and `datasetName` are optional and may also appear in regional results. The measurement dataset is separate from the background image. HiPS color and pixels provide no dataset identity. When metadata is missing, the interface reports that the dataset was unspecified and preserves the technical IDs. The backend must ensure the association with `surveyId` and confirm the units and uncertainty definitions.
 
-### Bandas
+### Bands
 
 `GET {baseURL}objects/{id}/measurements?surveyId=wise&observationId=observation-456`
 
@@ -75,30 +75,30 @@ Necessário para recuperar links compartilhados sem depender da lista regional o
   "allowNegative": true,
   "complete": false,
   "measurements": [
-    {"bandId":"B1", "wavelength":3.4, "wavelengthUnit":"µm", "radiance":0, "radianceUnit":"W m⁻² sr⁻¹ µm⁻¹", "uncertainty":0.1, "quality":"exemplo"},
-    {"bandId":"B2", "wavelength":4.6, "wavelengthUnit":"µm", "radiance":null, "radianceUnit":"W m⁻² sr⁻¹ µm⁻¹", "quality":"sem medição"}
+    {"bandId":"B1", "wavelength":3.4, "wavelengthUnit":"µm", "radiance":0, "radianceUnit":"W m⁻² sr⁻¹ µm⁻¹", "uncertainty":0.1, "quality":"example"},
+    {"bandId":"B2", "wavelength":4.6, "wavelengthUnit":"µm", "radiance":null, "radianceUnit":"W m⁻² sr⁻¹ µm⁻¹", "quality":"no measurement"}
   ]
 }
 ```
 
-O payload acima ilustra a estrutura; valores e unidades não são validação científica de um levantamento real. Comprimento de onda efetivo/central positivo; a definição precisa ser uniforme e acordada com o backend. Incerteza opcional, simétrica, não negativa, na mesma unidade da radiância; sua interpretação (por exemplo 1σ) deve ser acordada. `quality` opcional é exibida sem interpretação científica. Negativos somente com `allowNegative:true`. `null`/campo ausente não vira zero. Valores não finitos, banda duplicada, coordenadas inválidas, unidade ausente, unidades diferentes na mesma resposta e identidade divergente geram erro explícito. Unidades são comparadas literalmente e devem vir uniformizadas pelo backend. A aplicação não converte grandezas. Bandas ausentes não são interpoladas. SVG linear usa pontos discretos e barras de incerteza; a tabela inclui ausências e qualidade.
+The fixture illustrates payload structure. Its values and units are examples. Effective or central wavelengths must be positive and use a consistent definition agreed with the backend. Optional uncertainty is symmetric and non-negative, in radiance units. Its interpretation, such as 1σ, requires agreement. The UI displays optional `quality` verbatim. Negative radiance requires `allowNegative:true`. A null or absent value stays missing. Non-finite values, duplicate bands, invalid coordinates, missing units, inconsistent units within a response, and identity mismatches produce explicit errors. The backend must supply identical unit strings for comparison. The app performs no unit conversion or interpolation. The linear SVG chart shows discrete markers and uncertainty bars, and the table includes missing values and quality.
 
-Coordenadas em pixels são recusadas. O backend deve aplicar WCS válido e entregar ICRS em graus. Não existe conversão entre pixels da imagem original e pixels da tela.
+The backend must apply valid WCS and return ICRS degrees. Pixel coordinates are rejected. The frontend does not convert between original image pixels and screen pixels.
 
-## Sincronização e integração Aladin
+## Synchronization and Aladin integration
 
-Atualização de comportamento: [estados, fixação, tooltip e compartilhamento](melhorias-analise.md). Fixar mantém a análise durante navegação, mas não injeta sua fonte em resultados regionais ausentes. A chave do cache continua sendo levantamento/observação/astro. Links com identidade consultam o endpoint individual acima; nunca ativam demonstração por conta própria.
+See [state, pinning, tooltips, and sharing](melhorias-analise.md). Pinning preserves the selected analysis during navigation without inserting the source into regional results. The cache key remains survey, observation, and object. Links with an identity query the lookup endpoint and leave demo activation explicit.
 
-Consultas aguardam 350 ms após mudanças efetivas de posição, zoom, projeção e tamanho (eventos de simples redesenho são ignorados). Mudanças invalidam respostas em voo imediatamente e cancelam requisições via AbortController, com timeout HTTP de 15 segundos. Trocar levantamento limpa fontes e seleção imediatamente; navegar/redimensionar preserva a seleção durante o carregamento e a reconcilia com a nova lista regional. Um contador também bloqueia respostas antigas de provedores que ignorem o cancelamento. Medições usam cache limitado a 100 chaves de astro/levantamento/observação, válido durante a sessão; dados mutáveis do backend exigirão versão de observação ou política de expiração acordada.
+Queries wait 350 ms after a meaningful position, zoom, projection, or size change. Redraw-only events are ignored. Changes immediately invalidate in-flight responses and cancel requests through AbortController. HTTP requests time out after 15 seconds. A survey change clears sources and selection immediately. Pan or resize preserves selection while loading and reconciles it with the new regional list. A counter also rejects stale responses from providers that ignore cancellation. The session cache holds up to 100 object, survey, and observation keys. Mutable backend data will require observation versioning or an agreed expiration policy.
 
-Catálogo próprio usa `A.catalog`, `A.source`, `addCatalog`, `removeAll`, `source.select/deselect`, callback `onClick`, cores nativas de hover/seleção e `world2pix` para desambiguação de vizinhos a menos de 28 pixels de tela e verificação de visibilidade. Nenhum marcador HTML por objeto. A seleção principal ocorre pelo clique no mapa; marcadores próximos oferecem desambiguação após o clique. O dropdown do painel serve somente à comparação com outras fontes visíveis. Sem registro não há identidade atribuída ao ponto luminoso.
+The custom catalog uses `A.catalog`, `A.source`, `addCatalog`, `removeAll`, `source.select/deselect`, the `onClick` callback, native hover and selection colors, and `world2pix` for visibility and disambiguation within 28 screen pixels. Markers use Aladin's catalog renderer. The map click selects the primary source, offering disambiguation for nearby markers. The panel dropdown only compares other visible sources. Assigning an identity requires a catalog record.
 
-APIs conferidas no snapshot local 3.9.0-beta (`Catalog.js`, `Source.js`, `Aladin.js`, `View.js`) e na [documentação oficial de catálogo](https://cds-astro.github.io/aladin-lite/Catalog.js.html) e [atlas](https://cds-astro.github.io/aladin-lite/Aladin.html). `aladin.on` tem um callback por evento nesta versão: a aplicação compartilha os eventos de posição/zoom com os indicadores existentes.
+The APIs were checked against the local 3.9.0-beta snapshot (`Catalog.js`, `Source.js`, `Aladin.js`, `View.js`), the [official catalog documentation](https://cds-astro.github.io/aladin-lite/Catalog.js.html), and the [atlas documentation](https://cds-astro.github.io/aladin-lite/Aladin.html). In this version, `aladin.on` supports one callback per event, so the app shares position and zoom callbacks with the existing indicators.
 
-## Pendências do backend real
+## Requirements for a production science backend
 
-- Confirmar grandeza, unidades, significado de incertezas/qualidade e bandas efetivas.
-- Implementar os endpoints ou adaptar somente o provedor ao contrato definitivo.
-- Estabelecer mapeamento HiPS/levantamento/observação, cobertura e limites/cursor.
-- Garantir coordenadas astrométricas válidas, CORS, erros HTTP e identidade/versionamento estáveis.
-- Validar com observações reais; a demonstração e mocks não comprovam precisão científica nem renderização WebGL.
+- Confirm the quantity, units, meaning of uncertainty and quality, and effective band definitions.
+- Implement the proposed endpoints or adapt the provider to the final contract.
+- Define the mapping between HiPS, surveys, and observations, together with coverage, limits, and cursor semantics.
+- Ensure valid astrometry, CORS, HTTP errors, and stable identities and versions.
+- Validate with real observations. Demo and mock data only exercise their respective integration paths.
