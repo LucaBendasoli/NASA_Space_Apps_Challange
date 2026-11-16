@@ -24,7 +24,9 @@
  });
 
 
+ const shortcuts = navigation.querySelectorAll('[data-parent-page]');
  function showPage(page, focus = true){
+  for(const group of shortcuts)group.hidden = group.dataset.parentPage !== page;
   for (const [name, element] of Object.entries(pages)) element.hidden = name !== page;
   for (const button of navigation.querySelectorAll('[data-page]')){
    if (button.dataset.page === page) button.setAttribute('aria-current','page');
