@@ -155,9 +155,5 @@
  const homeHelp = byId('home-help');
  const homeGuide = byId('home-guide');
  homeHelp.onclick = ()=>disclosure(homeHelp,homeGuide);
- byId('skip-home-guide').onclick = ()=>{
-  disclosure(homeHelp,homeGuide);
-  homeHelp.focus();
- };
 
 }

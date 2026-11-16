@@ -16,7 +16,7 @@ for k,v in data.items():
  v['gaia_epoch']=gaia['epoch']
  v['radiance'].update(gaia['radiance'])
 s=re.sub(r'(?<=<script id="payload" type="application/json">).*?(?=</script>)',lambda _:json.dumps(data,separators=(',',':')),s,flags=re.S)
-s=s.replace('</style>', '</style><link rel="stylesheet" href="./eyelid.css">', 1)
+s=s.replace('</style>', '</style><link rel="stylesheet" href="./eyelid.css"><link rel="stylesheet" href="./vendor/driver.css"><link rel="stylesheet" href="./onboarding.css">', 1)
 copytree(p/'brand', p/'dist'/'brand', dirs_exist_ok=True)
 (p/'dist'/'eyelid.css').write_text((p/'eyelid.css').read_text())
 s=s.replace("const data=JSON.parse(document.getElementById('payload').textContent);","""const regions=JSON.parse(document.getElementById('payload').textContent);
@@ -55,9 +55,9 @@ s=s.replace('<script id="payload"', '<script>const pocTargets='+json.dumps(targe
 s=s.replace('<title', '<script src="./i18n.js"></script><title',1)
 s=s.replace('<script id="payload"', '<script>localizeMarkup()</script><script id="payload"',1)
 (p/'dist'/'i18n.js').write_text('const eyelidTranslations = '+json.dumps(translations,ensure_ascii=False)+';\n'+(p/'i18n.js').read_text())
-for script in ('aladin-view.js', 'spectral-tiles.js', 'navigation.js', 'object-sheet.js', 'object-spectrum.css', 'login.html', 'auth-form.js', 'account-ui.js', 'community-ui.js', 'profile-ui.js', 'badges-ui.js'):
+for script in ('aladin-view.js', 'spectral-tiles.js', 'navigation.js', 'object-sheet.js', 'object-spectrum.css', 'login.html', 'auth-form.js', 'account-ui.js', 'community-ui.js', 'profile-ui.js', 'badges-ui.js', 'onboarding.js', 'onboarding.css'):
  (p/'dist'/script).write_text((p/script).read_text())
-s=s.replace('</html>','<script>\n'+(p/'viewer.js').read_text()+'\n</script><script src="./navigation.js"></script><script src="./badges-ui.js"></script><script src="./account-ui.js"></script><script src="./community-ui.js"></script><script src="./profile-ui.js"></script></html>')
-for asset in ('object-spectrum.js', 'object-spectrum.LICENSE.txt'):
+s=s.replace('</html>','<script>\n'+(p/'viewer.js').read_text()+'\n</script><script src="./navigation.js"></script><script src="./badges-ui.js"></script><script src="./account-ui.js"></script><script src="./community-ui.js"></script><script src="./profile-ui.js"></script><script src="./vendor/driver.js"></script><script src="./onboarding.js"></script></html>')
+for asset in ('object-spectrum.js', 'object-spectrum.LICENSE.txt', 'driver.js', 'driver.css', 'driver.LICENSE.txt'):
  (p/'dist'/'vendor'/asset).write_bytes((p/'vendor'/asset).read_bytes())
 (p/'dist'/'index.html').write_text(s)
