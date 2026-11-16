@@ -116,7 +116,7 @@
    for (const control of logoutButtons) control.disabled = true;
    const signedOut = await account('logout');
    for (const control of logoutButtons) control.disabled = false;
-   if (signedOut) openAuth('login');
+   if (signedOut) location.replace('/login.html');
    else if (button === sidebarLogout) profileButton.click();
   };
  }

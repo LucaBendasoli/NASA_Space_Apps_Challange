@@ -154,7 +154,6 @@ lucide.createIcons({icons});\``);if(typeof document>"u")throw new Error("`create
         <button class="primary" type="submit" data-copy="enter">Entrar</button>
       </form>
       <p class="signup"><span data-copy="newAccount">Primeira vez aqui?</span> <button class="link" type="button" data-copy="signup" data-route="register">Criar conta</button></p>
-      <button class="guest" type="button" data-route="sky"><i data-lucide="compass" aria-hidden="true"></i><span data-copy="guest">Explorar sem conta</span></button>
 
     </div>
   </main>
@@ -258,7 +257,6 @@ lucide.createIcons({icons});\``);if(typeof document>"u")throw new Error("`create
     globalThis.lucide?.createIcons();
     render();
   });
-  root.querySelector('[data-route="sky"]').addEventListener('click', () => returnToExplorer());
   showNextPhoto();
   updateRotation();
 }
