@@ -4,9 +4,13 @@
 
 2026 NASA Space Apps Challenge · Planet X and SPHEREx
 
-## [Launch the judges’ demo](https://nasaspaceapps.eyelid.com.br/jurados)
+## For NASA Space Apps judges
 
-The judges’ link opens the demo directly. **No email, password, or setup required.**
+**[Open Eyelid as a judge →](https://nasaspaceapps.eyelid.com.br/jurados)**
+
+This link signs you into the demo automatically and opens the sky map. No email, password, or setup is required.
+
+**Start here:** Open **Saved regions** in the map sidebar, select **Barnard’s Star**, then use **▶ Dates** to compare the prepared SPHEREx images. The other four demo targets are in the same list.
 
 [Regular sign-in and account creation](https://nasaspaceapps.eyelid.com.br/)
 
@@ -18,7 +22,7 @@ The map brings together **SPHEREx** infrared observations, **WISE** imagery, and
 
 ## Try it in two minutes
 
-1. **Follow a moving star.** On Home, open **Barnard’s Star** from Suggested observations or Saved regions. In the map, open the date controls and press **Play** to compare exposures in the same channel.
+1. **Follow a moving star.** Use **▶ Dates** on Barnard’s Star to compare exposures in the same channel. Select the named target to open its object details.
 2. **Inspect the evidence.** Open **Epsilon Indi B** from Saved regions and select an investigation marker. The object panel shows which infrared bands recorded a signal and why the detection was flagged. Select a Gaia source to see its catalog details and any available spectrum.
 3. **See how a review is shared.** Return to **Home → Community**, open a discussion, and choose **Open view on map** to revisit the coordinates, channel, and date shared with that post.
 
