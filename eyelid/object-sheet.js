@@ -1,5 +1,40 @@
 let activeChannel = 63;
-let spectrumWidget, spectrumObject;
+let spectrumWidget, spectrumObject, displayedSpectrum;
+const sourceSpectra = new Map();
+let preparedSpectra;
+
+function sourceSpectrum(source, cataloged){
+ const saved = data.radiance[source.id];
+ if (saved?.some(Number.isFinite) || !cataloged) return {values:saved};
+ const cached = sourceSpectra.get(source.id);
+ if (cached) return cached;
+
+ const state = {status:'loading'};
+ sourceSpectra.set(source.id,state);
+ const load = async () => {
+  if (source.poc){
+   preparedSpectra ??= fetch('./poc-spectra.json')
+    .then(response => response.ok ? response.json() : {}).catch(() => ({}));
+   const values = (await preparedSpectra)[source.poc.key];
+   if (Array.isArray(values)) return values;
+  }
+  const [ra,dec] = gaiaPosition(source,2025.75);
+  const query = new URLSearchParams({ra:ra.toFixed(5),dec:dec.toFixed(5)});
+  const response = await fetch('/api/source-spectrum?'+query);
+  if (!response.ok) throw Error(response.status);
+  return (await response.json()).radiance;
+ };
+ load().then(values => {
+  state.values = values;
+  state.status = 'ready';
+  data.radiance[source.id] = values;
+ }).catch(() => {
+  state.status = 'error';
+ }).finally(() => {
+  if (selected === source.id) render();
+ });
+ return state;
+}
 
 function syncSpectrumChannel(channel){
  activeChannel = channel;
@@ -36,9 +71,12 @@ function renderObjectIdentity(object, gaia){
  updateObjectObservation();
 }
 
-function renderSpectrum(available, object){
+function renderSpectrum(available, object, cataloged){
  const host = byId('spectrum');
- if (spectrumObject === object?.id) return;
+ const result = object ? sourceSpectrum(object,cataloged) : {};
+ const status = result.status ?? 'ready';
+ if (spectrumObject === object?.id && displayedSpectrum === status) return;
+ displayedSpectrum = status;
  spectrumWidget?.destroy();
  spectrumWidget = undefined;
  spectrumObject = object?.id;
@@ -47,7 +85,7 @@ function renderSpectrum(available, object){
  const compare = document.createElement('select');
  compare.setAttribute('aria-label',t('Comparar objeto'));
  compare.add(new Option(t('Nenhum'),''));
- const others = available.filter(item => item.id !== object.id);
+ const others = available.filter(item => item.id !== object.id && data.radiance[item.id]?.some(Number.isFinite));
  for (const item of others) compare.add(new Option(item.id,item.id));
  const chart = document.createElement('div');
  const tools = document.createElement('div');
@@ -66,24 +104,34 @@ function renderSpectrum(available, object){
  bandLabel.append(t('Ver faixa no mapa'),band);
  const help = document.createElement('details');
  help.innerHTML = t('<summary>Como ler o gráfico</summary><p>Da esquerda para a direita, o comprimento de onda aumenta. Quanto mais alta a linha, maior o brilho medido naquela faixa. A curva usa o mosaico SPHEREx DR1, com fundo local subtraído. O gráfico só apresenta leituras nas faixas com medição.</p>');
- tools.append(bandLabel);
- host.append(chart,tools);
- if (!data.radiance[object.id]?.some(Number.isFinite)){
-  chart.className = 'object-spectrum-empty';
-  const heading = document.createElement('h2');
-  heading.textContent = t('Assinatura espectral');
-  const notice = document.createElement('p');
-  notice.className = 'caption';
-  notice.textContent = t('Espectro SPHEREx indisponível para esta fonte.');
-  chart.append(heading,notice);
-  return;
+ const measuredBands = result.values?.filter(Number.isFinite).length ?? 0;
+ const hasValues = measuredBands > 0;
+ if (!hasValues) compare.disabled = true;
+ tools.append(label,bandLabel,help);
+ const statusLine = document.createElement('p');
+ statusLine.className = 'caption spectrum-status';
+ statusLine.setAttribute('role','status');
+ statusLine.hidden = Boolean(hasValues);
+ const empty = status === 'loading' ? t('Carregando medições do SPHEREx…') :
+  status === 'error' ? t('Não foi possível carregar as medições do SPHEREx.') :
+  t('Espectro SPHEREx indisponível para esta fonte.');
+ if (!hasValues) statusLine.textContent = empty;
+ if (status === 'error'){
+  const retry = document.createElement('button');
+  retry.type = 'button';
+  retry.className = 'id';
+  retry.textContent = t('Tentar novamente');
+  retry.onclick = () => {
+   sourceSpectra.delete(object.id);
+   renderSpectrum(available,object,cataloged);
+  };
+  statusLine.append(' ',retry);
  }
- tools.prepend(label);
- tools.append(help);
+ host.append(chart,statusLine,tools);
  function chartObject(item,index){
   return {id:item.id,name:item.poc?.name ?? item.id,color:['#9d8bff','#52d6c7'][index],observations:[{
    id:'dr1',date:null,label:t('Mosaico SPHEREx DR1'),
-   points:data.radiance[item.id].map((radiance,i)=>({wavelength:data.wavelengths[i],radiance}))
+   points:data.wavelengths.map((wavelength,i)=>({wavelength,radiance:data.radiance[item.id]?.[i] ?? null}))
   }]};
  }
  const messages = language==='en' ? {
@@ -108,7 +156,7 @@ function renderSpectrum(available, object){
   'chart.plotLabel':'Spectrum of {names}. X axis: wavelength in micrometers. Y axis: {value} in {unit}.',
   'chart.noObject':'no object',
   'chart.wavelength':'Wavelength (μm)',
-  'chart.empty':'No data in this range. Select a series or widen the range.',
+  'chart.empty':hasValues ? 'No data in this range. Select a series or widen the range.' : empty,
   'chart.noData':'No data',
   'chart.unit':'{value} in {unit}',
   'chart.range':'Wavelength range',
@@ -127,7 +175,7 @@ function renderSpectrum(available, object){
   'chart.csv.filename':'spectra.csv'
  } : undefined;
  const props = () => ({
-  locale,messages,spectralRegion:t('0,75–5 µm · mosaico DR1'),
+  locale,messages,bandCount:measuredBands,spectralRegion:t('0,75–5 µm · mosaico DR1'),
   objects:[object,...others.filter(item=>item.id===compare.value)].map(chartObject)
  });
  spectrumWidget = window.mountEyelidSpectrum(chart,props());
@@ -135,5 +183,28 @@ function renderSpectrum(available, object){
  theme.rel = 'stylesheet';
  theme.href = './object-spectrum.css';
  chart.shadowRoot.append(theme);
+ chart.classList.toggle('spectrum-without-measurements',!hasValues);
  compare.onchange = () => spectrumWidget.update(props());
+}
+
+
+// All sources use the same sections. Their interpretation depends on the
+// evidence available for the selected source.
+function renderSourceOverview(id, {title, summary, identification, infrared, technical}){
+ const host = byId('overview');
+ const matrix = byId('candidate-technical');
+ const expanded = new Set(host.dataset.source === id
+  ? [...host.querySelectorAll('details[open]')].map(section => section.dataset.objectSection) : []);
+ const content = `<div class="hero"><h2>${title}</h2>${summary}</div>
+  <details class="evidence" data-object-section="identification"><summary>${t('Identificação')}</summary>${identification}</details>
+  <details class="evidence" data-object-section="infrared"><summary>${t('Evidências no infravermelho')}</summary>${infrared}</details>
+  <details class="evidence" data-object-section="technical"><summary>${t('Dados técnicos')}</summary>${technical}</details>`;
+ if (host.dataset.source === id && host.eyelidMarkup === content) return;
+ host.dataset.source = id;
+ host.eyelidMarkup = content;
+ host.innerHTML = content;
+ host.querySelector('[data-object-section=technical]').append(matrix);
+ for (const section of host.querySelectorAll('details[data-section]')){
+  section.open = expanded.has(section.dataset.objectSection);
+ }
 }

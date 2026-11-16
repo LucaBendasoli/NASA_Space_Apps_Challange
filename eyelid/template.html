@@ -185,7 +185,7 @@ function render(){
  byId('candidate-technical').hidden=!r;
  byId('focus').textContent='';renderOverview(filtered,r,gaia);
  renderObjectIdentity(gaia??r,Boolean(gaia));
- renderSpectrum([...filtered,...gaiaById.values()].filter(source=>data.radiance[source.id]?.some(Number.isFinite)),gaia??r);
+ renderSpectrum([...filtered,...gaiaById.values()],gaia??r,Boolean(gaia));
  updateGaiaSelection();
  document.dispatchEvent(new Event('atlas-selection'));
  byId('details').innerHTML=r?t`<h2>${r.id}</h2><div class="stats"><span><strong>${r.channels.length}</strong> canais SPHEREx</span><span><strong>${fmt(r.dist_gaia_arcsec,1)}″</strong> até o Gaia mais próximo</span><span>${r.wise.length? r.wise.join(' · '):t('Sem pico WISE')}</span></div><p>RA ${fmt(r.ra_icrs_deg,6)}° · Dec ${fmt(r.dec_icrs_deg,6)}°</p><div class="channels"><strong>Canais:</strong> ${ranges(r.channels)}</div>`:t('Nenhum candidato nesse filtro.');
@@ -201,7 +201,12 @@ function renderOverview(filtered,r,gaia){
  }
  if(gaia?.poc){renderPocOverview(gaia);return}
  if(gaia){renderGaiaOverview(gaia);return}
- if(!r){byId('overview').textContent=t('Nenhum candidato nesse filtro.');return}
+ if(!r){
+  const host=byId('overview'), matrix=byId('candidate-technical');
+  host.after(matrix);
+  host.replaceChildren();
+  return;
+ }
  const w1=r.wise.some(k=>k.endsWith('W1')),w2=r.wise.some(k=>k.endsWith('W2'));
  const both=w1&&w2;
  const windows=[
@@ -219,7 +224,14 @@ function renderOverview(filtered,r,gaia){
   :t('A triagem exigiu picos em pelo menos oito canais SPHEREx, distribuídos por pelo menos 0,35 µm, e distância superior a 8″ da fonte Gaia mais próxima.');
  const first=both?t('Picos em SPHEREx e nas duas bandas WISE dão motivo para conferir uma possível fonte real nos arquivos originais.'):t('O sinal merece revisão nos quadros originais. Artefatos e fontes sobrepostas também podem gerar picos em vários canais.');
  const hypotheses=both?t`<div class="hyp"><h3>Fonte fraca na luz visível</h3><p>Uma estrela com poeira na linha de visão ou uma galáxia compacta são possibilidades. Cruze com AllWISE e 2MASS e verifique se a fonte parece pontual ou estendida.</p></div><div class="hyp"><h3>Objeto frio</h3><p>Uma anã marrom é uma hipótese a testar se a fotometria calibrada e a forma do espectro forem compatíveis. Procure um padrão de absorção e compare com espectros de referência. <a href="https://www.jpl.nasa.gov/news/nasas-spherex-telescope-sees-menagerie-of-brown-dwarfs/">Exemplos do JPL</a></p></div>`:t`<div class="hyp"><h3>Fonte fraca ou artefato?</h3><p>Confira se o pico é separado de fontes vizinhas e reaparece em exposições independentes. Depois, procure correspondência em AllWISE ou 2MASS.</p></div>`;
- byId('overview').innerHTML=t`<div class="hero"><h2>${both?t('Sinal nos dois telescópios'):t('Sinal a revisar no SPHEREx')}</h2><p>${r.channels.length} canais com pico · ${fmt(r.dist_gaia_arcsec,1)}″ até a fonte Gaia mais próxima</p><p>${first}</p><details class="evidence"><summary>Por que foi sinalizado</summary><p>${rationale} Os picos usados passaram pelo filtro de halos.</p></details></div><details class="evidence"><summary>Onde o sinal aparece e o que pode ser</summary><div class="bands">${bars}</div><p>WISE W1: ${w1?t('pico registrado'):t('sem pico')} · W2: ${w2?t('pico registrado'):t('sem pico')}</p><h2 style="margin:16px 0 7px">O que pode ser</h2>${hypotheses}<p class="caption">As barras contam canais com picos próximos. Para distinguir essas hipóteses, precisamos medir o fluxo por faixa e sua incerteza.</p></details>`;
+ renderSourceOverview(r.id,{
+  title:both?t('Sinal nos dois telescópios'):t('Sinal a revisar no SPHEREx'),
+  summary:t`<p>${r.channels.length} canais com pico · ${fmt(r.dist_gaia_arcsec,1)}″ até a fonte Gaia mais próxima</p><p>${first}</p>`,
+  identification:hypotheses,
+  infrared:t`<div class="bands">${bars}</div><p>WISE W1: ${w1?t('pico registrado'):t('sem pico')} · W2: ${w2?t('pico registrado'):t('sem pico')}</p>
+   <p class="caption">As barras contam canais com picos próximos. Para distinguir essas hipóteses, precisamos medir o fluxo por faixa e sua incerteza.</p>`,
+  technical:t`<p>${rationale} Os picos usados passaram pelo filtro de halos.</p>`
+ });
 }
 
 byId('both').onchange=render;byId('sort').onchange=render;render();

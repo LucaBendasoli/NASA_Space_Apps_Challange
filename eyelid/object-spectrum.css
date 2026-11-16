@@ -48,3 +48,7 @@
 
 /* Available radiance is from one combined mosaic per source. */
 .chart-toolbar,.selection-row .button { display:none; }
+
+:host(.spectrum-without-measurements) .plot-wrap svg text,
+:host(.spectrum-without-measurements) .range-panel {visibility:hidden}
+:host(.spectrum-without-measurements) .plot-wrap .empty {display:none}

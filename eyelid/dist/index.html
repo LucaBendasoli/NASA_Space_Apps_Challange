@@ -444,7 +444,7 @@ function render(){
  byId('candidate-technical').hidden=!r;
  byId('focus').textContent='';renderOverview(filtered,r,gaia);
  renderObjectIdentity(gaia??r,Boolean(gaia));
- renderSpectrum([...filtered,...gaiaById.values()].filter(source=>data.radiance[source.id]?.some(Number.isFinite)),gaia??r);
+ renderSpectrum([...filtered,...gaiaById.values()],gaia??r,Boolean(gaia));
  updateGaiaSelection();
  document.dispatchEvent(new Event('atlas-selection'));
  byId('details').innerHTML=r?t`<h2>${r.id}</h2><div class="stats"><span><strong>${r.channels.length}</strong> canais SPHEREx</span><span><strong>${fmt(r.dist_gaia_arcsec,1)}″</strong> até o Gaia mais próximo</span><span>${r.wise.length? r.wise.join(' · '):t('Sem pico WISE')}</span></div><p>RA ${fmt(r.ra_icrs_deg,6)}° · Dec ${fmt(r.dec_icrs_deg,6)}°</p><div class="channels"><strong>Canais:</strong> ${ranges(r.channels)}</div>`:t('Nenhum candidato nesse filtro.');
@@ -460,7 +460,12 @@ function renderOverview(filtered,r,gaia){
  }
  if(gaia?.poc){renderPocOverview(gaia);return}
  if(gaia){renderGaiaOverview(gaia);return}
- if(!r){byId('overview').textContent=t('Nenhum candidato nesse filtro.');return}
+ if(!r){
+  const host=byId('overview'), matrix=byId('candidate-technical');
+  host.after(matrix);
+  host.replaceChildren();
+  return;
+ }
  const w1=r.wise.some(k=>k.endsWith('W1')),w2=r.wise.some(k=>k.endsWith('W2'));
  const both=w1&&w2;
  const windows=[
@@ -478,7 +483,14 @@ function renderOverview(filtered,r,gaia){
   :t('A triagem exigiu picos em pelo menos oito canais SPHEREx, distribuídos por pelo menos 0,35 µm, e distância superior a 8″ da fonte Gaia mais próxima.');
  const first=both?t('Picos em SPHEREx e nas duas bandas WISE dão motivo para conferir uma possível fonte real nos arquivos originais.'):t('O sinal merece revisão nos quadros originais. Artefatos e fontes sobrepostas também podem gerar picos em vários canais.');
  const hypotheses=both?t`<div class="hyp"><h3>Fonte fraca na luz visível</h3><p>Uma estrela com poeira na linha de visão ou uma galáxia compacta são possibilidades. Cruze com AllWISE e 2MASS e verifique se a fonte parece pontual ou estendida.</p></div><div class="hyp"><h3>Objeto frio</h3><p>Uma anã marrom é uma hipótese a testar se a fotometria calibrada e a forma do espectro forem compatíveis. Procure um padrão de absorção e compare com espectros de referência. <a href="https://www.jpl.nasa.gov/news/nasas-spherex-telescope-sees-menagerie-of-brown-dwarfs/">Exemplos do JPL</a></p></div>`:t`<div class="hyp"><h3>Fonte fraca ou artefato?</h3><p>Confira se o pico é separado de fontes vizinhas e reaparece em exposições independentes. Depois, procure correspondência em AllWISE ou 2MASS.</p></div>`;
- byId('overview').innerHTML=t`<div class="hero"><h2>${both?t('Sinal nos dois telescópios'):t('Sinal a revisar no SPHEREx')}</h2><p>${r.channels.length} canais com pico · ${fmt(r.dist_gaia_arcsec,1)}″ até a fonte Gaia mais próxima</p><p>${first}</p><details class="evidence"><summary>Por que foi sinalizado</summary><p>${rationale} Os picos usados passaram pelo filtro de halos.</p></details></div><details class="evidence"><summary>Onde o sinal aparece e o que pode ser</summary><div class="bands">${bars}</div><p>WISE W1: ${w1?t('pico registrado'):t('sem pico')} · W2: ${w2?t('pico registrado'):t('sem pico')}</p><h2 style="margin:16px 0 7px">O que pode ser</h2>${hypotheses}<p class="caption">As barras contam canais com picos próximos. Para distinguir essas hipóteses, precisamos medir o fluxo por faixa e sua incerteza.</p></details>`;
+ renderSourceOverview(r.id,{
+  title:both?t('Sinal nos dois telescópios'):t('Sinal a revisar no SPHEREx'),
+  summary:t`<p>${r.channels.length} canais com pico · ${fmt(r.dist_gaia_arcsec,1)}″ até a fonte Gaia mais próxima</p><p>${first}</p>`,
+  identification:hypotheses,
+  infrared:t`<div class="bands">${bars}</div><p>WISE W1: ${w1?t('pico registrado'):t('sem pico')} · W2: ${w2?t('pico registrado'):t('sem pico')}</p>
+   <p class="caption">As barras contam canais com picos próximos. Para distinguir essas hipóteses, precisamos medir o fluxo por faixa e sua incerteza.</p>`,
+  technical:t`<p>${rationale} Os picos usados passaram pelo filtro de halos.</p>`
+ });
 }
 
 byId('both').onchange=render;byId('sort').onchange=render;
@@ -495,9 +507,9 @@ const radians=Math.PI/180;
 let gaiaEpoch=data.gaia_epoch;
 let gaiaDate=null;
 
-function gaiaPosition(source){
- const years=gaiaEpoch-(source.epoch??2016);
- if(source.pmra===null||source.pmdec===null)return [source.ra,source.dec];
+function gaiaPosition(source, epoch=gaiaEpoch){
+ const years=epoch-(source.epoch??2016);
+ if(!Number.isFinite(source.pmra)||!Number.isFinite(source.pmdec))return [source.ra,source.dec];
  return [(source.ra+years*source.pmra/(3600000*Math.cos(source.dec*radians))+360)%360,
          source.dec+years*source.pmdec/3600000];
 }
@@ -576,7 +588,7 @@ function gaiaSpectralSummary(id){
  const spectrum=data.radiance[id];
  const samples=spectrum?.flatMap((value,i)=>Number.isFinite(value)?
   [{value,channel:i+1,wave:data.wavelengths[i]}]:[])??[];
- if(!samples.length)return '';
+ if(!samples.length)return t('<p>Não há medições SPHEREx disponíveis para esta fonte.</p>');
  const bands=[
   [t('Faixas curtas'),.75,1.5],
   [t('Faixas médias'),1.5,3],
@@ -588,16 +600,14 @@ function gaiaSpectralSummary(id){
   return t`<div class="band"><span>${name}</span><meter min="0" max="${total}" value="${count}" aria-label="${name}, ${count} de ${total} canais com medição"></meter><strong>${count}/${total}</strong></div>`;
  }).join('');
  const brightest=samples.reduce((peak,sample)=>sample.value>peak.value?sample:peak);
- return t`<details class="evidence" data-section="infrared"><summary>Onde o brilho foi medido</summary>
-  <div class="bands">${bands}</div><p>${samples.length} canais com medição no mosaico SPHEREx.
+ return t`<div class="bands">${bands}</div><p>${samples.length} canais com medição no mosaico SPHEREx.
   ${brightest.value>0?t`Maior brilho medido no canal ${brightest.channel} (${fmt(brightest.wave)} µm).`:''}</p>
-  <p class="caption">As barras indicam cobertura das medições.</p></details>`;
+  <p class="caption">As barras indicam cobertura das medições.</p>`;
 }
 
 function renderGaiaOverview(source){
  renderObjectIdentity(source,true);
  const host=byId('overview');
- const expanded=new Set([...host.querySelectorAll('details[open]')].map(section=>section.dataset.section));
  const state=gaiaDetails.get(source.id)??loadGaiaDetails(source.id);
  const details=state.result;
  const [ra,dec]=gaiaPosition(source);
@@ -632,18 +642,16 @@ function renderGaiaOverview(source){
  const catalogStatus=state.status==='loading'?t('<p class="caption" role="status">Consultando dados do Gaia DR3…</p>'):
   state.status==='error'?t('<p class="caption" role="status">Consulta ao Gaia DR3 indisponível. <button type="button" class="id gaia-retry">Tentar novamente</button></p>'):'';
  const sourceNumber=source.id.slice(5);
- host.innerHTML=t`<div class="hero"><h2>${classification}</h2>
-  ${summary?`<dl class="source-facts">${summary}</dl>`:''}
-  ${details?.variable?t('<p>O Gaia registrou variação de brilho nesta fonte.</p>'):''}
-  ${catalogStatus}</div>
-  ${gaiaSpectralSummary(source.id)}
-  ${details?t`<details class="evidence" data-section="allwise"><summary>Correspondência no WISE</summary>${allwise}</details>`:''}
-  <details class="evidence" data-section="catalog"><summary>Medições e posição no Gaia</summary>
-   <p>Ascensão reta ${fmt(ra,7)}° · Declinação ${fmt(dec,7)}°</p><p>${position}</p>
+ renderSourceOverview(source.id,{
+  title:classification,
+  summary:(summary?`<dl class="source-facts">${summary}</dl>`:'')+catalogStatus,
+  identification:t`<p>Gaia DR3 · ${sourceNumber}</p>`+
+   (details?.variable?t('<p>O Gaia registrou variação de brilho nesta fonte.</p>'):''),
+  infrared:gaiaSpectralSummary(source.id)+(details?allwise:''),
+  technical:t`<p>Ascensão reta ${fmt(ra,7)}° · Declinação ${fmt(dec,7)}°</p><p>${position}</p>
    ${technical?`<dl class="source-facts">${technical}</dl>`:''}
-   <p><a target="_blank" rel="noopener" href="https://simbad.cds.unistra.fr/simbad/sim-id?Ident=Gaia+DR3+${sourceNumber}">Buscar esta fonte no SIMBAD</a></p>
-  </details>`;
- for(const section of host.querySelectorAll('details'))section.open=expanded.has(section.dataset.section);
+   <p><a target="_blank" rel="noopener" href="https://simbad.cds.unistra.fr/simbad/sim-id?Ident=Gaia+DR3+${sourceNumber}">Buscar esta fonte no SIMBAD</a></p>`
+ });
  host.querySelector('.gaia-retry')?.addEventListener('click',()=>{
   loadGaiaDetails(source.id);
   renderGaiaOverview(source);
@@ -661,19 +669,21 @@ function renderPocOverview(source){
  const target=source.poc;
  const motion=fmt(Math.hypot(source.pmra,source.pmdec),1);
  const simbad='https://simbad.cds.unistra.fr/simbad/sim-id?Ident='+encodeURIComponent(target.simbad);
- byId('overview').innerHTML=`<div class="hero">
-  <h2>${t(target.description)}</h2>
-  <dl class="source-facts">
+ renderObjectIdentity(source,true);
+ renderSourceOverview(source.id,{
+  title:t(target.description),
+  summary:`<dl class="source-facts">
    <div><dt>${t('Identificação de catálogo')}</dt><dd>${target.catalog}</dd></div>
    <div><dt>${t('Movimento no céu')}</dt><dd>${motion} ${t('mas/ano')}</dd></div>
-  </dl>
-  <details class="evidence"><summary>${t('Como a posição é calculada')}</summary>
-   <p>${t('Posição estimada pelo movimento próprio do catálogo.')}</p>
-  </details>
- </div>
- <details class="evidence"><summary>${t('Dados de catálogo')}</summary>
-  <p><a href="${simbad}" target="_blank" rel="noopener">${t('Ficha no SIMBAD')}</a></p>
- </details>`;
+  </dl>`,
+  identification:`<p>${target.catalog} · <a href="${simbad}" target="_blank" rel="noopener">${t('Ficha no SIMBAD')}</a></p>`,
+  infrared:gaiaSpectralSummary(source.id),
+  technical:`<p>${t('Posição estimada pelo movimento próprio do catálogo.')}</p>
+   <dl class="source-facts">
+    <div><dt>RA · J${source.epoch}</dt><dd>${fmt(source.ra,7)}°</dd></div>
+    <div><dt>Dec · J${source.epoch}</dt><dd>${fmt(source.dec,7)}°</dd></div>
+   </dl>`
+ });
 }
 
 render();

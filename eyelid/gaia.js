@@ -6,9 +6,9 @@ const radians=Math.PI/180;
 let gaiaEpoch=data.gaia_epoch;
 let gaiaDate=null;
 
-function gaiaPosition(source){
- const years=gaiaEpoch-(source.epoch??2016);
- if(source.pmra===null||source.pmdec===null)return [source.ra,source.dec];
+function gaiaPosition(source, epoch=gaiaEpoch){
+ const years=epoch-(source.epoch??2016);
+ if(!Number.isFinite(source.pmra)||!Number.isFinite(source.pmdec))return [source.ra,source.dec];
  return [(source.ra+years*source.pmra/(3600000*Math.cos(source.dec*radians))+360)%360,
          source.dec+years*source.pmdec/3600000];
 }
@@ -87,7 +87,7 @@ function gaiaSpectralSummary(id){
  const spectrum=data.radiance[id];
  const samples=spectrum?.flatMap((value,i)=>Number.isFinite(value)?
   [{value,channel:i+1,wave:data.wavelengths[i]}]:[])??[];
- if(!samples.length)return '';
+ if(!samples.length)return t('<p>Não há medições SPHEREx disponíveis para esta fonte.</p>');
  const bands=[
   [t('Faixas curtas'),.75,1.5],
   [t('Faixas médias'),1.5,3],
@@ -99,16 +99,14 @@ function gaiaSpectralSummary(id){
   return t`<div class="band"><span>${name}</span><meter min="0" max="${total}" value="${count}" aria-label="${name}, ${count} de ${total} canais com medição"></meter><strong>${count}/${total}</strong></div>`;
  }).join('');
  const brightest=samples.reduce((peak,sample)=>sample.value>peak.value?sample:peak);
- return t`<details class="evidence" data-section="infrared"><summary>Onde o brilho foi medido</summary>
-  <div class="bands">${bands}</div><p>${samples.length} canais com medição no mosaico SPHEREx.
+ return t`<div class="bands">${bands}</div><p>${samples.length} canais com medição no mosaico SPHEREx.
   ${brightest.value>0?t`Maior brilho medido no canal ${brightest.channel} (${fmt(brightest.wave)} µm).`:''}</p>
-  <p class="caption">As barras indicam cobertura das medições.</p></details>`;
+  <p class="caption">As barras indicam cobertura das medições.</p>`;
 }
 
 function renderGaiaOverview(source){
  renderObjectIdentity(source,true);
  const host=byId('overview');
- const expanded=new Set([...host.querySelectorAll('details[open]')].map(section=>section.dataset.section));
  const state=gaiaDetails.get(source.id)??loadGaiaDetails(source.id);
  const details=state.result;
  const [ra,dec]=gaiaPosition(source);
@@ -143,18 +141,16 @@ function renderGaiaOverview(source){
  const catalogStatus=state.status==='loading'?t('<p class="caption" role="status">Consultando dados do Gaia DR3…</p>'):
   state.status==='error'?t('<p class="caption" role="status">Consulta ao Gaia DR3 indisponível. <button type="button" class="id gaia-retry">Tentar novamente</button></p>'):'';
  const sourceNumber=source.id.slice(5);
- host.innerHTML=t`<div class="hero"><h2>${classification}</h2>
-  ${summary?`<dl class="source-facts">${summary}</dl>`:''}
-  ${details?.variable?t('<p>O Gaia registrou variação de brilho nesta fonte.</p>'):''}
-  ${catalogStatus}</div>
-  ${gaiaSpectralSummary(source.id)}
-  ${details?t`<details class="evidence" data-section="allwise"><summary>Correspondência no WISE</summary>${allwise}</details>`:''}
-  <details class="evidence" data-section="catalog"><summary>Medições e posição no Gaia</summary>
-   <p>Ascensão reta ${fmt(ra,7)}° · Declinação ${fmt(dec,7)}°</p><p>${position}</p>
+ renderSourceOverview(source.id,{
+  title:classification,
+  summary:(summary?`<dl class="source-facts">${summary}</dl>`:'')+catalogStatus,
+  identification:t`<p>Gaia DR3 · ${sourceNumber}</p>`+
+   (details?.variable?t('<p>O Gaia registrou variação de brilho nesta fonte.</p>'):''),
+  infrared:gaiaSpectralSummary(source.id)+(details?allwise:''),
+  technical:t`<p>Ascensão reta ${fmt(ra,7)}° · Declinação ${fmt(dec,7)}°</p><p>${position}</p>
    ${technical?`<dl class="source-facts">${technical}</dl>`:''}
-   <p><a target="_blank" rel="noopener" href="https://simbad.cds.unistra.fr/simbad/sim-id?Ident=Gaia+DR3+${sourceNumber}">Buscar esta fonte no SIMBAD</a></p>
-  </details>`;
- for(const section of host.querySelectorAll('details'))section.open=expanded.has(section.dataset.section);
+   <p><a target="_blank" rel="noopener" href="https://simbad.cds.unistra.fr/simbad/sim-id?Ident=Gaia+DR3+${sourceNumber}">Buscar esta fonte no SIMBAD</a></p>`
+ });
  host.querySelector('.gaia-retry')?.addEventListener('click',()=>{
   loadGaiaDetails(source.id);
   renderGaiaOverview(source);
@@ -172,17 +168,19 @@ function renderPocOverview(source){
  const target=source.poc;
  const motion=fmt(Math.hypot(source.pmra,source.pmdec),1);
  const simbad='https://simbad.cds.unistra.fr/simbad/sim-id?Ident='+encodeURIComponent(target.simbad);
- byId('overview').innerHTML=`<div class="hero">
-  <h2>${t(target.description)}</h2>
-  <dl class="source-facts">
+ renderObjectIdentity(source,true);
+ renderSourceOverview(source.id,{
+  title:t(target.description),
+  summary:`<dl class="source-facts">
    <div><dt>${t('Identificação de catálogo')}</dt><dd>${target.catalog}</dd></div>
    <div><dt>${t('Movimento no céu')}</dt><dd>${motion} ${t('mas/ano')}</dd></div>
-  </dl>
-  <details class="evidence"><summary>${t('Como a posição é calculada')}</summary>
-   <p>${t('Posição estimada pelo movimento próprio do catálogo.')}</p>
-  </details>
- </div>
- <details class="evidence"><summary>${t('Dados de catálogo')}</summary>
-  <p><a href="${simbad}" target="_blank" rel="noopener">${t('Ficha no SIMBAD')}</a></p>
- </details>`;
+  </dl>`,
+  identification:`<p>${target.catalog} · <a href="${simbad}" target="_blank" rel="noopener">${t('Ficha no SIMBAD')}</a></p>`,
+  infrared:gaiaSpectralSummary(source.id),
+  technical:`<p>${t('Posição estimada pelo movimento próprio do catálogo.')}</p>
+   <dl class="source-facts">
+    <div><dt>RA · J${source.epoch}</dt><dd>${fmt(source.ra,7)}°</dd></div>
+    <div><dt>Dec · J${source.epoch}</dt><dd>${fmt(source.dec,7)}°</dd></div>
+   </dl>`
+ });
 }

@@ -421,5 +421,17 @@
   "Insígnias de exemplo para a demonstração.": "Sample badges for the demo.",
   "Como a posição é calculada": "How the position is calculated",
   "Dados de catálogo": "Catalog data",
-  "Assinatura espectral": "Spectral signature"
+  "Assinatura espectral": "Spectral signature",
+ "Carregando medições do SPHEREx…": "Loading SPHEREx measurements…",
+ "Não foi possível carregar as medições do SPHEREx.": "SPHEREx measurements could not be loaded.",
+ "Identificação": "Identification",
+ "Evidências no infravermelho": "Infrared evidence",
+ "Dados técnicos": "Technical details",
+ "<p>Não há medições SPHEREx disponíveis para esta fonte.</p>": "<p>No SPHEREx measurements are available for this source.</p>",
+ "<p>Gaia DR3 · {0}</p>": "<p>Gaia DR3 · {0}</p>",
+ "<p>{0} Os picos usados passaram pelo filtro de halos.</p>": "<p>{0} The peaks passed the halo filter.</p>",
+ "<p>{0} canais com pico · {1}″ até a fonte Gaia mais próxima</p><p>{2}</p>": "<p>{0} channels with peaks · {1}″ to the nearest Gaia source</p><p>{2}</p>",
+  "<p>Ascensão reta {0}° · Declinação {1}°</p><p>{2}</p>\n   {3}\n   <p><a target=\"_blank\" rel=\"noopener\" href=\"https://simbad.cds.unistra.fr/simbad/sim-id?Ident=Gaia+DR3+{4}\">Buscar esta fonte no SIMBAD</a></p>": "<p>Right ascension {0}° · Declination {1}°</p><p>{2}</p>\n   {3}\n   <p><a target=\"_blank\" rel=\"noopener\" href=\"https://simbad.cds.unistra.fr/simbad/sim-id?Ident=Gaia+DR3+{4}\">Look up this source in SIMBAD</a></p>",
+  "<div class=\"bands\">{0}</div><p>WISE W1: {1} · W2: {2}</p>\n   <p class=\"caption\">As barras contam canais com picos próximos. Para distinguir essas hipóteses, precisamos medir o fluxo por faixa e sua incerteza.</p>": "<div class=\"bands\">{0}</div><p>WISE W1: {1} · W2: {2}</p>\n   <p class=\"caption\">The bars count channels with nearby peaks. Distinguishing these explanations requires measuring flux and its uncertainty in each band.</p>",
+  "<div class=\"bands\">{0}</div><p>{1} canais com medição no mosaico SPHEREx.\n  {2}</p>\n  <p class=\"caption\">As barras indicam cobertura das medições.</p>": "<div class=\"bands\">{0}</div><p>{1} channels with measurements in the SPHEREx mosaic.\n  {2}</p>\n  <p class=\"caption\">The bars show measurement coverage.</p>"
 }

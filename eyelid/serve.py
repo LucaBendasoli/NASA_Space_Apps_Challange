@@ -772,6 +772,24 @@ class AtlasHandler(SimpleHTTPRequestHandler):
             from live_scan import saved_scans
             self.send_data(json.dumps(saved_scans(), allow_nan=False).encode(), 'application/json')
             return
+        if url.path == '/api/source-spectrum':
+            try:
+                query = parse_qs(url.query)
+                ra, dec = (round(float(query[key][0]), 5) for key in ('ra', 'dec'))
+                if not (0 <= ra < 360 and -90 <= dec <= 90):
+                    raise ValueError()
+            except (KeyError, ValueError, OverflowError):
+                self.send_error(400)
+                return
+            try:
+                from source_spectrum import spectrum
+                values = spectrum(ra, dec)
+                self.send_data(json.dumps({'radiance': values}, allow_nan=False).encode(),
+                               'application/json')
+            except (OSError, ValueError, requests.RequestException) as error:
+                self.log_error('%s', error)
+                self.send_error(502, 'Mosaico SPHEREx indisponível')
+            return
         if url.path == '/api/gaia-source':
             value = parse_qs(url.query).get('source_id', [''])[0]
             if not value.isascii() or not value.isdecimal() or len(value) > 19:
