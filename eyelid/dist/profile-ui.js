@@ -19,6 +19,16 @@
 
  function renderActivity(){
   for(const button of tabs)button.setAttribute('aria-pressed',String(button.dataset.profileTab===tab));
+  activity.hidden = tab==='badges';
+  byId('profile-badges').hidden = tab!=='badges';
+  const current=profile;
+  renderProfileBadges(current,(badges,id)=>{
+   if(profile!==current)return;
+   current.badges=badges;
+   renderActivity();
+   byId('profile-badges').querySelector('[data-badge="'+id+'"] button')?.focus();
+  });
+  if(tab==='badges')return;
   activity.replaceChildren();
   for(const item of profile[tab]){
    const article = document.createElement('article');

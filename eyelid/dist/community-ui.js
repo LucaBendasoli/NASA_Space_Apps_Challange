@@ -45,7 +45,78 @@
   return svg;
  }
 
- function showDraft(send,{attach=false,reply=false,fromMap=false}={}){
+ function evidenceControls(reply,original){
+  const group=element('details',null,'community-evidence');
+  group.append(element('summary',t('Anexar evidência')));
+  const type=element('select');
+  const options=['crossmatch','motion-tracker','variable-watch',...(reply?['second-look']:['candidate-scout'])];
+  if(reply&&original?.evidence?.measurements?.length===2)options.push('independent-check');
+  type.add(new Option(t('Sem evidência estruturada'),''));
+  for(const id of options)type.add(new Option(badgeCatalog.get(id).name,id));
+  const label=element('label',t('Tipo de evidência'));
+  label.append(type);
+  group.append(label);
+  const fields=element('div',null,'evidence-fields');
+  group.append(fields);
+  const field=(text,name,value='',type='text')=>{
+   const label=element('label',t(text));
+   const input=element('input');
+   input.name=name;
+   input.type=type;
+   input.value=value;
+   if(type==='number')input.step='any';
+   label.append(input);
+   fields.append(label);
+   return input;
+  };
+  type.onchange=()=>{
+   fields.replaceChildren();
+   if(type.value==='crossmatch'){
+    for(const survey of ['SPHEREx','WISE','Gaia'])field(survey,'survey',survey,'checkbox');
+   }else if(['motion-tracker','variable-watch','independent-check'].includes(type.value)){
+    const dates=original?.evidence?.measurements?.map(item=>item.day)??[];
+    for(const index of [0,1]){
+     const day=field(index===0?'Primeira data':'Segunda data','day'+index,dates[index]??'','date');
+     day.required=index===0||type.value==='independent-check';
+     if(type.value==='motion-tracker'){
+      field('Ascensão reta (graus)','ra'+index,'','number');
+      field('Declinação (graus)','dec'+index,'','number');
+     }
+     if(type.value==='variable-watch')field('Brilho (MJy/sr)','brightness'+index,'','number');
+    }
+   }else if(type.value==='candidate-scout'){
+    fields.append(element('p',t('Selecione um candidato no mapa antes de publicar.')));
+   }
+  };
+  function value(form){
+   const kind=type.value;
+   if(!kind)return null;
+   const input=new FormData(form);
+   if(kind==='candidate-scout'){
+    if(!rows.some(row=>row.id===selected))throw Error(t('Selecione um candidato no mapa antes de publicar.'));
+    return {kind,candidate:selected};
+   }
+   if(kind==='crossmatch')return {kind,surveys:input.getAll('survey')};
+   if(kind==='second-look')return {kind};
+   const measurements=[];
+   for(const index of [0,1]){
+    const day=input.get('day'+index);
+    if(!day)continue;
+    const measurement={day};
+    const measures=kind==='motion-tracker'?['ra','dec']:kind==='variable-watch'?['brightness']:[];
+    for(const measure of measures){
+     const number=input.get(measure+index);
+     if(!number?.trim())throw Error(t('Preencha as medidas junto de cada data.'));
+     measurement[measure]=Number(number);
+    }
+    measurements.push(measurement);
+   }
+   return {kind,measurements};
+  }
+  return {group,type,value};
+ }
+
+ function showDraft(send,{attach=false,reply=false,fromMap=false,original}={}){
   const form = element('form',null,'community-compose');
   const field = element('textarea');
   field.required = true;
@@ -58,6 +129,8 @@
   check.type = 'checkbox';
   check.checked = fromMap;
   option.prepend(check,icon('M20 10c0 5-8 10-8 10S4 15 4 10a8 8 0 1 1 16 0ZM12 7v6m-3-3h6'));
+  const evidence=evidenceControls(reply,original);
+  evidence.type.addEventListener('change',()=>{if(evidence.type.value)check.checked=true});
   const submit = element('button',reply?t('Responder'):t('Publicar'));
   submit.type = 'submit';
   const status = element('p',null,'community-status');
@@ -69,7 +142,7 @@
   const actions = element('div',null,'community-compose-actions');
   if(attach)actions.append(option);
   actions.append(submit);
-  body.append(field,actions,status);
+  body.append(field,evidence.group,actions,status);
   form.append(photo,body);
   form.onsubmit = async event=>{
    event.preventDefault();
@@ -79,7 +152,10 @@
    status.textContent = '';
    try {
     const message = {body};
-    if(attach&&check.checked){
+    const observation=evidence.value(form);
+    if(observation)message.evidence=observation;
+    if(observation?.kind==='independent-check'&&original?.view)message.view=original.view;
+    else if((attach&&check.checked)||observation){
      if(!view){
       status.textContent = t('Aguarde o mapa carregar para anexar a vista.');
       return;
@@ -98,7 +174,9 @@
     } else {
      status.textContent = error.message==='403'
       ? t('Use uma conta pessoal para participar.')
-      : t('Não foi possível enviar. Seu texto foi preservado.');
+      : error.message==='400' ? t('Confira os dados da evidência e as datas observadas.')
+      : /^\d+$/.test(error.message) ? t('Não foi possível enviar. Seu texto foi preservado.')
+      : error.message;
     }
    } finally {submit.disabled = false}
   };
@@ -151,6 +229,22 @@
   const content = element('div',null,'community-post-content');
   card.append(avatar(item.author,item.avatar_url),content);
   content.append(byline,text);
+  if(item.evidence){
+   const badge=badgeCatalog.get(item.evidence_kind);
+   const evidence=element('div',null,'post-evidence');
+   evidence.append(element('strong',badge?.name));
+   const data=item.evidence;
+   if(data.candidate)evidence.append(element('span',data.candidate));
+   if(data.surveys)evidence.append(element('span',data.surveys.join(' · ')));
+   for(const point of data.measurements??[]){
+    const parts=[point.day];
+    if(point.ra!==undefined)parts.push('RA '+point.ra+'°','Dec '+point.dec+'°');
+    if(point.brightness!==undefined)parts.push(point.brightness+' MJy/sr');
+    evidence.append(element('span',parts.join(' · ')));
+   }
+   content.append(evidence);
+  }
+
   if(item.view){
    const link = element('a',t('Abrir vista no mapa'));
    link.href = '/?'+new URLSearchParams(item.view);
@@ -250,7 +344,7 @@
      await request(endpoint+'/'+id,body);
      if(version===threadVersion)await openThread(id);
      refresh();
-    },{reply:true}));
+    },{reply:true,attach:true,original:data.post}));
    } catch {
     if(version===threadVersion)thread.replaceChildren(back,element('p',t('Não foi possível carregar a discussão.')));
    }
