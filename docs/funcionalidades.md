@@ -1,48 +1,48 @@
-# Funcionalidades
+# Features
 
-| Recurso | Na ferramenta pública/documentação | Na demonstração Órbita |
+| Feature | Public tool or documentation | Órbita demonstration |
 | --- | --- | --- |
-| Imagens do céu | HiPS com níveis progressivos | Biblioteca oficial com URL direta de espelho |
-| Navegação e zoom | Mouse, toque e API | Gestos originais; botões próprios acionam `increaseZoom`/`decreaseZoom`, como os controles oficiais |
-| Busca por nome | Resolução astronômica remota | Oito alvos locais; demais nomes via Sesame |
-| Busca por posição | API de coordenadas | Dois números decimais em graus ICRS |
-| Coordenadas | Diferentes referenciais e formatos | RA/Dec centrais em graus ICRS |
-| Levantamentos | Lista ampla e seleção de camadas | DSS2, 2MASS, AllWISE e SDSS9 |
-| Espelhos | Página atual oferece provedores alternativos | ESA e China-VO selecionáveis |
-| Projeções | Múltiplas projeções do motor | SIN, AIT e MOL |
-| Grade | Grade de coordenadas | Botão liga/desliga via `setCooGrid` |
-| Catálogos | SIMBAD, VizieR, locais e outros na API | Lista local de oito objetos com posições aproximadas |
-| CSV e VOTable | Controles presentes na página pública | Não implementados |
-| FITS, MOC e SAMP | Recursos do código/API | Não expostos nesta interface |
-| Compartilhamento | API de estado e compartilhamento | Link próprio com posição, FoV, projeção e camada |
+| Sky imagery | Progressive HiPS levels | Official library with a direct mirror URL |
+| Navigation and zoom | Mouse, touch, and API | Native gestures and custom buttons that call `increaseZoom` and `decreaseZoom`, like the official controls |
+| Name search | Remote astronomical name resolution | Eight local targets, with Sesame for other names |
+| Position search | Coordinate API | Two decimal numbers in ICRS degrees |
+| Coordinates | Multiple reference frames and formats | Center RA and Dec in ICRS degrees |
+| Surveys | Extensive list and layer selection | DSS2, 2MASS, AllWISE, and SDSS9 |
+| Mirrors | The public page offers alternate providers | Selectable ESA and China-VO mirrors |
+| Projections | Multiple engine projections | SIN, AIT, and MOL |
+| Grid | Coordinate grid | Toggle through `setCooGrid` |
+| Catalogs | SIMBAD, VizieR, local catalogs, and others through the API | Local list of eight objects with approximate positions |
+| CSV and VOTable | Controls on the public page | Unavailable in this demo |
+| FITS, MOC, and SAMP | Features in the code and API | Unavailable in this interface |
+| Sharing | State and sharing API | Custom link with position, field of view, projection, and layer |
 
-## Uso
+## Usage
 
-- Digite `M31`, `M42`, `M45`, `Sirius`, `M51`, `M13`, `M1` ou `Sgr A*` para destinos locais. Nomes locais têm coordenadas aproximadas fixas, não atualizadas para movimento próprio.
-- Digite `10.684708, 41.268750` ou `83.822083 -5.391111` para navegar sem resolução remota. O separador decimal é ponto; a vírgula separa os dois valores. Não há parsing próprio de coordenadas sexagesimais.
-- Troque o levantamento para comparar diferentes bandas. As cores são composições dos provedores; não equivalem necessariamente às cores percebidas pelo olho humano.
-- Se as imagens não aparecerem, alterne o servidor e confira o link dos metadados. SDSS não cobre todo o céu.
-- Ative os objetos de referência para ver os marcadores quando estiverem no campo atual. Eles não são uma consulta do céu inteiro ao SIMBAD.
-- Use “Copiar posição” para salvar o estado no link. Se a área de transferência estiver indisponível, copie o endereço da barra. O espelho, a grade e a visibilidade do catálogo não fazem parte desse estado.
+- Enter `M31`, `M42`, `M45`, `Sirius`, `M51`, `M13`, `M1`, or `Sgr A*` to find a local target. Local targets use fixed, approximate coordinates without proper-motion corrections.
+- Enter `10.684708, 41.268750` or `83.822083 -5.391111` to navigate without remote name resolution. Use a period as the decimal separator and a comma or space between the values. The custom parser handles decimal degrees.
+- Switch surveys to compare bands. The providers supply color composites, which may differ from what the human eye would see.
+- If images fail to appear, switch mirrors and check the metadata link. SDSS has partial sky coverage.
+- Enable reference objects to see markers within the current field. The markers come from the local list.
+- Use **Copy position** to save the current state as a link. If clipboard access fails, copy from the address bar. The link excludes the mirror, grid, and catalog visibility settings.
 
-## Tratamento de falhas
+## Error handling
 
-O site mostra estado de carregamento, falha de biblioteca/WebGL, timeout de busca e aviso de acesso ao espelho. O botão de nova tentativa recarrega a página. A confirmação de metadados não garante que as imagens de todos os níveis estejam disponíveis. Não há renderização científica alternativa offline nem cache próprio de levantamentos.
+The site reports loading, library or WebGL failure, search timeout, and mirror access errors. The retry button reloads the page. A successful metadata request only confirms access to metadata. The demo has no offline science renderer or custom survey cache.
 
-Os controles foram implementados e revisados contra a API dos fontes importados. A validação visual completa continua pendente; veja `validacao.md`.
+The controls were implemented and reviewed against the imported API source. See [validation notes](validacao.md) for the scope of browser testing at this stage.
 
-## Aproximação e resolução
+## Zoom and resolution
 
-A faixa artificial de 0,01° foi removida. O motor agora determina os limites de aproximação e afastamento conforme a projeção. Nesta versão, o limite interno de aproximação é aproximadamente 0,1 segundo de arco; não se trata de zoom matematicamente infinito. Os botões usam a animação nativa do motor, e os gestos não recebem interceptação própria.
+The artificial 0.01° limit was removed. The engine determines zoom limits for the selected projection. Its minimum field was about 0.1 arcseconds in this version. Buttons use native engine animation, and gestures use native input handling.
 
-O campo exibido muda entre graus (°), minutos (′) e segundos (″) de arco. Coordenadas são exibidas com oito casas decimais; isso melhora a leitura em grande aproximação, sem aumentar a precisão dos dados originais. Links preservam a representação numérica de RA, Dec e FoV, sem arredondar campos pequenos a zero. Campos positivos vindos de links são enviados ao motor, que aplica os limites nativos.
+Field size is displayed in degrees (°), arcminutes (′), or arcseconds (″). Coordinates use eight decimal places for readability at high zoom, with the original data precision intact. Links retain the numerical RA, Dec, and field of view without rounding small fields to zero. Positive field values from links go to the engine, which applies its own limits.
 
-A resolução máxima de cada levantamento continua finita. Depois do último nível de detalhe, aproximar amplia os pixels existentes. Essa alteração não acrescenta imagens de maior resolução.
+Each survey has a finite maximum resolution. Zooming beyond its highest level of detail enlarges existing pixels.
 
-## Trabalho da interface durante a navegação
+## Interface updates during navigation
 
-As atualizações de posição e zoom solicitam um único trabalho pendente do painel, sincronizado com `requestAnimationFrame` e limitado a 10 atualizações por segundo. O estado é lido na execução para mostrar a posição mais recente, incluindo o valor final depois do movimento. Não há loop contínuo próprio quando o painel está ocioso. Os nós são referenciados uma vez e o texto só é escrito quando muda. Em aba oculta, o trabalho pendente do painel é cancelado; ao voltar, é solicitado um novo estado.
+Position and zoom events schedule one pending panel update through `requestAnimationFrame`, capped at 10 updates per second. The update reads the latest state when it runs and includes the final position after movement. An idle panel has no continuous loop. Nodes are stored once and text is written only when it changes. Hiding the tab cancels pending panel work, and returning requests a fresh update.
 
-`showFov` e `showCooLocation` ficam desativados no Aladin para evitar indicadores e listeners nativos duplicados. A barra de estado original e as atribuições permanecem disponíveis. A contenção CSS do mapa e do rodapé limita a propagação de layout/pintura; os números usam largura tabular.
+The Aladin options `showFov` and `showCooLocation` are disabled to avoid duplicate indicators and listeners. The original status bar and attribution remain available. CSS containment on the map and footer limits layout and painting propagation, and their numeric displays use tabular figures.
 
-Essas otimizações reduzem trabalho auxiliar da interface. Não limitam os quadros do mapa a 10 FPS, não interceptam gestos, não alteram os limites de zoom, a resolução do canvas, os dados HiPS ou o motor original. Downloads de imagens ainda dependem dos espelhos e da rede. Não foi medido ganho de FPS ou tempo de GPU nesta sessão.
+The cap applies only to the auxiliary panel. The engine still handles map frames and gestures, and survey mirrors and network conditions determine image download performance. This session did not measure FPS or GPU time.
