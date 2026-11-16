@@ -1,51 +1,51 @@
-# Comparação de astros no mesmo gráfico
+# Comparing objects on the same chart
 
-Selecione a fonte principal clicando em seu marcador no mapa. O dropdown de seleção principal foi removido. O gráfico começa sempre com uma única série verde, correspondente à fonte selecionada. O dropdown **Comparar com outro astro visível** aparece imediatamente abaixo do título, ao lado de **Fixar análise**, no formato do seletor anterior; não exige expandir o painel nem abrir “Visualizar mais”. Ele começa em **Selecione outro astro para comparação** e adiciona uma segunda série, roxa, somente após escolha explícita. A legenda identifica o astro principal e o astro de comparação; a tabela e os tooltips identificam a mesma série e banda.
+Click a map marker to select the primary source. The chart starts with one green series for that source. The former primary source dropdown was removed. The **Compare with another visible object** dropdown sits below the heading next to **Pin analysis**, using the previous selector's style. It is available without expanding the panel or opening **Show more**. It starts at **Select another object to compare**. An explicit choice adds a purple series. The legend identifies each object, and the table and tooltips identify the corresponding series and band.
 
-Durante o carregamento principal, o dropdown de comparação permanece visível e desabilitado. Ao abrir o painel por teclado ou pelo link de acesso rápido, o foco vai para a região rotulada, sem rolar a página. A desambiguação de marcadores sobrepostos continua sendo oferecida após o clique no mapa, para evitar atribuir medições ao astro errado.
+During primary loading, the comparison dropdown stays visible and disabled. Opening the panel by keyboard or through the shortcut focuses its labeled region without scrolling the page. If map markers overlap, the click opens a disambiguation choice so users can select the intended source.
 
-Após o gráfico, **Tabela de medições** aparece antes de **Observação e coordenadas**. Ambas são seções permanentes com títulos acessíveis, sem controles de abrir/fechar. Quando há dados, os conteúdos ficam expostos na rolagem interna do painel, inclusive após trocar o astro ou a comparação. A tabela permanece ausente quando não há medições, e a identificação só aparece quando existe uma fonte selecionada.
+The chart is followed by **Measurement table**, then **Observation and coordinates**. Both have accessible headings, and their contents remain open in the panel's scroll area as the object or comparison changes. The table appears when measurements are available, and identification appears when a source is selected.
 
-O seletor inclui somente outras fontes do catálogo científico regional cuja posição projetada pelo Aladin esteja dentro da largura e altura do mapa atual. Não usa objetos didáticos nem atribui medições a pontos luminosos sem registro. Uma consulta parcial continua sendo identificada como parcial; as opções representam os registros disponíveis.
+The dropdown includes only other sources from the regional science catalog whose projected positions lie within the map's current width and height. Educational objects and uncataloged points are excluded. Partial queries remain labeled as such, and choices reflect the available records.
 
-## Ciclo de seleção
+## Selection lifecycle
 
-- A segunda fonte só é carregada após escolha explícita. Escolher a primeira opção remove a comparação.
-- Selecionar uma fonte principal, inclusive a mesma novamente, limpa a comparação. Fechar e reabrir o painel também reinicia com uma série. A fixação da análise principal mantém seu comportamento anterior.
-- Navegar atualiza as opções por projeção; se a segunda fonte sair do campo ou do catálogo regional, sua comparação é removida. A fixação se aplica à análise principal.
-- Trocar levantamento ou contexto incompatível remove ambas as séries. Compartilhamento continua recuperando apenas a fonte principal: comparações não são ativadas implicitamente por links.
-- Erro ou ausência de medições na comparação preserva a análise principal. Há mensagem específica e ação para repetir em caso de erro.
+- A second source loads after an explicit choice. Select the first option to remove the comparison.
+- Selecting a primary source, including the same source again, clears the comparison. Reopening the panel also starts with one series. Pinning keeps its existing behavior for the primary analysis.
+- Navigation updates the available choices using their projected positions. The comparison is removed if its source leaves the field or regional catalog.
+- Changing surveys or entering an incompatible context clears both series. A shared link restores only the primary selection.
+- Missing measurements or errors in the comparison leave the primary analysis visible. Errors have a dedicated message and a retry action.
 
-## Dados e movimento
+## Data and motion
 
-`science-comparison.js` mantém requisição, cancelamento, versão, cache limitado e estado da comparação separados da seleção principal. A chave do cache inclui levantamento, observação e identificador. Respostas de uma escolha anterior ou anterior à redefinição não podem restaurar uma série. Receber dados com o painel fechado não o reabre.
+`science-comparison.js` manages requests, cancellation, version counters, a bounded cache, and comparison state independently of the primary selection. Keys include the survey, observation, and identifier. Stale responses cannot restore a cleared or replaced series. Responses arriving after the panel closes leave it closed.
 
-Ambas as séries usam os mesmos eixos numéricos, considerando valores e incertezas de todos os pontos. A comparação exige igualdade das unidades de comprimento de onda e radiância normalizadas pelo adaptador. Não há conversão automática, normalização de amplitudes nem segundo eixo enganoso. O backend deverá fornecer unidades compatíveis; o contrato e os endpoints provisórios existentes não mudam.
+Both series share numerical axes based on all valid values and uncertainties. Wavelength and radiance unit strings must match after adapter normalization. The backend must supply compatible units. Existing provisional contracts and endpoints remain unchanged, and the chart uses no automatic conversion, amplitude normalization, or secondary axis.
 
-Cada série tem segmentos retos de apoio visual entre bandas consecutivas válidas. Ausências interrompem os segmentos; zero e negativos autorizados são preservados. A linha não representa um espectro contínuo medido. Uma única medição válida permanece isolada.
+Straight visual guides connect consecutive valid bands. Missing values break a line, zero and permitted negatives are preserved, and a single value stays isolated. Connecting the points gives a visual guide between discrete measurements.
 
-Ao adicionar ou trocar a comparação, as escalas e coordenadas são atualizadas juntas; o SVG e a linha principal permanecem no DOM. Somente a nova série é traçada, em aproximadamente 500 ms. Os pontos e incertezas aparecem nas coordenadas finais, sem animar os valores. O painel e o seletor permanecem estáveis. Movimento reduzido mostra o resultado final, inclusive quando a preferência muda durante a interação; sem GSAP, os dados permanecem visíveis. Veja [largura fluida, continuidade e validação](grafico-responsivo.md).
+Adding or replacing a comparison updates scale and coordinates together. The SVG and primary path remain in the DOM. Only the new series animates, over about 500 ms. Markers and uncertainties appear at their final coordinates, and the selector stays stable. Reduced motion shows the final state, even if the preference changes during interaction. Data remains visible when GSAP is unavailable. See [responsive width, series continuity, and validation](grafico-responsivo.md).
 
-## Validação
+## Validation
 
-Os testes de estado cobrem início sem comparação, remoção, candidatos, respostas fora de ordem, redefinição durante requisição, contexto científico, cache por observação, unidades incompatíveis, vazio, erro e repetição. A validação visual usa dados explicitamente simulados; não comprova integração com backend científico real.
+State tests cover the initial single-series state, removal, available choices, out-of-order responses, resets during a request, scientific context, observation-keyed caching, incompatible units, empty responses, errors, and retries. Visual checks used explicitly simulated data.
 
-Executados nesta entrega: `npm.cmd test` (**43 aprovados**), `npm.cmd run verify:upstream` (**429/429 arquivos preservados**) e `git diff --check` (sem erros de whitespace).
+This run passed **43 tests** with `npm.cmd test`, verified all **429 upstream files** with `npm.cmd run verify:upstream`, and passed `git diff --check`.
 
-Em Microsoft Edge real, via Playwright CLI, foram executados:
+Microsoft Edge via Playwright CLI covered:
 
-- Clique real no marcador nativo do Aladin, primeira série isolada e placeholder exato; adição de segunda série com cores distintas e dez bandas na tabela da demonstração.
-- Tooltip por foco na série de comparação destacando apenas sua linha na tabela, sem confundir bandas de mesmo identificador em astros distintos.
-- Comparação vazia mantendo o gráfico principal, escolha repetida da mesma fonte principal, fechamento/reabertura e remoção pelo placeholder.
-- Temas claro/escuro, mudança para movimento reduzido com painel aberto e ausência de tracejado residual.
-- Desktop 1440×900 e viewport móvel 390×844. No móvel expandido, o SVG ficou entre y=555 e y=773, dentro da altura de 844 px; não houve overflow horizontal. `scrollX/scrollY` permaneceram em `[0,0]` antes/depois das seleções.
-- Zoom retirando as outras fontes do campo e removendo a segunda série; retorno do zoom restaurando opções sem escolher outra fonte automaticamente. Troca SIN/AIT preservando comparação compatível; grade e catálogo didático continuam acionáveis. Em 760×390, painel limitado ao viewport com rolagem interna, sem deslocamento da página.
-- HTTP **interceptado com respostas de teste**, separado da demonstração: teclado no dropdown, demora de 850 ms, B→C com resposta de B atrasada, HTTP 503 e repetir, unidades incompatíveis, fechar durante requisição e trocar levantamento. O avanço do traço foi observado em valor intermediário de `stroke-dashoffset` de aproximadamente 0,49.
+- Clicking a native Aladin marker, the initial series and exact placeholder, adding a second series with distinct colors, and ten demo bands in the table.
+- Keyboard focus on the comparison tooltip highlighting only its row, even when two objects share a band identifier.
+- A comparison with no measurements leaving the primary chart visible, repeated primary selection, reopening, and removing the comparison through the placeholder.
+- Light and dark themes, switching to reduced motion with the panel open, and cleanup of line dashes.
+- 1440×900 desktop and 390×844 mobile. The expanded mobile SVG occupied y=555–773, within the 844 px viewport. Horizontal overflow was absent and `scrollX/scrollY` stayed `[0,0]`.
+- Zooming until other sources leave the field, removal of the comparison, and recovery of the available choices on zooming out. Switching SIN/AIT preserved a compatible comparison. The grid and educational catalog remained accessible. At 760×390, the panel scrolled internally without moving the page.
+- Intercepted HTTP responses, separate from the demo, tested keyboard interaction, an 850 ms delay, a stale B response after switching to C, HTTP 503 and retry, incompatible units, closing during a request, and switching surveys. Line drawing was observed at an intermediate `stroke-dashoffset` of about 0.49.
 
-Capturas em `output/playwright/comparison-desktop.png`, `comparison-dark.png`, `comparison-mobile.png`, `comparison-reduced.png` e `comparison-landscape.png`. Scripts de reprodução locais estão no mesmo diretório ignorado pelo Git.
+Screenshots include `output/playwright/comparison-desktop.png`, `comparison-dark.png`, `comparison-mobile.png`, `comparison-reduced.png`, and `comparison-landscape.png`. Local scripts are in the same Git-ignored directory.
 
-O motor WebGL e seus marcadores foram usados de verdade, sem substituição por canvas de teste. Apenas o módulo de entrada foi instrumentado em memória para observar a instância do Aladin nos testes; nenhum renderer foi mockado. Os tiles HiPS não carregaram nesta sessão: houve falhas DNS e timeout nos serviços externos, além de mensagens de falha de fetch do bundle oficial. Portanto, as capturas mostram o fundo escuro e não validam alinhamento sobre imagens HiPS efetivamente renderizadas. Não houve teste em aparelho físico, leitor de tela ou backend científico real.
+Edge used the real WebGL renderer and native markers. In-memory instrumentation of the entry module exposed the Aladin instance. HiPS tiles failed to load due to DNS errors and timeouts, and the official bundle also reported fetch errors. The screenshots show a dark map background. Alignment over loaded tiles, physical devices, screen readers, and a real science backend were outside the verified scope.
 
-### Ajuste do seletor visível
+### Always-visible selector follow-up
 
-Após remover “Selecionar fonte” e mover a comparação para a faixa fixa do painel, foram repetidos os 43 testes, a verificação dos 429 arquivos upstream e `git diff --check`, todos aprovados. No Edge, foram conferidos clique real em A, seletor de comparação imediatamente visível sem ancestral `details`, adição da segunda linha sem alterar o principal, troca de tema sem recriar o controle, clique em B reiniciando com uma série e placeholder vazio, e entrada de foco na região do painel. Em 390×844, o seletor ficou entre y=411 e y=456 e o SVG entre y=558 e y=776, sem overflow horizontal nem mudança de `scrollX/scrollY`. Capturas atualizadas: `output/playwright/direct-comparison-desktop.png` e `direct-comparison-mobile.png`. Os testes usaram a demonstração explícita; as limitações de rede e backend real continuam aplicáveis.
+After removing the primary selector and moving the comparison into the fixed controls, all 43 tests, the 429-file upstream verification, and `git diff --check` passed again. The Edge run confirmed a real click on A, an immediately visible comparison selector with no `details` ancestor, a second line without changes to the primary path, theme changes without recreating the control, a click on B restoring one line and the placeholder, and focus entering the panel. On 390×844, the selector occupied y=411–456 and the SVG y=558–776, without horizontal overflow or changes in `scrollX/scrollY`. Updated captures are `output/playwright/direct-comparison-desktop.png` and `direct-comparison-mobile.png`. This used the explicit demo, with the same network and backend limits.
