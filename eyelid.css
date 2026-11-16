@@ -263,11 +263,12 @@ label[for="rgb-blue"]{--component:#2764a9}
  .navigation-collapsed #eyelid-navigation span{display:inline}
 }
 @media(max-width:650px){
- #eyelid-shell,#eyelid-shell.navigation-collapsed{padding-bottom:calc(98px + env(safe-area-inset-bottom))}
- #eyelid-navigation{grid-template-columns:repeat(4,minmax(0,1fr))}
+ #eyelid-shell:has([data-parent-page]:not([hidden])){padding-bottom:calc(98px + env(safe-area-inset-bottom))}
+ #eyelid-navigation{--primary-navigation-row:1;grid-template-columns:repeat(4,minmax(0,1fr))}
+ #eyelid-navigation:has([data-parent-page]:not([hidden])){--primary-navigation-row:2}
  #eyelid-navigation .eyelid-shortcuts{display:contents}
  #eyelid-navigation [data-section]{grid-row:1}
- #eyelid-navigation [data-page]{grid-row:2}
+ #eyelid-navigation [data-page]{grid-row:var(--primary-navigation-row)}
  #eyelid-navigation .eyelid-account{grid-column:4}
  #eyelid-navigation .eyelid-shortcuts button{min-height:44px;text-align:center;font-size:10px}
  #eyelid-shell #object-panel,#eyelid-shell #restore-object{bottom:calc(103px + env(safe-area-inset-bottom))}
@@ -367,7 +368,7 @@ label[for="rgb-blue"]{--component:#2764a9}
 .navigation-collapsed .eyelid-account-actions{flex-direction:column}
 @media(max-width:650px){
  .eyelid-account-actions,.navigation-collapsed .eyelid-account-actions{
-  grid-area:2 / 3 / 3 / 5;flex-direction:row;justify-content:flex-end;margin:0;padding:0;border:0
+  grid-column:3 / 5;grid-row:var(--primary-navigation-row);flex-direction:row;justify-content:flex-end;margin:0;padding:0;border:0
  }
  #eyelid-navigation .eyelid-account-actions .eyelid-account{flex:0 1 auto;min-width:60px}
  #eyelid-navigation #sidebar-logout{width:44px}
