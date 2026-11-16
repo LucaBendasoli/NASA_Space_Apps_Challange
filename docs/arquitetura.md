@@ -1,78 +1,78 @@
-# Arquitetura e investigação
+# Architecture and source investigation
 
-Consulta e importação: 14/11/2026. Esta análise separa fatos encontrados nos fontes oficiais de decisões da aplicação própria. Não houve captura de tráfego de um navegador funcional nesta sessão.
+Research and import were performed on November 14, 2026. This document records an investigation of the official source and the implementation decisions for the standalone demonstration. The session did not capture live browser traffic.
 
-## Identidade da ferramenta
+## Tool identity
 
-O [README do projeto CDS](https://github.com/cds-astro/aladin-lite) aponta para a URL solicitada, e a documentação do Aladin Lite aponta para esse repositório. O código foi obtido de `cds-astro/aladin-lite`, commit `60c5cf414d6d56a10b406761e62e8c2ce9f2a760`, versão declarada `3.9.0-beta`. Arquivos originais e manifesto de hashes estão em `../upstream/`.
+The [CDS project README](https://github.com/cds-astro/aladin-lite) points to the requested page, and the Aladin Lite documentation points to that repository. The source came from `cds-astro/aladin-lite` at commit `60c5cf414d6d56a10b406761e62e8c2ce9f2a760`, declared version `3.9.0-beta`. The original files and hash manifest are in [upstream](../upstream/).
 
-A página pública hoje é descrita pelo próprio CDS como uma versão de contingência. Ela apresenta espelhos de levantamentos, resolução de nomes, SIMBAD, inclusão de catálogos VizieR e arquivos CSV/VOTable. A extração textual da página confirma esses controles, mas não mostra a implementação completa do HTML/JS dessa interface. **Não há prova de equivalência byte a byte entre o commit importado e todos os scripts atualmente publicados na página.** A identidade confirmada é a do projeto e de seu motor público.
+CDS described the public page as a contingency previewer. Its controls include survey mirrors, name resolution, SIMBAD, VizieR catalogs, and CSV/VOTable files. Text extracted from the page confirmed those controls. The investigation established the identity of the project and engine. The page's full HTML/JavaScript implementation and byte-for-byte equivalence between its published scripts and the imported commit remained unverified.
 
-## Componentes confirmados pela leitura dos fontes
+## Components confirmed in the source
 
-| Camada | Evidência local original | Responsabilidade |
+| Layer | Local upstream evidence | Responsibility |
 | --- | --- | --- |
-| API JavaScript | `upstream/aladin-lite/src/js/A.js` | Entrada pública, inicialização, fábricas de catálogos e objetos |
-| Instância do atlas | `src/js/Aladin.js` no upstream | Métodos para câmera, camadas, projeção, coordenadas e eventos |
-| Interação | `src/js/View.js` no upstream | Eventos de mouse/toque, arraste, zoom e atualização da vista |
-| HiPS | `src/js/HiPS.js` no upstream | Leitura de propriedades, formatos e resolução dos levantamentos |
-| Núcleo Rust | `src/core/src/lib.rs`, `app.rs`, `camera/` | Estado/renderização expostos ao JavaScript via WebAssembly |
-| GPU | `src/core/al-core/`, `src/glsl/`, `src/core/src/shaders.rs` | Abstrações gráficas e shaders usados pelo motor WebGL2 |
-| Downloads | `src/core/src/tile_fetcher.rs`, `downloader/` | Fila de solicitações e tiles carregados |
-| Busca original | `src/js/Sesame.js` | Resolução de nome por serviço HTTP; interpretação da linha `%J` |
-| Compilação | `package.json`, `vite.config.ts` | wasm-pack para Rust, Vite para módulos ES e UMD |
+| JavaScript API | `upstream/aladin-lite/src/js/A.js` | Public entry point, initialization, catalog and source factories |
+| Atlas instance | `src/js/Aladin.js` | Camera, layers, projection, coordinates, and events |
+| Interaction | `src/js/View.js` | Mouse and touch events, panning, zoom, and view updates |
+| HiPS | `src/js/HiPS.js` | Survey properties, formats, and resolution |
+| Rust core | `src/core/src/lib.rs`, `app.rs`, `camera/` | State and rendering exposed to JavaScript through WebAssembly |
+| GPU | `src/core/al-core/`, `src/glsl/`, `src/core/src/shaders.rs` | Graphics abstractions and shaders for WebGL 2 |
+| Downloads | `src/core/src/tile_fetcher.rs`, `downloader/` | Request queue and loaded tiles |
+| Native search | `src/js/Sesame.js` | HTTP name resolution and parsing the `%J` line |
+| Build | `package.json`, `vite.config.ts` | wasm-pack for Rust and Vite for ES and UMD builds |
 
-Os caminhos abreviados nessa tabela ficam dentro de `upstream/aladin-lite/`. O `A.init` verifica WebGL2 e aguarda a inicialização do módulo WASM. O núcleo se apoia em bibliotecas científicas Rust como cdshealpix, mapproj, fitsrs e moc, conforme README e manifests Cargo.
+Abbreviated paths are relative to `upstream/aladin-lite/`. `A.init` checks WebGL 2 and waits for the WASM module. The upstream README and Cargo manifests list Rust science libraries including cdshealpix, mapproj, fitsrs, and moc.
 
-## Como as imagens formam o mapa
+## How the imagery forms the map
 
-HiPS organiza levantamentos sobre a tesselação HEALPix da esfera, em níveis progressivos de resolução. O número de células em uma ordem `k` é `12 × 4^k`; ordem HEALPix não é a mesma coisa que a largura em pixels de cada tile. O arquivo `properties` informa, entre outros campos, ordem máxima, tamanho dos tiles, sistema de coordenadas e formatos disponíveis. No esquema HiPS, URLs de tiles seguem a estrutura `NorderK/DirD/NpixP.ext`; a implementação dessas requisições pertence ao motor original.
+HiPS uses HEALPix tessellation to organize surveys over the sphere at progressively finer resolutions. Order `k` has `12 × 4^k` cells. HEALPix order and tile width in pixels are separate properties. The `properties` file gives the maximum order, tile size, coordinate frame, available formats, and other metadata. The original engine requests tiles through URLs of the form `NorderK/DirD/NpixP.ext`.
 
-A câmera, o campo de visão e a projeção determinam quais regiões precisam aparecer. O motor obtém tiles adequados à região e ao nível de detalhe, usa recursos de GPU e faz a projeção da esfera para a tela. O zoom muda o campo angular e a demanda de detalhe; não é simplesmente ampliar uma fotografia única. Mover a vista provoca novas requisições conforme necessário.
+The camera, field of view, and projection define the visible region. The engine fetches tiles for the region and level of detail and uses the GPU to project the sphere onto the screen. Zoom changes the angular field of view and requested detail. Panning requests new tiles as needed.
 
-**Inferência de projeto:** essa estrutura permite explorar levantamentos muito maiores que a memória do navegador sem carregar todos os pixels. Não fizemos medições de tempo, memória, taxa de quadros ou tráfego para quantificar o benefício nesta entrega.
+This design lets the browser explore surveys larger than its available memory by loading tiles on demand. The investigation did not measure time, memory, frame rate, or traffic to quantify that benefit.
 
-## Coordenadas e navegação
+## Coordinates and navigation
 
-A API oferece `gotoRaDec`, `getRaDec`, `getFov`, `setFoV`, `pix2world` e `world2pix`. Nossa interface mantém os valores em ICRS e graus decimais, valida RA em `[0, 360)` e declinação em `[-90, 90]`, e envia a posição para o motor. O rótulo ICRS/J2000 acompanha o uso comum do atlas; ICRS e FK5/J2000 não são referenciais rigorosamente idênticos. A implementação original comenta que a diferença não é perceptível para os propósitos visuais do visualizador.
+The API provides `gotoRaDec`, `getRaDec`, `getFov`, `setFoV`, `pix2world`, and `world2pix`. The interface uses decimal ICRS degrees, validates RA in `[0, 360)` and declination in `[-90, 90]`, and passes the position to the engine. The ICRS/J2000 label follows common atlas usage. ICRS and FK5/J2000 are distinct frames, and the upstream implementation notes that their difference is imperceptible for the viewer's visual use.
 
-O arraste e a roda são tratados pela própria biblioteca. Eventos `positionChanged` e `zoomChanged` atualizam nossos indicadores, sem acessar detalhes privados do WASM. O campo exibido é o primeiro valor de `getFov()` (largura angular); a altura pode ser diferente.
+The library handles drag and wheel input. `positionChanged` and `zoomChanged` update the indicators via public events. The field display uses the first `getFov()` value, its angular width. The height may differ.
 
-## Catálogos, protocolos e serviços
+## Catalogs, protocols, and services
 
-Imagens e catálogos são camadas distintas: as primeiras contêm pixels; os segundos contêm fontes com coordenadas e atributos. A API original permite catálogos locais, consultas a SIMBAD/VizieR/NED, catálogos HiPS progressivos, sobreposições e coberturas MOC. O código também contém integração SAMP e leitura de imagens FITS. A existência desses recursos foi verificada no código/documentação; não implica que todos os serviços estejam operacionais hoje.
+Image layers contain pixels. Catalog layers contain sources with coordinates and attributes. Upstream supports local catalogs, SIMBAD/VizieR/NED queries, progressive HiPS catalogs, overlays, and MOC coverage. Its source also includes SAMP integration and FITS image reading. The source establishes support for these capabilities. Live service availability was outside the investigation.
 
-O catálogo didático local de oito referências usa `A.catalog`, `A.source` e `addCatalog`. Um catálogo científico separado agora permite fontes por região, seleção e medições no infravermelho, com provedor HTTP configurável ou demonstração explicitamente ativada. O contrato ainda é provisório: veja [backend-infravermelho.md](backend-infravermelho.md). A resolução de outros nomes usa HTTP(S) do Sesame com resposta textual e posição `%J`; não confundir essa busca com baixar um catálogo inteiro. As imagens usam HiPS sobre HTTPS nos espelhos ESA e China-VO. Não há implementação de backend científico neste repositório.
+The eight educational references use `A.catalog`, `A.source`, and `addCatalog`. A separate science catalog supports regional sources, selection, and infrared measurements through a configurable HTTP provider or an explicitly enabled demo. See the [provisional contract](backend-infravermelho.md) for this prototype. Other names resolve through Sesame over HTTP(S), with textual `%J` positions. Images use HiPS over HTTPS on the ESA and China-VO mirrors. This standalone demonstration had no science backend.
 
-## Fluxo da demonstração própria
+## Standalone demonstration flow
 
 ```mermaid
 flowchart TD
-  HTML[HTML e CSS locais] --> UI[Controles próprios]
-  UI --> BOOT[Carregar distribuição oficial 3.9.0-beta]
-  BOOT --> INIT[A.init: WebAssembly e WebGL2]
+  HTML[Local HTML and CSS] --> UI[Custom controls]
+  UI --> BOOT[Load official 3.9.0-beta distribution]
+  BOOT --> INIT[A.init starts WebAssembly and WebGL2]
   INIT --> ATLAS[A.aladin]
-  ATLAS --> HIPS[Espelho HiPS: properties e tiles]
-  HIPS --> GPU[Motor original projeta e desenha o céu]
-  UI --> LOCAL[Coordenadas ou oito destinos locais]
-  UI --> SESAME[Outros nomes: Sesame via HTTPS]
-  LOCAL --> CAMERA[gotoRaDec e setFoV]
+  ATLAS --> HIPS[HiPS mirror serves properties and tiles]
+  HIPS --> GPU[Original engine projects and renders the sky]
+  UI --> LOCAL[Coordinates or eight local targets]
+  UI --> SESAME[Other names through Sesame over HTTPS]
+  LOCAL --> CAMERA[gotoRaDec and setFoV]
   SESAME --> CAMERA
   CAMERA --> ATLAS
-  ATLAS --> EVENTS[positionChanged e zoomChanged]
-  EVENTS --> READOUT[RA, Dec e campo na interface]
+  ATLAS --> EVENTS[positionChanged and zoomChanged]
+  EVENTS --> READOUT[RA, Dec, and field readout]
 ```
 
-1. O servidor Node entrega os arquivos locais; não compila o motor.
-2. O app restaura o estado válido do fragmento da URL, se houver.
-3. Tenta o bundle local opcional, a URL oficial de contingência e a URL versionada oficial. Aguarda `A.init` com limite de tempo.
-4. Cria a vista com URL direta do levantamento, evitando depender de descoberta do registro para selecionar a camada inicial.
-5. Cria o catálogo didático oculto, conecta eventos e habilita os controles.
-6. Busca local não precisa de Sesame. Busca remota tem cancelamento e limite de 12 segundos; uma resposta antiga não substitui uma navegação posterior.
-7. O estado das imagens usa callbacks públicos de `A.HiPS`: preparação de camada e erro de acesso são distintos da inicialização do motor. Sucesso não é tratado como prova de tiles renderizados. Veja [estados, fixação e compartilhamento](melhorias-analise.md).
+1. The Node server serves local files. Engine compilation is separate.
+2. The app restores valid state from the URL fragment when present.
+3. It tries the optional local bundle, the official contingency URL, and the official versioned URL, then waits for `A.init` with a timeout.
+4. It creates the view with a direct survey URL so the initial layer can load independently of registry discovery.
+5. It creates the hidden educational catalog, connects events, and enables controls.
+6. Local search works independently of Sesame. Remote search supports cancellation and a 12-second timeout. Stale results cannot override subsequent navigation.
+7. Image status uses public `A.HiPS` callbacks. Engine startup, layer preparation, and access errors are separate states. Layer success leaves tile rendering unconfirmed. See [state, pinning, and sharing](melhorias-analise.md).
 
-## Decisão de implementação
+## Implementation decision
 
-Integramos o motor oficial sem modificá-lo. Reimplementar projeções e streaming HiPS ampliaria muito o escopo e exigiria validação científica. O estudo entrega fontes legíveis para entender essas partes e um exemplo de como construir nossa própria interface com a API existente. Essa é uma escolha de implementação, não uma descoberta de componentes proprietários.
+The demo integrates the official engine through its public API. Reimplementing projections and HiPS streaming would expand the project substantially and require scientific validation. The imported source and example show how to build a custom interface on the existing API.
 
-Para reproduzir exatamente a página atual, ainda seria necessário obter seu HTML/JS específico e validá-lo no navegador. Esta entrega não afirma ter feito essa reprodução exata.
+Exact reproduction of the public page would require obtaining its specific HTML and JavaScript and validating them in the browser.
