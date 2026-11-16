@@ -56,10 +56,10 @@ body{background:radial-gradient(ellipse at 15% 0%,#1b2941 0,transparent 48%),var
  <div><dt>Camada da imagem</dt><dd id="object-image-layer"></dd></div>
  <div class="object-coordinate"><dt id="object-position-label">Posição · ICRS</dt><dd id="object-position"></dd></div>
 </dl>
-<section class="spectrum object-spectrum" id="spectrum"></section><div id="overview" aria-live="polite"></div><details class="technical"><summary>Comparar candidatos e ver dados técnicos</summary><div class="head"><div class="controls"><label for="sort">Ordem</label><select id="sort"><option value="id">ID</option><option value="channels">Mais canais</option><option value="distance">Mais distante do Gaia</option></select><label><input id="both" type="checkbox"> WISE + SPHEREx</label></div></div>
+<section class="spectrum object-spectrum" id="spectrum"></section><div id="overview" aria-live="polite"></div><details class="technical" id="candidate-technical"><summary>Comparar candidatos e ver dados técnicos</summary><div class="head"><div class="controls"><label for="sort">Ordem</label><select id="sort"><option value="id">ID</option><option value="channels">Mais canais</option><option value="distance">Mais distante do Gaia</option></select><label><input id="both" type="checkbox"> WISE + SPHEREx</label></div></div>
 <div id="picker" class="r pick" aria-label="Escolher candidato"></div><div class="scroll"><div class="chart"><div class="r"><span></span><div><strong>SPHEREx</strong><div class="axis"><span>1</span><span>25</span><span>50</span><span>75</span><span>102</span></div></div><div><strong>WISE</strong><div class="wise"><span>A W1</span><span>N W1</span><span>N W2</span></div></div></div><div id="chart"></div></div></div>
 <div class="legend"><span><b>■</b> Pico próximo no SPHEREx</span><span><em>✓</em> Pico próximo no WISE</span><span>▧ Canais 51–52 vazios</span></div>
-<p id="focus" class="focus" aria-live="polite"></p><div class="detail" id="details" aria-live="polite"></div></details><p class="caption">Candidatos da triagem após exclusão de halos. Cada marca indica um pico próximo, sem medir fluxo nem confirmar um objeto novo.</p></div></section></div></aside>
+<p id="focus" class="focus" aria-live="polite"></p><div class="detail" id="details" aria-live="polite"></div><p class="caption">Candidatos da triagem após exclusão de halos. Cada marca indica um pico próximo, sem medir fluxo nem confirmar um objeto novo.</p></details></div></section></div></aside>
 <figure id="epoch-preview" hidden>
  <img id="epoch-preview-image" alt="Recorte infravermelho da exposição">
  <figcaption id="epoch-preview-caption"></figcaption>
@@ -182,6 +182,7 @@ function render(){
   line.append(button,cells,wise);chart.append(line);
  }
  const r=rows.find(v=>v.id===selected);
+ byId('candidate-technical').hidden=!r;
  byId('focus').textContent='';renderOverview(filtered,r,gaia);
  renderObjectIdentity(gaia??r,Boolean(gaia));
  renderSpectrum([...filtered,...gaiaById.values()].filter(source=>data.radiance[source.id]?.some(Number.isFinite)),gaia??r);
@@ -198,7 +199,7 @@ function renderOverview(filtered,r,gaia){
   b.onclick=()=>{focusCandidate(item);picker.querySelector('[aria-pressed=true]')?.focus()};
   picker.append(b);
  }
- if(gaia?.poc){renderPocOverview(gaia.poc);return}
+ if(gaia?.poc){renderPocOverview(gaia);return}
  if(gaia){renderGaiaOverview(gaia);return}
  if(!r){byId('overview').textContent=t('Nenhum candidato nesse filtro.');return}
  const w1=r.wise.some(k=>k.endsWith('W1')),w2=r.wise.some(k=>k.endsWith('W2'));
