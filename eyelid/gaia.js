@@ -7,7 +7,7 @@ let gaiaEpoch=data.gaia_epoch;
 let gaiaDate=null;
 
 function gaiaPosition(source){
- const years=gaiaEpoch-2016;
+ const years=gaiaEpoch-(source.epoch??2016);
  if(source.pmra===null||source.pmdec===null)return [source.ra,source.dec];
  return [(source.ra+years*source.pmra/(3600000*Math.cos(source.dec*radians))+360)%360,
          source.dec+years*source.pmdec/3600000];
@@ -54,7 +54,8 @@ function updateGaiaEpoch(utc){
   marker.classList.toggle('hidden',x<0||x>121||y<0||y>121);
  }
  const current=gaiaById.get(selected);
- if(current)renderGaiaOverview(current);
+ if(current?.poc)renderObjectIdentity(current,true);
+ else if(current)renderGaiaOverview(current);
  document.dispatchEvent(new Event('atlas-gaia'));
 }
 
@@ -166,3 +167,24 @@ byId('gaia-toggle').onchange=event=>{
  document.dispatchEvent(new Event('atlas-gaia-toggle'));
 };
 updateGaiaEpoch(null);
+
+function renderPocOverview(target){
+ const link = document.createElement('a');
+ link.href = 'https://simbad.harvard.edu/simbad/sim-id?Ident='+encodeURIComponent(target.simbad);
+ link.target = '_blank';
+ link.rel = 'noopener';
+ link.textContent = t('Ficha no SIMBAD');
+ const details = document.createElement('div');
+ details.className = 'hero';
+ const description = document.createElement('p');
+ description.textContent = t(target.description);
+ const identifier = document.createElement('p');
+ identifier.textContent = t('Identificação de catálogo')+' · '+target.catalog;
+ const position = document.createElement('p');
+ position.className = 'caption';
+ position.textContent = t('Posição estimada pelo movimento próprio do catálogo.');
+ const motion = document.createElement('p');
+ motion.textContent = t('Movimento no céu')+' · '+fmt(Math.hypot(...target.reference.slice(3)),1)+' '+t('mas/ano');
+ details.append(description,identifier,motion,position,link);
+ byId('overview').replaceChildren(details);
+}

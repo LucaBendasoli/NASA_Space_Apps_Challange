@@ -29,9 +29,9 @@ function updateObjectObservation(){
 function renderObjectIdentity(object, gaia){
  if (!object) return;
  const [ra,dec] = gaia ? gaiaPosition(object) : [object.ra_icrs_deg,object.dec_icrs_deg];
- byId('object-name').textContent = object.id;
- byId('object-kind').textContent = gaia ? t('Fonte Gaia DR3') : t('Candidato para revisão');
- byId('object-position-label').textContent = gaia ? t('Posição · Gaia DR3') : t('Posição · ICRS');
+ byId('object-name').textContent = object.poc?.name ?? object.id;
+ byId('object-kind').textContent = object.poc ? t('Alvo da demonstração') : gaia ? t('Fonte Gaia DR3') : t('Candidato para revisão');
+ byId('object-position-label').textContent = gaia && !object.poc ? t('Posição · Gaia DR3') : t('Posição · ICRS');
  byId('object-position').textContent = 'RA '+fmt(ra,6)+'° · Dec '+fmt(dec,6)+'°';
  updateObjectObservation();
 }

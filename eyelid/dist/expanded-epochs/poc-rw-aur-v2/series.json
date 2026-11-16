@@ -1,0 +1,73 @@
+{
+  "ra": 76.95653,
+  "dec": 30.40144,
+  "channel": 63,
+  "width": 61,
+  "scale": 6.17,
+  "cuts": [
+    0.2629620850086212,
+    67.39315008544791
+  ],
+  "frames": {
+    "2025-09-03": {
+      "channel": 63,
+      "wave": 3.2818129032559265,
+      "width": 0.09553387461228537,
+      "pixelScale": 6.17,
+      "utc": "2025-09-03 23:53:31.971",
+      "source": "local",
+      "fits": "/expanded-epochs/poc-rw-aur-v2/2025-09-03.fits",
+      "preview": "/expanded-epochs/poc-rw-aur-v2/2025-09-03.png",
+      "url": "/api/local-original/00314915e5c81c3160cc01520045c8c7",
+      "expanded": true
+    },
+    "2025-09-04": {
+      "channel": 63,
+      "wave": 3.2538905896827712,
+      "width": 0.09495924725983378,
+      "pixelScale": 6.17,
+      "utc": "2025-09-04 01:37:57.395",
+      "source": "local",
+      "fits": "/expanded-epochs/poc-rw-aur-v2/2025-09-04.fits",
+      "preview": "/expanded-epochs/poc-rw-aur-v2/2025-09-04.png",
+      "url": "/api/local-original/28d2326ff76c7b7b1e6d936d2e332bbd",
+      "expanded": true
+    },
+    "2026-03-06": {
+      "channel": 63,
+      "wave": 3.2533683342281186,
+      "width": 0.09383574189894248,
+      "pixelScale": 6.17,
+      "utc": "2026-03-06 05:33:03.427",
+      "source": "local",
+      "fits": "/expanded-epochs/poc-rw-aur-v2/2026-03-06.fits",
+      "preview": "/expanded-epochs/poc-rw-aur-v2/2026-03-06.png",
+      "url": "/api/local-original/5cfb3fb62e89a7a7ea882e2698fafc10",
+      "expanded": true
+    },
+    "2026-09-02": {
+      "channel": 63,
+      "wave": 3.3172458216604106,
+      "width": 0.09643091979250178,
+      "pixelScale": 6.17,
+      "utc": "2026-09-02 02:19:55.430",
+      "source": "local",
+      "fits": "/expanded-epochs/poc-rw-aur-v2/2026-09-02.fits",
+      "preview": "/expanded-epochs/poc-rw-aur-v2/2026-09-02.png",
+      "url": "/api/local-original/5f1596496fe14a5a74c1cce916d2e677",
+      "expanded": true
+    },
+    "2026-09-09": {
+      "channel": 63,
+      "wave": 3.2892126782702524,
+      "width": 0.09572051235470189,
+      "pixelScale": 6.17,
+      "utc": "2026-09-09 21:42:13.876",
+      "source": "local",
+      "fits": "/expanded-epochs/poc-rw-aur-v2/2026-09-09.fits",
+      "preview": "/expanded-epochs/poc-rw-aur-v2/2026-09-09.png",
+      "url": "/api/local-original/e9a21d0450658260954ad6e5bb03084b",
+      "expanded": true
+    }
+  }
+}

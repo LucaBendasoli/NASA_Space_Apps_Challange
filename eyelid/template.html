@@ -65,6 +65,8 @@ body{background:radial-gradient(ellipse at 15% 0%,#1b2941 0,transparent 48%),var
  <figcaption id="epoch-preview-caption"></figcaption>
 </figure></div><p class="caption">Norte para cima no recorte. Selecione um ponto Gaia ou um candidato para abrir sua curva SPHEREx.</p><div class="map-heading">
  <div class="map-actions">
+  <button type="button" id="open-poc-object" hidden></button>
+  <span id="poc-coverage" class="caption" hidden></span>
   <div id="region-controls"><label for="region">Ir para</label> <select id="region"></select></div>
   <label class="candidate-choice" for="map-candidates">Candidatos <select id="map-candidates"><option value="">Selecionar candidato</option></select></label>
   <details class="map-settings"><summary><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5"/></svg>Camadas</summary>
@@ -151,10 +153,13 @@ function render(){
  if(!gaia&&!rows.some(r=>r.id===selected))selected=undefined;
  syncObjectPanel();
  const mapCandidates=byId('map-candidates');
- mapCandidates.replaceChildren(new Option(rows.length?rows.length+t(' disponíveis'):t('Nenhum candidato'),''));
- for(const row of rows)mapCandidates.add(new Option(row.id,row.id));
- mapCandidates.value=rows.some(r=>r.id===selected)?selected:'';
- mapCandidates.disabled=!rows.length;
+ const choices=typeof offsetFrom==='function'&&openingPoc?rows.filter(row=>
+  Math.hypot(...offsetFrom(openingPoc.center,row.ra_icrs_deg,row.dec_icrs_deg))<=.072
+ ):rows;
+ mapCandidates.replaceChildren(new Option(choices.length?choices.length+t(' disponíveis'):t('Nenhum candidato'),''));
+ for(const row of choices)mapCandidates.add(new Option(row.id,row.id));
+ mapCandidates.value=choices.some(r=>r.id===selected)?selected:'';
+ mapCandidates.disabled=!choices.length;
  const chart=byId('chart');chart.replaceChildren();
  for(const r of rows){const pin=byId('pin-'+r.id);if(!pin)continue;pin.classList.toggle('hidden',!filtered.includes(r));pin.setAttribute('aria-pressed',r.id===selected)}
  for(const r of filtered){
@@ -190,6 +195,7 @@ function renderOverview(filtered,r,gaia){
   b.onclick=()=>{focusCandidate(item);picker.querySelector('[aria-pressed=true]')?.focus()};
   picker.append(b);
  }
+ if(gaia?.poc){renderPocOverview(gaia.poc);return}
  if(gaia){renderGaiaOverview(gaia);return}
  if(!r){byId('overview').textContent=t('Nenhum candidato nesse filtro.');return}
  const w1=r.wise.some(k=>k.endsWith('W1')),w2=r.wise.some(k=>k.endsWith('W2'));

@@ -10,17 +10,12 @@
  const savedToggle = byId('toggle-sky-saved');
  const saved = byId('eyelid-sky-saved');
  const normalize = value => value.normalize('NFD').replace(/\p{Diacritic}/gu,'').trim().toLowerCase();
- const juryRegions = [
-  {name:'Barnard’s Star', aliases:['Barnard',t('Estrela de Barnard'),'Gl 699','Gl699'], center:[269.452083,4.693370], fov:.09, channel:20},
-  {name:'Epsilon Indi B', aliases:['ε Indi B','Eps Ind B'], description:t('Par de anãs marrons'), center:[331.09566,-56.80086], fov:.09, channel:20},
-  {name:'WISE 0855', aliases:['WISE 0855−0714'], description:t('Anã marrom de movimento rápido'), center:[133.7951291667,-7.2451472222], fov:.09},
-  {name:'RW Aurigae', aliases:['RW Aur'], description:t('Estrela variável'), center:[76.9565260346,30.4014381739], fov:.09},
-  {name:'R Draconis', aliases:['R Dra'], description:t('Estrela variável'), center:[248.1676075,66.7549841667], fov:.09}
- ];
+ const juryRegions = pocTargets.map(target=>({...target,description:t(target.description)}));
  const andromeda = {name:t('Galáxia de Andrômeda'), aliases:['Andrômeda','Andromeda Galaxy','M31','M 31'], center:[10.684793,41.269065]};
  const targets = [...juryRegions,andromeda,...Object.values(regions)];
  const mapUrl = target => '/?'+new URLSearchParams({
-  ra:target.center[0],dec:target.center[1],fov:target.fov??.18,canal:target.channel??63
+  ra:target.center[0],dec:target.center[1],fov:target.fov??.18,canal:target.channel??63,
+  ...(target.key?{poc:target.key}:{})
  });
 
 
