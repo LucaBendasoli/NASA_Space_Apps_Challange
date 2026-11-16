@@ -807,9 +807,11 @@ const aladinHost=byId('aladin-sky');
 let aladin, aladinFrame={channel:initialBand,datedPath:null};
 let aladinActive=false;
 
+const pocGaiaId=openingPoc?.catalog.replace(/^Gaia DR3 /,'Gaia ');
+
 function syncAladinPoints(){
  if(!aladinActive||!aladin)return;
- const stars=byId('gaia-toggle').checked?[...data.gaia,...remoteGaia].filter(source=>source.id!==openingPoc?.catalog).map(source=>{
+ const stars=byId('gaia-toggle').checked?[...data.gaia,...remoteGaia].filter(source=>source.id!==pocGaiaId).map(source=>{
   const [ra,dec]=gaiaPosition(source);
   return {id:source.id,ra,dec};
  }):[];
