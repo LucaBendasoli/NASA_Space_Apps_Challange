@@ -1,0 +1,12 @@
+[
+ ["first-light","First Light","Primeira Luz","Open your first object details on the sky map.","Abra a primeira ficha de um objeto no mapa.",1],
+ ["blink-observer","Blink Observer","Observador de Épocas","View two observation dates in the same region and SPHEREx channel.","Veja duas datas de observação na mesma região e canal do SPHEREx.",2],
+ ["beyond-visible","Beyond Visible","Além do Visível","View three infrared bands in a region and save its false-color view.","Veja três faixas infravermelhas em uma região e salve a vista em falsa cor.",4],
+ ["candidate-scout","Candidate Scout","Explorador de Candidatos","Publish an observation with the attached view of a screening candidate.","Publique uma observação com a vista de um candidato à triagem anexada.",1],
+ ["crossmatch","Crossmatch","Cruzamento de Catálogos","Share a possible match with evidence from at least two of SPHEREx, WISE and Gaia.","Compartilhe uma possível correspondência com evidências de pelo menos dois entre SPHEREx, WISE e Gaia.",2],
+ ["motion-tracker","Motion Tracker","Rastreador de Movimento","Share a comparison with the coordinates of an object at two observation dates.","Compartilhe uma comparação com as coordenadas de um objeto em duas datas de observação.",2],
+ ["variable-watch","Variable Watch","Vigia de Variáveis","Share brightness measurements of RW Aurigae or R Draconis at two dates in the same channel.","Compartilhe medidas de brilho de RW Aurigae ou R Draconis em duas datas no mesmo canal.",2],
+ ["second-look","Second Look","Segundo Olhar","Reply to another user's discussion with an attached sky view and your evidence.","Responda à discussão de outra pessoa com uma vista do céu anexada e sua evidência.",1],
+ ["five-fields","Five Fields","Cinco Campos","View two dates in the same channel in each of the five prepared demo fields.","Veja duas datas no mesmo canal em cada um dos cinco campos preparados da demo.",5],
+ ["independent-check","Independent Check","Verificação Independente","Have another observer reproduce your two-date comparison and share theirs in your discussion.","Peça a outra pessoa que reproduza sua comparação de duas datas e compartilhe o resultado na discussão.",1]
+]

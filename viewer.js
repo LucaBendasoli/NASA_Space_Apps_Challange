@@ -33,6 +33,8 @@ function initializeExposureViewer(){
  let archiveStatus='', presentedFrame, requestedDate=/^\d{4}-\d{2}-\d{2}$/.test(openingQuery.get('data')??'')?openingQuery.get('data'):'';
  let monoAnchor, monoAttempt, monoDetail, monoRequest, monoStatus='';
  let rgbGeneration=0, rgbChannels, rgbMosaicLabel, rgbDetailKey, rgbDetailRequest, rgbTimer;
+ const rgbSave=byId('save-badge-rgb');
+ const rgbStatus=byId('badge-rgb-status');
  const mode=byId('image-mode'), rgbControls=byId('rgb-controls'), surveyPicker=byId('image-source');
  const nearPoc=()=>openingPoc&&(!viewport||(
   viewport.size<=.16&&Math.hypot(...offsetFrom(openingPoc.center,viewport.ra,viewport.dec))<=.008
@@ -223,6 +225,12 @@ function initializeExposureViewer(){
   applyAppearance();
  };
  document.addEventListener('atlas-aladin-ready',()=>{
+  const savedColors=openingQuery.get('rgb')?.split(',').map(Number);
+  if(savedColors?.length===3&&new Set(savedColors).size===3&&savedColors.every(channel=>available.includes(channel))){
+   mode.value='rgb';
+   rgbSelectors.forEach((picker,index)=>picker.value=savedColors[index]);
+   mode.dispatchEvent(new Event('change'));
+  }
   mode.disabled=surveyPicker.disabled=byId('appearance-controls').disabled=false;
   applyAppearance();
  });
@@ -363,6 +371,8 @@ function initializeExposureViewer(){
   if(comparing()||!aladinActive||!colorMode())return;
   clearRGBDetail();
   rgbChannels=null;
+  rgbSave.disabled=true;
+  rgbStatus.textContent='';
   const generation=++rgbGeneration;
   const colors=rgbSelectors.map(picker=>Number(picker.value));
   resolutionStatus.textContent=t('Preparando falsa cor…');
@@ -373,10 +383,23 @@ function initializeExposureViewer(){
    return;
   }
   rgbChannels=colors;
+  rgbSave.disabled=new Set(colors).size!==3;
   rgbMosaicLabel=t`Falsa cor · R ${colors[0]} · G ${colors[1]} · B ${colors[2]} · mosaico 12,9″/pixel`;
   byId('frame-status').textContent=t('Falsa cor · três faixas do mosaico SPHEREx DR1, combinadas em vermelho, verde e azul.');
   scheduleRGBDetail();
  }
+ rgbSave.onclick=async()=>{
+  if(!viewport||!rgbChannels)return;
+  rgbSave.disabled=true;
+  try{
+   await badgeRequest('activity',{action:'save-rgb',ra:viewport.ra,dec:viewport.dec,
+     fov:viewport.fov,channels:rgbChannels});
+   rgbStatus.textContent=t('Vista salva no perfil.');
+  }catch(error){
+   rgbStatus.textContent=error.message==='403'?t('Use uma conta pessoal para conquistar insígnias.'):
+    t('Não foi possível salvar a vista.');
+  }finally{rgbSave.disabled=!rgbChannels||new Set(rgbChannels).size!==3}
+ };
  function scheduleSearch(){
   clearTimeout(searchTimer);
   searchTimer=setTimeout(searchViewport,420);
@@ -523,6 +546,12 @@ function initializeExposureViewer(){
   if(!wideExposure||!frame.preview)updateEpochPreview(null);
   const presentation=presentedFrame;
   document.dispatchEvent(new CustomEvent('atlas-frame',{detail:{datedPath:imagePath,channel:displayedChannel,rendered:success=>{
+   if(success&&presentedFrame===presentation&&viewport&&available.includes(c)&&(!day||frame)){
+    const position=nearPoc()?openingPoc.center:[viewport.ra,viewport.dec];
+    document.dispatchEvent(new CustomEvent('eyelid-band-observed',{detail:{
+     ra:Math.round(position[0]*1e4)/1e4,dec:Math.round(position[1]*1e4)/1e4,channel:c,day
+    }}));
+   }
    if(!display||presentedFrame!==presentation)return;
    if(success){showEpoch(epoch);if(wideExposure)updateEpochPreview(frame)}
    resolutionStatus.textContent=success?label:t('Exposição original indisponível');

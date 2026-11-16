@@ -7,11 +7,15 @@ from urllib.parse import parse_qs
 
 from accounts import AuthError, auth_response, current_token, database, photo_url, read_same_origin_json, session_account
 
+from badges import TARGETS, badge_post, badge_state, badge_tables, evidence_for, region_key
+
 POSTS = '/api/community/posts'
 POST_PATH = re.compile(r'/api/community/posts/([1-9][0-9]{0,17})')
 LIMIT = 30
 
 POST_FIELDS = """
+    (SELECT kind FROM observation_evidence WHERE post_id=p.id) AS evidence_kind,
+    (SELECT details FROM observation_evidence WHERE post_id=p.id) AS evidence_details,
     p.id, a.id AS author_id, a.name AS author, p.body, p.created_at, p.sky_view,
     (SELECT account_id FROM account_photos WHERE account_id=a.id) AS photo_id,
     COALESCE((SELECT sum(value) FROM community_votes WHERE post_id=p.id), 0) AS score,
@@ -35,6 +39,7 @@ def open_community():
         CREATE INDEX IF NOT EXISTS community_posts_parent ON community_posts(parent_id, id);
         CREATE INDEX IF NOT EXISTS community_posts_author ON community_posts(author_id, id);
     """)
+    badge_tables(db)
     return db
 
 
@@ -43,6 +48,7 @@ def serialize(row):
     account_id = post.pop('photo_id')
     post['avatar_url'] = photo_url(account_id) if account_id else None
     post['view'] = json.loads(post.pop('sky_view') or 'null')
+    post['evidence'] = json.loads(post.pop('evidence_details') or 'null')
     return post
 
 
@@ -59,6 +65,9 @@ def shared_view(value):
     if type(value['canal']) is not int:
         raise AuthError(400, 'invalid')
     fields = {key: value[key] for key in bounds}
+    region = region_key(fields['ra'],fields['dec'])
+    if any(region == target['key'] for target in TARGETS):
+        fields['poc'] = region
     if day := value.get('data'):
         try:
             fields['data'] = date.fromisoformat(day).isoformat()
@@ -85,7 +94,8 @@ def profile_get(handler, path):
             if match[1] == 'self':
                 auth_response(handler, {'profile': {'name': viewer['name'] if viewer else 'Visitante',
                                                                   'role': viewer['role'] if viewer else 'guest'},
-                                        'own': True, 'editable': False, 'posts': [], 'replies': [], 'count': 0, 'post_count': 0})
+                                        'own': True, 'editable': False, 'posts': [], 'replies': [], 'count': 0,
+                                        'post_count': 0, 'badges':badge_state(db,None)})
             else:
                 auth_response(handler, {'error': 'missing'}, 404)
             return True
@@ -105,7 +115,10 @@ def profile_get(handler, path):
                 item['view'] = json.loads(item.pop('sky_view') or 'null')
                 items.append(item)
             activity.append(items)
-    auth_response(handler, {'profile': profile, 'own': own, 'editable': own,
+        badges = badge_state(db, account_id)
+        if not own:
+            badges.pop('saved_rgb')
+    auth_response(handler, {'profile': profile, 'badges': badges, 'own': own, 'editable': own,
                             'posts': activity[0], 'replies': activity[1], 'count': counts[0], 'post_count': counts[1]})
     return True
 
@@ -185,6 +198,8 @@ def community_vote(handler, post_id):
 
 
 def community_post(handler, path):
+    if badge_post(handler, path, open_community):
+        return True
     if path.endswith('/vote') and (target := POST_PATH.fullmatch(path.removesuffix('/vote'))):
         return community_vote(handler, int(target[1]))
     match = POST_PATH.fullmatch(path)
@@ -196,21 +211,30 @@ def community_post(handler, path):
         if not isinstance(message, str) or not 1 <= len(message.strip()) <= 2000:
             raise AuthError(400, 'invalid')
         parent = int(match[1]) if match else None
-        view = None if parent else shared_view(body.get('view'))
+        view = shared_view(body.get('view'))
         with closing(open_community()) as db, db:
             author = session_account(db, current_token(handler))
             if not author:
                 raise AuthError(401, 'login')
             if author['role'] != 'member':
                 raise AuthError(403, 'member')
-            if parent and not db.execute(
-                'SELECT 1 FROM community_posts WHERE id=? AND parent_id IS NULL', (parent,)
-            ).fetchone():
-                raise AuthError(404, 'missing')
+            original = None
+            if parent:
+                original = db.execute("""
+                    SELECT p.author_id,p.sky_view,e.details FROM community_posts p
+                    LEFT JOIN observation_evidence e ON p.id=e.post_id
+                    WHERE p.id=? AND p.parent_id IS NULL
+                """,(parent,)).fetchone()
+                if not original:
+                    raise AuthError(404, 'missing')
+            evidence = (evidence_for(db,body['evidence'],json.loads(view) if view else None,original,author['id'])
+                        if 'evidence' in body else None)
             post_id = db.execute("""
                 INSERT INTO community_posts (author_id,parent_id,body,created_at,sky_view)
                 VALUES (?,?,?,?,?)
             """, (author['id'],parent,message.strip(),datetime.now(timezone.utc).isoformat(),view)).lastrowid
+            if evidence:
+                db.execute('INSERT INTO observation_evidence VALUES (?,?,?)',(post_id,*evidence))
         auth_response(handler, {'id': post_id},201)
     except AuthError as error:
         auth_response(handler, {'error': error.code},error.status)

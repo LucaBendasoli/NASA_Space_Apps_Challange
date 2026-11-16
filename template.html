@@ -122,7 +122,10 @@ function select(id){
  if(id!==selected)byId('object-panel').querySelector('.sky-panel-body').scrollTop=0;
  selected=id;
  panelOpen=Boolean(id);
- if(id)panelTab='object';
+ if(id){
+  panelTab='object';
+  document.dispatchEvent(new Event('eyelid-object-opened'));
+ }
  render();
 }
 function toggleObjectPanel(){
