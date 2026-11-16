@@ -1,48 +1,46 @@
-# Validação — 14/11/2026
+# Validation on November 14, 2026
 
-## Executado com sucesso
+## Successful checks
 
-- Node.js disponível: 26.13.1; aplicação exige Node 22 ou superior.
-- `node --test tests/*.test.mjs`: 12 testes aprovados, zero falhas.
-- Servidor real iniciado em porta efêmera de loopback pelo teste, com respostas HTTP verificadas por fetch e encerramento ao final.
-- Página inicial: HTTP 200 e conteúdo esperado. JavaScript: HTTP 200 e MIME correto. Licença original: HTTP 200.
-- HEAD sem corpo; POST rejeitado; arquivo inexistente retorna 404; URL malformada retorna 400; escape para diretório vizinho retorna 403.
-- Lógica de coordenadas: limites da esfera, polos, sinais, entradas inválidas, aliases, parsing de resposta Sesame e restauração de link.
-- Regressão de zoom: round-trip numérico exato de links em 0,1 segundo de arco, campos abaixo do antigo limite e coordenadas próximas de 360°. Testadas unidades de campo em graus, minutos e segundos, incluindo o mínimo nativo sem exibir zero.
-- Conferidos nos fontes oficiais os métodos públicos `increaseZoom`/`decreaseZoom` e seu uso pelos controles oficiais. A interface própria agora chama esses métodos e não configura uma faixa adicional de FoV.
-- Servidor ativo em `http://127.0.0.1:4174`: resposta HTTP 200 do módulo atualizado, contendo as chamadas aos controles nativos.
-- `node scripts/verify-upstream.mjs`: **429/429 arquivos idênticos aos hashes dos blobs do commit oficial**.
-- `node --check` nos módulos próprios: sintaxe verificada.
+- Node.js 26.13.1 was available. The application requires Node.js 22 or later.
+- `node --test tests/*.test.mjs` passed all 12 tests.
+- The test started the real server on an ephemeral loopback port, verified HTTP responses with fetch, and stopped it afterward.
+- The home page returned HTTP 200 with the expected content. JavaScript returned 200 with the correct MIME type, and the original license returned 200.
+- HEAD returned no body. POST was rejected. Missing files returned 404, malformed URLs returned 400, and attempts to access a neighboring directory returned 403.
+- Coordinate tests covered spherical bounds, poles, signs, invalid inputs, aliases, parsing Sesame responses, and restoring shared links.
+- Zoom regression tests covered exact numeric round trips at 0.1 arcseconds, fields smaller than the former limit, and coordinates near 360°. Display tests covered degrees, arcminutes, and arcseconds, including displaying the native minimum field without rounding it to zero.
+- Official source confirmed the public `increaseZoom` and `decreaseZoom` methods and their use by the native controls. The custom interface uses those methods and leaves field limits to the engine.
+- The server at `http://127.0.0.1:4174` returned 200 for the updated module containing the native control calls.
+- `node scripts/verify-upstream.mjs` verified that all 429 files matched the blob hashes of the official commit.
+- `node --check` verified syntax in the custom modules.
 
-Esses testes não usam um mock do renderizador para afirmar que imagens foram exibidas. A renderização não foi testada.
+This run covered the server and application logic. Rendering was outside its test scope.
 
-### Otimização da navegação
+### Navigation optimization
 
-Quatro testes com relógio e agendador controlados verificam: agrupamento de uma rajada de 1.000 solicitações em uma atualização com o último estado; limitação do painel a 10 Hz em eventos contínuos com atualização final; cancelamento/retomada e ausência de loop ocioso; eliminação de escritas repetidas de texto. Os eventos sintéticos verificam o agendador próprio, não representam um benchmark do Aladin ou a frequência real de seus callbacks, que já têm throttling no original.
+Four tests with a controlled clock and scheduler verified that a burst of 1,000 requests produces one update with the latest state, continuous events cap panel updates at 10 Hz and still show the final state, updates can be canceled and resumed without an idle loop, and repeated text writes are skipped. The synthetic events exercise the custom scheduler. Aladin already throttles its callbacks, and this suite does not benchmark their frequency.
 
-Os indicadores nativos de coordenadas e campo foram desativados na configuração por duplicarem os próprios. O código oficial importado não foi alterado. Sintaxe dos módulos atualizados e integridade do upstream verificadas. Não houve medição de FPS, GPU, rede ou inspeção visual; portanto não há percentual de aceleração certificado.
+The configuration disables the native coordinate and field indicators to avoid duplicate updates. Syntax and upstream integrity checks passed. This run did not measure FPS, GPU usage, or network timing, and it included no visual inspection.
 
-## Tentado e não concluído
+## Incomplete checks
 
-- Downloads externos via fetch no terminal para o site oficial, npm e API GitHub falharam com `EACCES`.
-- `node scripts/vendor-runtime.mjs`: falhou com `fetch failed (EACCES)`. Nenhum bundle compilado foi salvo. A obtenção dos fontes foi resolvida pelo conector oficial do GitHub, que disponibilizou os arquivos públicos com hashes.
-- A ferramenta web conseguiu consultar o HTML textual do site e as páginas oficiais, mas rejeitou o conteúdo JavaScript do bundle. Isso não é evidência de que a URL esteja fora do ar no navegador do usuário.
-- A tentativa de automação de Firefox no turno anterior foi encerrada pela ferramenta: política de URLs não suportada para esse navegador. Não repetimos a tentativa nem contornamos a restrição.
+- Terminal fetch requests to the official site, npm, and the GitHub API failed with `EACCES`.
+- `node scripts/vendor-runtime.mjs` failed with `fetch failed (EACCES)`, so it saved no compiled bundle. The official GitHub connector provided the public source files and their hashes.
+- The web tool retrieved textual HTML and official pages but rejected the JavaScript bundle content. Browser availability remained unverified.
+- The previous Firefox automation attempt ended because the tool did not support the URL policy for that browser.
 
-## Pendente no navegador
+## Pending browser checks
 
-Não foram observados ou certificados nesta sessão: aparência final em desktop/celular, inicialização do WASM, imagens efetivamente desenhadas, resposta real de Sesame, clique em catálogos, gestos e troca efetiva de imagens. A revisão dos métodos contra o código oficial reduz erros de integração, mas não substitui esse teste.
+At this stage, desktop and mobile visuals, WASM initialization, rendered images, live Sesame responses, catalog clicks, gestures, and survey image changes still required browser testing. Comparing methods against official source verifies the API calls. Browser testing is needed to verify the resulting interactions.
 
-Roteiro reproduzível:
+1. Run `npm.cmd start` and open `http://127.0.0.1:4174` in a browser with WebGL 2 and internet access.
+2. Confirm that the loading panel disappears, real images appear, and the Aladin Lite logo remains visible.
+3. Drag the map and use the wheel and buttons. Coordinates and field of view should change.
+4. Search for M42, then `10.684708, 41.268750`. Both should work without Sesame.
+5. Search for an object outside the local list, such as `M81`. This requires Sesame and can fail during CDS service disruptions.
+6. Switch between DSS2, 2MASS, and AllWISE and try alternate mirrors. Check imagery and credits. SDSS has partial sky coverage.
+7. Switch projections, toggle the grid and local catalog, and visit M31 to check a known marker.
+8. Copy the position and open the link in another tab. It should restore RA, Dec, field of view, projection, and survey.
+9. At 390 px and 1440 px widths, check readability, keyboard operation, and access to controls.
 
-1. Execute `npm.cmd start` e abra `http://127.0.0.1:4174` em um navegador com WebGL2 e internet.
-2. Confirme que o painel de carregamento sai, as imagens reais aparecem e o logo Aladin Lite permanece visível.
-3. Arraste e use a roda/botões: coordenadas e FoV devem mudar.
-4. Busque M42 e depois `10.684708, 41.268750`: ambos dispensam Sesame.
-5. Busque um objeto fora da lista, por exemplo `M81`: exige acesso ao Sesame e pode falhar durante a degradação dos serviços CDS.
-6. Alterne DSS2/2MASS/AllWISE e os espelhos. Confira imagens e créditos; SDSS pode ter áreas sem cobertura.
-7. Alterne projeções, grade e catálogo local; visite M31 para verificar um marcador conhecido.
-8. Copie a posição e abra o link em outra aba: deve restaurar RA/Dec, FoV, projeção e levantamento.
-9. Use 390 px e 1440 px de largura e confira legibilidade, teclado e acesso aos controles.
-
-O estado “HiPS acessível” da aplicação significa somente que `properties` respondeu com um campo HiPS esperado. Não deve ser interpretado como comprovação de todos os tiles, qualidade científica ou disponibilidade futura.
+The HiPS access indicator confirms that `properties` returned an expected HiPS field. Tile coverage, scientific quality, and future availability require separate checks.
