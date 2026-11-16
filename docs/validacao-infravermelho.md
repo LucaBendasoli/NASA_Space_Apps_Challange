@@ -1,23 +1,23 @@
-# Validação da seleção e infravermelho
+# Infrared analysis and source selection validation
 
-Executada em 14/11/2026 (horário de São Paulo).
+Run on November 14, 2026 (São Paulo time).
 
-- `npm.cmd test`: 22 testes aprovados, incluindo 10 novos testes do contrato, estado assíncrono, catálogo e provedor HTTP.
-- `npm.cmd run verify:upstream`: 429/429 arquivos oficiais preservados.
-- Navegador real: Microsoft Edge via Playwright CLI, desktop 1366 × 900 e viewport móvel 390 × 844. Sem simulação de WebGL ou do motor Aladin.
+- `npm.cmd test` passed 22 tests, including 10 new tests for the contract, asynchronous state, catalog, and HTTP provider.
+- `npm.cmd run verify:upstream` verified all 429 upstream files.
+- Microsoft Edge ran through the Playwright CLI with desktop (1366 × 900) and mobile (390 × 844) viewports, using real WebGL and Aladin.
 
-## Demonstração no navegador
+## Browser demonstration
 
-Clique de mouse em fonte nativa abriu o gráfico de A; seleção de B atualizou gráfico e tabela. Conferidos ausência de bandas, zero, negativo autorizado, resultados incompletos e fonte sem medições. Seleção via teclado no select (Home, setas, Enter) atualizou o valor e o painel. Grade, catálogo didático e compartilhamento continuaram operacionais. Busca local M42 levou à região sem cobertura demonstrativa.
+Clicking a native source opened the chart for A. Selecting B updated the chart and table. The test covered missing bands, zero values, permitted negatives, incomplete results, and a source without measurements. Selecting a different source with the keyboard (Home, arrow keys, Enter) updated both the control and the panel. The grid, educational catalog, and sharing controls remained functional. A local search for M42 opened a region outside demo coverage.
 
-Conferidos cliques após zoom, projeções AIT/MOL, arraste e redimensionamento. Para a checagem final, uma interceptação somente do módulo próprio `app.js` no navegador expôs a instância real do atlas ao roteiro de teste. Usou-se `world2pix` público para determinar o ponto clicado antes/depois dos gestos; o arraste moveu a posição projetada e o clique na nova posição abriu as medições do mesmo ID. Nenhum dado do catálogo ou renderização foi simulado nesse teste. O roteiro temporário está em `output/playwright/validate.js` (artefato local ignorado pelo Git).
+Clicks were checked after zooming, switching between AIT and MOL projections, panning, and resizing. For the final check, the test intercepted only the project's own `app.js` module to expose the real atlas instance. The public `world2pix` method located the source before and after gestures. Panning changed its projected position, and a click at the new position opened measurements for the same ID. The test used the catalog as supplied by the demo provider and the real renderer. The temporary script is `output/playwright/validate.js`, a local artifact ignored by Git.
 
-Trocar levantamento limpou gráfico e seleção; trocar somente espelho manteve ID/observação/levantamento. Temas claro e escuro foram alternados com gráfico aberto; resize manteve gráfico compatível. Não houve transbordamento horizontal da página no viewport móvel; gráfico e tabela têm rolagem horizontal própria para manter eixos e valores legíveis. Capturas locais em `output/playwright/` incluem `desktop-chart.png`, `mobile-chart.png` e `mobile-final.png`.
+Switching surveys cleared the chart and selection, while switching mirrors within the same survey preserved the ID, observation, and survey. Light and dark themes were tested with the chart open, and it remained usable after resizing. The mobile viewport had no horizontal page overflow. The chart and table could scroll horizontally within their own containers to keep axes and values readable. Local captures in `output/playwright/` include `desktop-chart.png`, `mobile-chart.png`, and `mobile-final.png`.
 
-## HTTP e limites da validação
+## HTTP and validation limits
 
-Em `?science=http`, a URL base padrão sem serviço retornou HTTP 404; o painel mostrou erro e botão de tentar novamente, sem fontes fictícias. Falhas e repetição de requisições de medições também têm testes unitários. Isso valida a apresentação de falha, **não uma integração com backend científico real**.
+In `?science=http` mode, the default base URL returned HTTP 404 because no service was available. The panel showed an error and a retry button, with no demo sources displayed. Measurement request failures and retries also have unit tests. The HTTP check covered error handling only.
 
-O bundle local opcional `vendor/aladin.js` estava ausente (404 esperado); o fallback oficial remoto carregou a versão configurada e as imagens DSS foram renderizadas. O logger externo do Aladin apresentou falha DNS; isso não impediu esses testes. Não houve bloqueio de WebGL.
+The optional local bundle `vendor/aladin.js` was absent (expected 404). The official remote fallback loaded the configured version and rendered DSS images. The external Aladin logger encountered a DNS error, and the remaining tests continued. WebGL was available.
 
-Não foram validados: medidas científicas reais, serviço científico/CORS de produção, autenticação futura, precisão astrométrica de observações reais, pesquisa remota Sesame, leitor de tela ou toque em aparelho físico. O celular foi validado por viewport; a entrada por teclado e os cliques usaram o navegador desktop. A desambiguação tem teste de catálogo com fontes próximas; ainda merece teste com catálogo científico denso real.
+The test scope excluded real scientific measurements, the production science service and CORS, future authentication, astrometric accuracy for real observations, remote Sesame searches, screen readers, and physical-device touch. Mobile behavior was checked using a viewport, with keyboard and click input in the desktop browser. A catalog test covers disambiguation between nearby sources. Validation against a real, dense scientific catalog remains pending.
