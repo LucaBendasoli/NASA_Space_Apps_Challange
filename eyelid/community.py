@@ -12,7 +12,7 @@ POST_PATH = re.compile(r'/api/community/posts/([1-9][0-9]{0,17})')
 LIMIT = 30
 
 POST_FIELDS = """
-    p.id, a.name AS author, p.body, p.created_at, p.sky_view,
+    p.id, a.id AS author_id, a.name AS author, p.body, p.created_at, p.sky_view,
     (SELECT account_id FROM account_photos WHERE account_id=a.id) AS photo_id,
     COALESCE((SELECT sum(value) FROM community_votes WHERE post_id=p.id), 0) AS score,
     COALESCE((SELECT value FROM community_votes WHERE post_id=p.id AND account_id=:viewer), 0) AS vote,
@@ -33,6 +33,7 @@ def open_community():
             value INTEGER NOT NULL CHECK(value IN (-1, 1)), PRIMARY KEY(post_id, account_id)
         );
         CREATE INDEX IF NOT EXISTS community_posts_parent ON community_posts(parent_id, id);
+        CREATE INDEX IF NOT EXISTS community_posts_author ON community_posts(author_id, id);
     """)
     return db
 
@@ -66,7 +67,51 @@ def shared_view(value):
     return json.dumps(fields)
 
 
+def profile_get(handler, path):
+    match = re.fullmatch(r'/api/community/profile/(self|[0-9a-f]{32})', path)
+    if not match:
+        return False
+    with closing(open_community()) as db:
+        viewer = session_account(db, current_token(handler))
+        account_id = viewer['id'] if match[1] == 'self' and viewer else match[1]
+        own = bool(viewer and viewer['id'] == account_id)
+        row = db.execute("""
+            SELECT a.id, a.name, coalesce(p.bio,'') AS bio, p.cover IS NOT NULL AS has_cover,
+                   f.account_id IS NOT NULL AS has_photo
+            FROM accounts a LEFT JOIN account_profiles p ON p.account_id=a.id
+            LEFT JOIN account_photos f ON f.account_id=a.id WHERE a.id=?
+        """, (account_id,)).fetchone()
+        if not row:
+            if match[1] == 'self':
+                auth_response(handler, {'profile': {'name': viewer['name'] if viewer else 'Visitante'},
+                                        'own': True, 'editable': False, 'posts': [], 'replies': [], 'count': 0})
+            else:
+                auth_response(handler, {'error': 'missing'}, 404)
+            return True
+        profile = dict(row)
+        profile['avatar_url'] = photo_url(account_id) if profile.pop('has_photo') else None
+        profile['cover_url'] = f'/api/auth/cover/{account_id}' if profile.pop('has_cover') else None
+        count = db.execute('SELECT count(*) FROM community_posts WHERE author_id=?', (account_id,)).fetchone()[0]
+        activity = []
+        for condition in ('IS NULL', 'IS NOT NULL'):
+            rows = db.execute(f"""
+                SELECT id, parent_id, body, created_at, sky_view FROM community_posts
+                WHERE author_id=? AND parent_id {condition} ORDER BY id DESC LIMIT 30
+            """, (account_id,))
+            items = []
+            for row in rows:
+                item = dict(row)
+                item['view'] = json.loads(item.pop('sky_view') or 'null')
+                items.append(item)
+            activity.append(items)
+    auth_response(handler, {'profile': profile, 'own': own, 'editable': own,
+                            'posts': activity[0], 'replies': activity[1], 'count': count})
+    return True
+
+
 def community_get(handler, url):
+    if profile_get(handler, url.path):
+        return True
     match = POST_PATH.fullmatch(url.path)
     if url.path != POSTS and not match:
         return False
@@ -102,7 +147,7 @@ def community_get(handler, url):
             """, dict(params, before=int(before) if before else None, limit=LIMIT+1))
             posts = [serialize(row) for row in cursor]
             contributors = db.execute('''
-                SELECT a.name, count(*) AS contributions
+                SELECT a.id, a.name, count(*) AS contributions
                 FROM community_posts p JOIN accounts a ON a.id=p.author_id
                 GROUP BY a.id ORDER BY contributions DESC, a.name LIMIT 5
             ''')
