@@ -38,17 +38,12 @@ function renderObjectIdentity(object, gaia){
 
 function renderSpectrum(available, object){
  const host = byId('spectrum');
- const values = object && data.radiance[object.id];
  if (spectrumObject === object?.id) return;
  spectrumWidget?.destroy();
  spectrumWidget = undefined;
  spectrumObject = object?.id;
  host.replaceChildren();
  if (!object) return;
- if (!values?.some(Number.isFinite)){
-  host.textContent = t('Espectro SPHEREx indisponível para esta fonte.');
-  return;
- }
  const compare = document.createElement('select');
  compare.setAttribute('aria-label',t('Comparar objeto'));
  compare.add(new Option(t('Nenhum'),''));
@@ -59,6 +54,7 @@ function renderSpectrum(available, object){
  tools.className = 'object-chart-tools';
  const label = document.createElement('label');
  label.append(t('Comparar objeto'),compare);
+ compare.disabled = !others.length;
  const band = document.createElement('input');
  band.type = 'range';
  band.id = 'spectral-channel';
@@ -70,10 +66,22 @@ function renderSpectrum(available, object){
  bandLabel.append(t('Ver faixa no mapa'),band);
  const help = document.createElement('details');
  help.innerHTML = t('<summary>Como ler o gráfico</summary><p>Da esquerda para a direita, o comprimento de onda aumenta. Quanto mais alta a linha, maior o brilho medido naquela faixa. A curva usa o mosaico SPHEREx DR1, com fundo local subtraído. O gráfico só apresenta leituras nas faixas com medição.</p>');
- tools.append(label,bandLabel,help);
+ tools.append(bandLabel);
  host.append(chart,tools);
+ if (!data.radiance[object.id]?.some(Number.isFinite)){
+  chart.className = 'object-spectrum-empty';
+  const heading = document.createElement('h2');
+  heading.textContent = t('Assinatura espectral');
+  const notice = document.createElement('p');
+  notice.className = 'caption';
+  notice.textContent = t('Espectro SPHEREx indisponível para esta fonte.');
+  chart.append(heading,notice);
+  return;
+ }
+ tools.prepend(label);
+ tools.append(help);
  function chartObject(item,index){
-  return {id:item.id,name:item.id,color:['#9d8bff','#52d6c7'][index],observations:[{
+  return {id:item.id,name:item.poc?.name ?? item.id,color:['#9d8bff','#52d6c7'][index],observations:[{
    id:'dr1',date:null,label:t('Mosaico SPHEREx DR1'),
    points:data.radiance[item.id].map((radiance,i)=>({wavelength:data.wavelengths[i],radiance}))
   }]};

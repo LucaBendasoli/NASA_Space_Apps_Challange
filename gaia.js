@@ -147,7 +147,7 @@ function renderGaiaOverview(source){
   ${summary?`<dl class="source-facts">${summary}</dl>`:''}
   ${details?.variable?t('<p>O Gaia registrou variação de brilho nesta fonte.</p>'):''}
   ${catalogStatus}</div>
-  ${gaiaSpectralSummary(source.id)||t('<p class="caption">O Eyelid ainda não tem um espectro SPHEREx processado para esta fonte.</p>')}
+  ${gaiaSpectralSummary(source.id)}
   ${details?t`<details class="evidence" data-section="allwise"><summary>Correspondência no WISE</summary>${allwise}</details>`:''}
   <details class="evidence" data-section="catalog"><summary>Medições e posição no Gaia</summary>
    <p>Ascensão reta ${fmt(ra,7)}° · Declinação ${fmt(dec,7)}°</p><p>${position}</p>
@@ -168,23 +168,21 @@ byId('gaia-toggle').onchange=event=>{
 };
 updateGaiaEpoch(null);
 
-function renderPocOverview(target){
- const link = document.createElement('a');
- link.href = 'https://simbad.harvard.edu/simbad/sim-id?Ident='+encodeURIComponent(target.simbad);
- link.target = '_blank';
- link.rel = 'noopener';
- link.textContent = t('Ficha no SIMBAD');
- const details = document.createElement('div');
- details.className = 'hero';
- const description = document.createElement('p');
- description.textContent = t(target.description);
- const identifier = document.createElement('p');
- identifier.textContent = t('Identificação de catálogo')+' · '+target.catalog;
- const position = document.createElement('p');
- position.className = 'caption';
- position.textContent = t('Posição estimada pelo movimento próprio do catálogo.');
- const motion = document.createElement('p');
- motion.textContent = t('Movimento no céu')+' · '+fmt(Math.hypot(...target.reference.slice(3)),1)+' '+t('mas/ano');
- details.append(description,identifier,motion,position,link);
- byId('overview').replaceChildren(details);
+function renderPocOverview(source){
+ const target=source.poc;
+ const motion=fmt(Math.hypot(source.pmra,source.pmdec),1);
+ const simbad='https://simbad.cds.unistra.fr/simbad/sim-id?Ident='+encodeURIComponent(target.simbad);
+ byId('overview').innerHTML=`<div class="hero">
+  <h2>${t(target.description)}</h2>
+  <dl class="source-facts">
+   <div><dt>${t('Identificação de catálogo')}</dt><dd>${target.catalog}</dd></div>
+   <div><dt>${t('Movimento no céu')}</dt><dd>${motion} ${t('mas/ano')}</dd></div>
+  </dl>
+  <details class="evidence"><summary>${t('Como a posição é calculada')}</summary>
+   <p>${t('Posição estimada pelo movimento próprio do catálogo.')}</p>
+  </details>
+ </div>
+ <details class="evidence"><summary>${t('Dados de catálogo')}</summary>
+  <p><a href="${simbad}" target="_blank" rel="noopener">${t('Ficha no SIMBAD')}</a></p>
+ </details>`;
 }

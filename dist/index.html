@@ -244,10 +244,10 @@ body{background:radial-gradient(ellipse at 15% 0%,#1b2941 0,transparent 48%),var
  <div><dt data-eyelid-copy="Camada da imagem">Image layer</dt><dd id="object-image-layer"></dd></div>
  <div class="object-coordinate"><dt id="object-position-label" data-eyelid-copy="Posição · ICRS">Position · ICRS</dt><dd id="object-position"></dd></div>
 </dl>
-<section class="spectrum object-spectrum" id="spectrum"></section><div id="overview" aria-live="polite"></div><details class="technical"><summary data-eyelid-copy="Comparar candidatos e ver dados técnicos">Compare candidates and inspect technical data</summary><div class="head"><div class="controls"><label for="sort" data-eyelid-copy="Ordem">Sort by</label><select id="sort"><option value="id">ID</option><option value="channels" data-eyelid-copy="Mais canais">Most channels</option><option value="distance" data-eyelid-copy="Mais distante do Gaia">Farthest from Gaia</option></select><label><input id="both" type="checkbox"> WISE + SPHEREx</label></div></div>
+<section class="spectrum object-spectrum" id="spectrum"></section><div id="overview" aria-live="polite"></div><details class="technical" id="candidate-technical"><summary data-eyelid-copy="Comparar candidatos e ver dados técnicos">Compare candidates and inspect technical data</summary><div class="head"><div class="controls"><label for="sort" data-eyelid-copy="Ordem">Sort by</label><select id="sort"><option value="id">ID</option><option value="channels" data-eyelid-copy="Mais canais">Most channels</option><option value="distance" data-eyelid-copy="Mais distante do Gaia">Farthest from Gaia</option></select><label><input id="both" type="checkbox"> WISE + SPHEREx</label></div></div>
 <div id="picker" class="r pick" aria-label="Choose a candidate" data-eyelid-attrs="{&quot;aria-label&quot;: &quot;Escolher candidato&quot;}"></div><div class="scroll"><div class="chart"><div class="r"><span></span><div><strong>SPHEREx</strong><div class="axis"><span>1</span><span>25</span><span>50</span><span>75</span><span>102</span></div></div><div><strong>WISE</strong><div class="wise"><span>A W1</span><span>N W1</span><span>N W2</span></div></div></div><div id="chart"></div></div></div>
 <div class="legend"><span data-eyelid-copy="Pico próximo no SPHEREx"><b>■</b> Nearby SPHEREx peak</span><span data-eyelid-copy="Pico próximo no WISE"><em>✓</em> Nearby WISE peak</span><span data-eyelid-copy="▧ Canais 51–52 vazios">▧ Channels 51–52 have no data</span></div>
-<p id="focus" class="focus" aria-live="polite"></p><div class="detail" id="details" aria-live="polite"></div></details><p class="caption" data-eyelid-copy="Candidatos da triagem após exclusão de halos. Cada marca indica um pico próximo, sem medir fluxo nem confirmar um objeto novo.">Screening candidates after halo filtering. Each marker indicates a nearby peak. Flux and new objects require further validation.</p></div></section></div></aside>
+<p id="focus" class="focus" aria-live="polite"></p><div class="detail" id="details" aria-live="polite"></div><p class="caption" data-eyelid-copy="Candidatos da triagem após exclusão de halos. Cada marca indica um pico próximo, sem medir fluxo nem confirmar um objeto novo.">Screening candidates after halo filtering. Each marker indicates a nearby peak. Flux and new objects require further validation.</p></details></div></section></div></aside>
 <figure id="epoch-preview" hidden>
  <img id="epoch-preview-image" alt="Infrared exposure cutout" data-eyelid-attrs="{&quot;alt&quot;: &quot;Recorte infravermelho da exposição&quot;}">
  <figcaption id="epoch-preview-caption"></figcaption>
@@ -441,6 +441,7 @@ function render(){
   line.append(button,cells,wise);chart.append(line);
  }
  const r=rows.find(v=>v.id===selected);
+ byId('candidate-technical').hidden=!r;
  byId('focus').textContent='';renderOverview(filtered,r,gaia);
  renderObjectIdentity(gaia??r,Boolean(gaia));
  renderSpectrum([...filtered,...gaiaById.values()].filter(source=>data.radiance[source.id]?.some(Number.isFinite)),gaia??r);
@@ -457,7 +458,7 @@ function renderOverview(filtered,r,gaia){
   b.onclick=()=>{focusCandidate(item);picker.querySelector('[aria-pressed=true]')?.focus()};
   picker.append(b);
  }
- if(gaia?.poc){renderPocOverview(gaia.poc);return}
+ if(gaia?.poc){renderPocOverview(gaia);return}
  if(gaia){renderGaiaOverview(gaia);return}
  if(!r){byId('overview').textContent=t('Nenhum candidato nesse filtro.');return}
  const w1=r.wise.some(k=>k.endsWith('W1')),w2=r.wise.some(k=>k.endsWith('W2'));
@@ -635,7 +636,7 @@ function renderGaiaOverview(source){
   ${summary?`<dl class="source-facts">${summary}</dl>`:''}
   ${details?.variable?t('<p>O Gaia registrou variação de brilho nesta fonte.</p>'):''}
   ${catalogStatus}</div>
-  ${gaiaSpectralSummary(source.id)||t('<p class="caption">O Eyelid ainda não tem um espectro SPHEREx processado para esta fonte.</p>')}
+  ${gaiaSpectralSummary(source.id)}
   ${details?t`<details class="evidence" data-section="allwise"><summary>Correspondência no WISE</summary>${allwise}</details>`:''}
   <details class="evidence" data-section="catalog"><summary>Medições e posição no Gaia</summary>
    <p>Ascensão reta ${fmt(ra,7)}° · Declinação ${fmt(dec,7)}°</p><p>${position}</p>
@@ -656,25 +657,23 @@ byId('gaia-toggle').onchange=event=>{
 };
 updateGaiaEpoch(null);
 
-function renderPocOverview(target){
- const link = document.createElement('a');
- link.href = 'https://simbad.harvard.edu/simbad/sim-id?Ident='+encodeURIComponent(target.simbad);
- link.target = '_blank';
- link.rel = 'noopener';
- link.textContent = t('Ficha no SIMBAD');
- const details = document.createElement('div');
- details.className = 'hero';
- const description = document.createElement('p');
- description.textContent = t(target.description);
- const identifier = document.createElement('p');
- identifier.textContent = t('Identificação de catálogo')+' · '+target.catalog;
- const position = document.createElement('p');
- position.className = 'caption';
- position.textContent = t('Posição estimada pelo movimento próprio do catálogo.');
- const motion = document.createElement('p');
- motion.textContent = t('Movimento no céu')+' · '+fmt(Math.hypot(...target.reference.slice(3)),1)+' '+t('mas/ano');
- details.append(description,identifier,motion,position,link);
- byId('overview').replaceChildren(details);
+function renderPocOverview(source){
+ const target=source.poc;
+ const motion=fmt(Math.hypot(source.pmra,source.pmdec),1);
+ const simbad='https://simbad.cds.unistra.fr/simbad/sim-id?Ident='+encodeURIComponent(target.simbad);
+ byId('overview').innerHTML=`<div class="hero">
+  <h2>${t(target.description)}</h2>
+  <dl class="source-facts">
+   <div><dt>${t('Identificação de catálogo')}</dt><dd>${target.catalog}</dd></div>
+   <div><dt>${t('Movimento no céu')}</dt><dd>${motion} ${t('mas/ano')}</dd></div>
+  </dl>
+  <details class="evidence"><summary>${t('Como a posição é calculada')}</summary>
+   <p>${t('Posição estimada pelo movimento próprio do catálogo.')}</p>
+  </details>
+ </div>
+ <details class="evidence"><summary>${t('Dados de catálogo')}</summary>
+  <p><a href="${simbad}" target="_blank" rel="noopener">${t('Ficha no SIMBAD')}</a></p>
+ </details>`;
 }
 
 render();

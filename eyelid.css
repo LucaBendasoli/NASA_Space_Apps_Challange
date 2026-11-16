@@ -310,6 +310,10 @@ label[for="rgb-blue"]{--component:#2764a9}
 .object-observation dd{margin:2px 0 0;font-size:13px;overflow-wrap:anywhere}
 .object-coordinate{grid-column:1/-1}
 #spectrum.object-spectrum{background:transparent;border:0;padding:0 0 10px}
+.object-spectrum-empty{padding:12px 4px 6px}
+.object-spectrum-empty h2{margin:0;font-size:16px}
+.object-spectrum-empty p{margin:6px 0 0}
+.object-spectrum-empty + .object-chart-tools{grid-template-columns:1fr}
 .object-chart-tools{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:6px 4px}
 .object-chart-tools label{display:grid;gap:4px;min-width:0}
 .object-chart-tools details{grid-column:1/-1}
