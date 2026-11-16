@@ -78,6 +78,9 @@ async function composeTile(root,channels,file) {
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
+self.addEventListener('message', event => {
+ if(event.data==='claim')event.waitUntil(self.clients.claim());
+});
 
 self.addEventListener('fetch', event => {
  const url = new URL(event.request.url);

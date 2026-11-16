@@ -2,9 +2,12 @@ import A from './vendor/aladin.js';
 
 async function connectSpectralTiles() {
  await navigator.serviceWorker.register('./spectral-tiles.js');
- await navigator.serviceWorker.ready;
+ const registration = await navigator.serviceWorker.ready;
  if (navigator.serviceWorker.controller) return;
- await new Promise(resolve => navigator.serviceWorker.addEventListener('controllerchange', resolve, {once: true}));
+ await new Promise(resolve => {
+  navigator.serviceWorker.addEventListener('controllerchange', resolve, {once:true});
+  registration.active?.postMessage('claim');
+ });
 }
 
 function spectralSurvey(channel) {
@@ -18,8 +21,12 @@ const SURVEYS={
 const fieldOfView = 0.18;
 const hitRadius = 16;
 
-export async function createAladin(host, center, channel, onSelect, onError, onCoverage, target=center) {
- await Promise.all([A.init, connectSpectralTiles()]);
+export async function createAladin(host, center, channel, onSelect, onError, onCoverage, target=center, localFirst=false) {
+ const spectralTiles = connectSpectralTiles();
+ const tileReady = localFirst
+  ? Promise.race([spectralTiles.catch(()=>{}),new Promise(resolve=>setTimeout(resolve,1000))])
+  : spectralTiles;
+ await Promise.all([A.init,tileReady]);
  const view = A.aladin(host, {
   target: target.join(' '), fov: fieldOfView, cooFrame: 'ICRS',
   survey: spectralSurvey(channel === 51 || channel === 52 ? 63 : channel), hipsList: [], log: false, backgroundColor: '#080a10',

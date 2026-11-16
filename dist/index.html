@@ -1531,7 +1531,7 @@ async function openSkyViewer(){
    navigationStatus.textContent=t('A exposição datada não pôde ser aberta. Mantivemos a última imagem disponível.');
   },area=>{
    document.dispatchEvent(new CustomEvent('atlas-coverage',{detail:area}));
-  },openingTarget??data.center);
+  },openingTarget??data.center,Boolean(openingPoc));
   const sharedFov=Number(openingQuery.get('fov'));
   if(openingTarget&&sharedFov>=.00001&&sharedFov<=360)aladin.setFieldOfView(sharedFov);
   aladinActive=true;
