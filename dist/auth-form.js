@@ -1,20 +1,15 @@
 function returnToExplorer(){
  if (parent !== window) parent.postMessage({type:'eyelid-auth-close'},location.origin);
- else location.assign('/');
+ else {
+  const next = new URLSearchParams(location.search).get('next');
+  location.replace(next?.startsWith('/?') ? next : '/');
+ }
 }
 
 for (const [screen, action] of [['eyelid-login','login'],['eyelid-register','register']]){
  const root = document.getElementById(screen);
  const form = root.querySelector('form');
  const judge = document.createElement('button');
- const cancel = root.querySelector('[data-route="sky"]') ?? document.createElement('button');
- if (!cancel.isConnected){
-  cancel.className = 'guest';
-  cancel.type = 'button';
-  cancel.textContent = 'Explorar sem conta';
-  cancel.onclick = returnToExplorer;
-  form.after(cancel);
- }
  judge.type = 'button';
  judge.className = 'judge-login';
  judge.textContent = 'Login de jurados';
@@ -26,7 +21,6 @@ for (const [screen, action] of [['eyelid-login','login'],['eyelid-register','reg
  const language = root.querySelector('select');
  language.addEventListener('change',()=>{
   judge.textContent = language.value === 'en' ? 'Judges’ login' : 'Login de jurados';
-  if (action === 'register') cancel.textContent = language.value === 'en' ? 'Explore as guest' : 'Explorar sem conta';
   status.textContent = '';
  });
 

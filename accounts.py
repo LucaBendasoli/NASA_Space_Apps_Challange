@@ -13,7 +13,7 @@ import secrets
 import sqlite3
 from threading import BoundedSemaphore
 import time
-from urllib.parse import urlsplit
+from urllib.parse import parse_qs, urlencode, urlsplit
 
 DATABASE = Path(os.environ.get('EYELID_ACCOUNTS_DB', Path(__file__).parent / '.eyelid' / 'accounts.sqlite3'))
 COOKIE = 'eyelid_session'
@@ -167,13 +167,27 @@ def auth_response(handler, body, status=200, token=None):
     handler.wfile.write(content)
 
 
-def auth_get(handler, path):
+def redirect(handler, location):
+    handler.send_response(303)
+    handler.send_header('Location', location)
+    handler.send_header('Cache-Control', 'no-store')
+    handler.send_header('Content-Length', '0')
+    handler.end_headers()
+
+
+def auth_get(handler, url):
+    path = url.path
     if path in ('/jurados', '/jurados/'):
-        handler.send_response(303)
-        handler.send_header('Location', '/?acesso=jurados')
-        handler.send_header('Cache-Control', 'no-store')
-        handler.send_header('Content-Length', '0')
-        handler.end_headers()
+        redirect(handler, '/?acesso=jurados')
+        return True
+    if path in ('/', '/index.html'):
+        if parse_qs(url.query).get('acesso') == ['jurados']:
+            return False
+        with closing(database()) as db:
+            if session_account(db, current_token(handler)):
+                return False
+        destination = '/?' + url.query if url.query else '/'
+        redirect(handler, '/login.html?' + urlencode({'next': destination}) if url.query else '/login.html')
         return True
     if match := re.fullmatch(r'/api/auth/photo/([0-9a-f]{32})', path):
         with closing(database()) as db:

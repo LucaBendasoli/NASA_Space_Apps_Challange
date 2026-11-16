@@ -713,7 +713,7 @@ class AtlasHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         url = urlsplit(self.path)
-        if auth_get(self, url.path) or community_get(self, url):
+        if auth_get(self, url) or community_get(self, url):
             return
         if url.path.startswith(('/api/local-frame/', '/api/local-preview/', '/api/local-original/')):
             entry = LOCAL_EPOCHS.get(url.path.rsplit('/', 1)[-1])
