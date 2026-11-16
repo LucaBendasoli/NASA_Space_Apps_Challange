@@ -769,7 +769,7 @@ function initializeExposureViewer(){
     }
    }
    if(field.gaia)rememberGaiaField('poc-'+openingPoc.key,field.gaia);
-   if(!requestedDate&&preparedDates())requestedDate=Object.keys(preparedDates()).sort()[0]??'';
+   if(!requestedDate&&field.channel===openingBand)requestedDate=Object.keys(field.dates).sort()[0]??'';
    resetDates();
    refresh();
    render();
