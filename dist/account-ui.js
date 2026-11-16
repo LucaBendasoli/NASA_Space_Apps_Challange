@@ -9,8 +9,9 @@
 
  function showAccount(user){
   activeUser = user;
-  profileButton.querySelector('strong').textContent = user?.name ?? 'Visitante';
-  profileButton.setAttribute('aria-label','Meu perfil');
+  profileButton.querySelector('strong').textContent = user?.role === 'judge' ? t('Jurado') : user?.name ?? t('Visitante');
+  profileButton.setAttribute('aria-label',t('Meu perfil'));
+  profileButton.title = t('Meu perfil');
   document.dispatchEvent(new CustomEvent('eyelid-account-changed',{detail:user}));
  }
 
@@ -26,7 +27,7 @@
    if (version === sessionVersion) showAccount(user);
   } catch {
    if (action && version === sessionVersion){
-    error.textContent = 'Não foi possível atualizar a sessão. Tente novamente.';
+    error.textContent = t('Não foi possível atualizar a sessão. Tente novamente.');
     error.hidden = false;
     return false;
    }
@@ -46,7 +47,8 @@
  window.addEventListener('message',event => {
   if(event.origin!==location.origin || event.source!==frame.contentWindow || event.data?.type!=='eyelid-auth-close')return;
   if (dialog.open) dialog.close();
-  account();
+  if(localStorage.getItem(languageKey)!==language)location.reload();
+  else account();
  });
  const logoutButtons = [byId('account-logout'), sidebarLogout];
  for (const button of logoutButtons){

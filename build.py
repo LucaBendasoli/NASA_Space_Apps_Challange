@@ -1,8 +1,10 @@
 import json,re
 from shutil import copytree
 from pathlib import Path
+from localize import localize_markup
 p=Path(__file__).resolve().parent
-s=(p/'template.html').read_text()
+s=(p/'template.html').read_text().replace('lang="pt-BR"','lang="en"',1)
+translations=json.loads((p/'translations.json').read_text())
 for part in ('navigation', 'navigation-pages'):
  s=s.replace('<!-- '+part+' -->',(p/(part+'.html')).read_text(),1)
 names={'campo-c03':'Campo do C03','campo-hercules':'Campo em Hércules','campo-leao':'Campo em Leão'}
@@ -23,7 +25,7 @@ const regionKey=Object.hasOwn(regions,key)?key:'campo-c03';
 const data=regions[regionKey];""")
 s=s.replace("byId('both').onchange=render;byId('sort').onchange=render;render();","""byId('both').onchange=render;byId('sort').onchange=render;
 const regionSelect=byId('region');
-for(const [id,region] of Object.entries(regions))regionSelect.add(new Option(region.name,id));
+for(const [id,region] of Object.entries(regions))regionSelect.add(new Option(t(region.name),id));
 regionSelect.value=regionKey;
 regionSelect.onchange=()=>{const url=new URL(location.href);url.searchParams.set('regiao',regionSelect.value);location.href=url};
 byId('coordinates').textContent='RA '+fmt(data.center[0],6)+'° · Dec '+fmt(data.center[1],6)+'° · 6′ × 6′';
@@ -46,6 +48,10 @@ s=s.replace('</style>',"""#sky{background:#05070c} #sky-image{image-rendering:pi
 .playlist label{display:flex;align-items:center;background:#172436;border-radius:4px;font-size:12px}
 #frame-origin{color:var(--blue)} #frame-status{min-height:2.8em}</style>""",1)
 s=s.replace('</style>',(p/'gaia.css').read_text()+'</style>',1)
+s=localize_markup(s,translations)
+s=s.replace('<title', '<script src="./i18n.js"></script><title',1)
+s=s.replace('<script id="payload"', '<script>localizeMarkup()</script><script id="payload"',1)
+(p/'dist'/'i18n.js').write_text('const eyelidTranslations = '+json.dumps(translations,ensure_ascii=False)+';\n'+(p/'i18n.js').read_text())
 for script in ('aladin-view.js', 'spectral-tiles.js', 'navigation.js', 'object-sheet.js', 'object-spectrum.css', 'login.html', 'auth-form.js', 'account-ui.js', 'community-ui.js', 'profile-ui.js'):
  (p/'dist'/script).write_text((p/script).read_text())
 s=s.replace('</html>','<script>\n'+(p/'viewer.js').read_text()+'\n</script><script src="./navigation.js"></script><script src="./account-ui.js"></script><script src="./community-ui.js"></script><script src="./profile-ui.js"></script></html>')
