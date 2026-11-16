@@ -8,10 +8,12 @@ import math
 from pathlib import Path
 import re
 
-from accounts import AuthError, auth_response, current_token, read_same_origin_json, session_account
+from accounts import JUDGE, AuthError, auth_response, current_token, read_same_origin_json, session_account
 
 ROOT = Path(__file__).resolve().parent
 DEFINITIONS = {row[0]: row[-1] for row in json.loads((ROOT/'badges.json').read_text())}
+JURY_BADGES = ('first-light','blink-observer','beyond-visible','five-fields')
+JURY_FAVORITE = 'five-fields'
 TARGETS = json.loads((ROOT/'poc-targets.json').read_text())
 
 
@@ -29,6 +31,10 @@ def badge_tables(db):
         CREATE TABLE IF NOT EXISTS badge_rgb_views (
             account_id TEXT NOT NULL REFERENCES accounts(id), region TEXT NOT NULL,
             view TEXT NOT NULL, PRIMARY KEY(account_id,region)
+        );
+        CREATE TABLE IF NOT EXISTS badge_awards (
+            account_id TEXT NOT NULL REFERENCES accounts(id), badge TEXT NOT NULL,
+            awarded_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY(account_id,badge)
         );
         CREATE TABLE IF NOT EXISTS badge_favorites (
             account_id TEXT PRIMARY KEY REFERENCES accounts(id), badge TEXT NOT NULL
@@ -57,8 +63,11 @@ def prepared_dates(region):
 
 def badge_state(db, account_id):
     progress = dict.fromkeys(DEFINITIONS, 0)
+    if account_id == JUDGE['id']:
+        progress.update({badge:DEFINITIONS[badge] for badge in JURY_BADGES})
+        return {'progress':progress,'favorite':JURY_FAVORITE,'saved_rgb':[],'awarded':list(JURY_BADGES)}
     if not account_id:
-        return {'progress': progress, 'favorite': None, 'saved_rgb': []}
+        return {'progress':progress,'favorite':None,'saved_rgb':[],'awarded':[]}
     dates, channels = defaultdict(set), defaultdict(set)
     for region, channel, day in db.execute(
         'SELECT region,channel,day FROM badge_observations WHERE account_id=?', (account_id,)
@@ -96,9 +105,13 @@ def badge_state(db, account_id):
           WHERE p.author_id=? AND p.author_id<>r.author_id AND e.kind='independent-check')
     """, (account_id,)).fetchone()[0])
     # The verification badge belongs to the original observer, not to the reviewer.
+    granted = [row[0] for row in db.execute(
+        'SELECT badge FROM badge_awards WHERE account_id=? ORDER BY badge',(account_id,)
+    ) if row[0] in DEFINITIONS and progress[row[0]] < DEFINITIONS[row[0]]]
+    progress.update({badge:DEFINITIONS[badge] for badge in granted})
     favorite = db.execute('SELECT badge FROM badge_favorites WHERE account_id=?',(account_id,)).fetchone()
     return {'progress':progress,'favorite':favorite[0] if favorite else None,
-            'saved_rgb':[json.loads(value) for value in rgb.values()]}
+            'saved_rgb':[json.loads(value) for value in rgb.values()],'awarded':granted}
 
 
 def valid_number(value, low, high):

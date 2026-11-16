@@ -95,7 +95,7 @@ def profile_get(handler, path):
                 auth_response(handler, {'profile': {'name': viewer['name'] if viewer else 'Visitante',
                                                                   'role': viewer['role'] if viewer else 'guest'},
                                         'own': True, 'editable': False, 'posts': [], 'replies': [], 'count': 0,
-                                        'post_count': 0, 'badges':badge_state(db,None)})
+                                        'post_count': 0, 'badges':badge_state(db,viewer['id'] if viewer else None)})
             else:
                 auth_response(handler, {'error': 'missing'}, 404)
             return True
