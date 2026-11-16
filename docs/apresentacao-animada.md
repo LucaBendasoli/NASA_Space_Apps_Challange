@@ -1,67 +1,67 @@
-# Apresentação animada das medições
+# Animated presentation of measurements
 
-Atualização: os gráficos agora incluem [linha de apoio com traçado animado](linha-animada.md), conforme a direção visual mais recente. A descrição original abaixo registra a etapa anterior de revelação apenas por pontos.
+The charts later gained an [animated guide line](linha-animada.md). The notes below describe the earlier point-only reveal.
 
-## Comportamento e arquitetura
+## Behavior and architecture
 
-O painel é uma única região não modal, fixa ao viewport. No desktop usa até 560 px, limitada a 46% da largura disponível do mapa, com margem de 18 px. Na abertura, `world2pix` ajuda a escolher o lado que reduz a sobreposição com a fonte; o lado permanece estável até fechar. Os controles do mapa ficam na lateral oposta. Nenhuma câmera, coordenada, FoV ou projeção é alterada para acomodar o painel.
+The panel is a single non-modal region fixed to the viewport. On desktop, it is up to 560 px wide, capped at 46% of the available map width, with an 18 px margin. On open, `world2pix` helps choose the side that overlaps the selected source least. That side stays fixed until closing, with map controls on the opposite side. Camera, coordinates, field of view, and projection stay in place.
 
-O tamanho original é o modo compactado. **Ampliar** aumenta a largura em até 40%, com limite de 860 px e da área disponível à esquerda, mantendo borda direita, posição vertical e altura. **Compactar** restaura a geometria original. A transição dura 280 ms; o SVG aproveita toda a largura mantendo altura estável, sem distorcer textos, recriar séries existentes ou repetir sua entrada. A operação não redimensiona o Aladin nem modifica a seleção ou comparação. Veja [geometria responsiva e animação apenas das novas séries](grafico-responsivo.md).
+Compact mode uses the original width. **Expand** adds up to 40%, bounded by 860 px and the available space to the left. The right edge, vertical position, and height stay fixed. **Compact** restores the original geometry. The transition takes 280 ms, and the SVG uses the available width at a stable height. Text, existing series, their animation state, Aladin size, and selections are preserved. See [responsive geometry and series animation](grafico-responsivo.md).
 
-No celular, o painel inferior tem superfície sólida, safe area, cabeçalho persistente, gráfico e rolagem interna. Quando já ocupa a largura disponível, Ampliar fica desabilitado e informa esse limite no título do botão. Tabela e detalhes permanecem acessíveis por rolagem interna. Não há arraste de painel disputando os gestos do mapa. Em paisagem baixa o gráfico é compacto, com tipografia SVG ajustada.
+On mobile the bottom panel uses a solid surface, safe-area spacing, a persistent heading, a chart, and internal scrolling. When it already fills the available width, Expand is disabled and its title explains the limit. The table and details stay accessible through internal scrolling. The panel has no drag gesture competing with the map. Short landscape layouts use a compact chart and adjusted SVG typography.
 
-- `presentation-state.js`: aberto/fechado/expandido, independente das requisições.
-- `panel-presentation.js`: posicionamento, origem de foco, Escape, timelines, preferência de movimento e limpeza.
-- `science-panel.js`/`science-view.js`: interface estável; cabeçalho, botões, select e detalhes não são reconstruídos a cada emissão. Apenas o conjunto de dados do gráfico/tabela é substituído atomicamente, pela chave astro/levantamento/observação.
-- `science-chart.js`: pontos nas coordenadas científicas finais; sem animação de valores, interpolação ou linhas entre bandas.
-- `science-state.js`: cache, cancelamento e versão de requisições preservados; cache entrega pronto/vazio diretamente, sem estado intermediário de carregamento.
+- `presentation-state.js` stores open, closed, and expanded state independently of requests.
+- `panel-presentation.js` handles positioning, focus origin, Escape, timelines, motion preferences, and cleanup.
+- `science-panel.js` and `science-view.js` preserve the heading, buttons, selector, and details across state updates. Chart and table data are replaced as a unit by object, survey, and observation key.
+- `science-chart.js` places points at their final scientific coordinates. This stage used discrete points without connecting lines, interpolation, or animated values.
+- `science-state.js` retains caching, cancellation, and request versioning. Cache hits return ready or empty state immediately.
 
-Selecionar abre a estrutura e atualiza o nome de forma síncrona; a busca começa no mesmo fluxo, sem aguardar a animação. O carregamento reserva o espaço do gráfico. Somente ações explícitas abrem o painel; respostas de rede nunca o reabrem. Na troca de astro, o gráfico anterior é removido antes de atualizar a área de dados. Fechar não limpa o cache; selecionar novamente a mesma fonte pode reabrir o painel.
+Selecting a source opens the panel, updates its name synchronously, and starts the request immediately. Loading reserves chart space. Explicit actions open the panel, and arriving responses leave its open or closed state intact. Switching sources removes the previous chart before updating the data area. Closing retains the cache, so selecting the same source again can reopen it.
 
-## Movimento
+## Motion
 
-GSAP **3.13.0**, servido localmente em `vendor/gsap.min.js` (~72 kB sem compressão), foi escolhido para coreografia SVG, interrupção e controle de timelines. Não há framework ou plugins GSAP adicionais. Origem, versão e SHA-256 estão em `vendor/gsap-runtime.json`; README e referência de licença foram preservados no mesmo diretório. Os manifests e fontes do Aladin não foram modificados.
+GSAP **3.13.0**, served locally from `vendor/gsap.min.js` (about 72 kB uncompressed), handles SVG sequencing, interruptions, and timelines. No framework or additional GSAP plugins were added. Origin, version, and SHA-256 are in `vendor/gsap-runtime.json`. The README and license reference are in the same directory. Aladin manifests and source were untouched.
 
-- Desktop: 270 ms, deslocamento horizontal de 20 px e opacidade, `power3.out`.
-- Celular: 340 ms, deslocamento vertical de 28 px e opacidade.
-- Fechamento: 180 ms. Conteúdo: 150 ms, seguido de eixos e marcas com pequenas sobreposições; revelação termina em aproximadamente 370 ms.
-- Pontos e incertezas: somente opacidade, na posição final; nenhuma mudança simulada de radiância.
-- Interromper a entrada/saída mata o tween anterior e continua do estado visual atual. `will-change` existe apenas durante o movimento do contêiner. Não há leitura/escrita de layout a cada frame nem resize contínuo do Aladin.
-- `gsap.matchMedia` acompanha breakpoint e movimento reduzido. A troca da preferência encerra o movimento e revela o estado final sem sequência escalonada. Sem GSAP, a apresentação é imediata e funcional.
+- Desktop entrance takes 270 ms, moving horizontally by 20 px and fading with `power3.out`.
+- Mobile entrance takes 340 ms, moving vertically by 28 px and fading.
+- Closing takes 180 ms. Content takes 150 ms, followed by slightly overlapping axes and marks. The reveal ends at about 370 ms.
+- Points and uncertainty bars fade in at their final positions, with radiance values held constant.
+- Interrupting a transition cancels its tween and resumes from the current visual state. `will-change` applies only while the container moves. The animation avoids per-frame layout reads and writes or continuous Aladin resizing.
+- `gsap.matchMedia` tracks viewport and reduced motion. Changing the preference ends active motion and immediately displays the final state. The presentation is immediate and functional without GSAP.
 
-## Acessibilidade
+## Accessibility
 
-Região rotulada pelo título do astro, sem foco aprisionado ou backdrop no céu. “Abrir medições” e o link “Ir para a análise” oferecem entrada por teclado com `preventScroll`. Fechar medições, Ampliar/Compactar e tabela são controles nativos. Escape não é interceptado em select/input, dialog prioritário ou gaveta de controles. Ao fechar com foco interno, retorna à origem válida ou ao botão da barra de ferramentas para seleções no canvas. O painel fechado fica `inert`, oculto da árvore acessível e sem captura de cliques. Anúncios curtos de seleção, carregamento e erro ficam separados do SVG e da tabela.
+The source title labels the region, which leaves focus and the sky available. **Open measurements** and the **Go to analysis** link offer keyboard entry with `preventScroll`. Close, Expand, Compact, and the table controls are native. The Escape handler yields to a select or input, a higher-priority dialog, or the controls drawer. Closing from inside returns focus to its valid origin, or to the toolbar after canvas selections. The closed panel is `inert`, outside the accessibility tree, and does not capture clicks. Short selection, loading, and error announcements are separate from the SVG and table.
 
-## Referências consultadas e adaptação
+## Design references
 
-- [Apple HIG — Sheets](https://developer.apple.com/design/human-interface-guidelines/sheets): uma apresentação contextual não modal, adaptada ao navegador; não se replica a modalidade padrão dos sheets de macOS.
-- [Vaul / Building a drawer component](https://emilkowal.ski/ui/building-a-drawer-component) e [7 Practical Animation Tips](https://emilkowal.ski/ui/7-practical-animation-tips): resposta imediata, desaceleração e movimento breve; sem dependência React nem arraste nesta implementação.
-- [Carbon — Choreography](https://www.carbondesignsystem.com/building-blocks/foundations/motion/choreography) e [Simple Charts](https://www.carbondesignsystem.com/building-blocks/data-visualization/simple-charts): hierarquia e revelação curta, sem transformar bandas discretas em um espectro contínuo.
-- [Bostock — Object Constancy](https://bost.ocks.org/mike/constancy/): identidade científica explícita e contêiner estável; escalas, pontos e título trocam como um conjunto coerente.
-- [Radix Popover](https://www.radix-ui.com/primitives/docs/components/popover): limites do viewport, origem de foco e apresentação não modal, sem instalar Radix.
-- [W3C — Animation from Interactions](https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html) e [Focus Not Obscured](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html): preferência de movimento em tempo real e acesso por foco.
-- [gsap.matchMedia](https://gsap.com/docs/v3/GSAP/gsap.matchMedia()/): gerenciamento de condições e limpeza das animações.
+- The browser panel adapts contextual sheet presentation to a non-modal region. [Apple HIG — Sheets](https://developer.apple.com/design/human-interface-guidelines/sheets)
+- Immediate response, easing, and brief motion informed the transitions. This implementation uses no React or panel dragging. [Building a drawer component](https://emilkowal.ski/ui/building-a-drawer-component) · [7 Practical Animation Tips](https://emilkowal.ski/ui/7-practical-animation-tips)
+- Visual hierarchy and a brief reveal were applied to discrete bands. [Carbon Choreography](https://www.carbondesignsystem.com/building-blocks/foundations/motion/choreography) · [Simple Charts](https://www.carbondesignsystem.com/building-blocks/data-visualization/simple-charts)
+- Stable containers and explicit identities keep scales, marks, and titles coherent when switching data. [Bostock — Object Constancy](https://bost.ocks.org/mike/constancy/)
+- Viewport boundaries, focus origin, and non-modal presentation informed the panel without adding Radix as a dependency. [Radix Popover](https://www.radix-ui.com/primitives/docs/components/popover)
+- Live motion preference handling and focus access guide accessibility. [W3C — Animation from Interactions](https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html) · [Focus Not Obscured](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html)
+- Media conditions and animation cleanup use [gsap.matchMedia](https://gsap.com/docs/v3/GSAP/gsap.matchMedia()/).
 
-Skills aplicadas: frontend-design, gsap-core, gsap-timeline, gsap-performance, svg-animation e accessible-animation. Playwright CLI foi usado para os testes de navegador.
+The historical run applied frontend-design, gsap-core, gsap-timeline, gsap-performance, svg-animation, and accessible-animation and used Playwright CLI for browser checks.
 
-## Validação executada
+## Validation performed
 
-Edge real, Aladin 3.9.0-beta e WebGL reais, branch `feat/selecao-astros-infravermelho`, sem commit ou push:
+Edge used Aladin 3.9.0-beta and real WebGL on `feat/selecao-astros-infravermelho`. This historical run did not include a commit or push.
 
-- `npm.cmd test`: **25 testes aprovados**, incluindo apresentação independente, fechamento durante carregamento, cache sem loading e resposta antiga após fechar/reabrir para outra identidade.
-- `npm.cmd run verify:upstream`: **429/429 arquivos preservados**. `git diff --check` sem erros de whitespace.
-- Demonstração explícita: clique no marcador nativo A, seleção de B por teclado, fonte sem medições, reabrir a mesma fonte, expansão e tabela. Referências dos botões permaneceram idênticas entre atualizações.
-- Ao selecionar: `scrollX/scrollY` iguais antes/depois; RA/Dec/FoV iguais antes/depois da abertura. Painel, título e gráfico dentro do viewport em **1440×900**, **390×844** e **844×390**, sem overflow horizontal.
-- Escape com foco no botão de fechar retornou o foco à barra. Fechamento durante entrada manteve o painel fechado. Alteração de reduced-motion com painel aberto resultou em `transform: none`. Temas claro e escuro exercitados.
-- Zoom, projeção MOL e arraste mantiveram navegação e lado do painel estável. Trocar levantamento limpou o gráfico incompatível; trocar só o espelho preservou a identidade.
-- HTTP **com respostas controladas no navegador**, não backend real: A (900 ms), B (550 ms), C (120 ms); após A→B→C somente C e sua chave estavam no gráfico. Durante a troca para A, título A e placeholder sem gráfico antigo. Fechar antes da resposta permaneceu fechado após chegar; reabrir usou cache pronto. HTTP 503 mostrou erro; Tentar novamente recuperou os dados. Cobertura parcial foi preservada.
-- Recurso GSAP bloqueado deliberadamente: seleção e gráfico continuaram utilizáveis.
+- `npm.cmd test` passed **25 tests**, including independent presentation state, closing during load, immediate cache hits, and stale responses after reopening with a different identity.
+- `npm.cmd run verify:upstream` verified all **429 files**, and `git diff --check` passed.
+- The explicit demo covered clicking native marker A, selecting B by keyboard, a source without measurements, reopening the same source, expanding, and using the table. Button nodes stayed identical across updates.
+- Selection preserved `scrollX/scrollY` and RA, Dec, and field of view. The panel, title, and chart stayed inside 1440×900, 390×844, and 844×390 viewports without horizontal overflow.
+- Escape with focus on Close returned focus to the toolbar. Closing mid-entrance kept the panel closed. Changing reduced motion while open resulted in `transform: none`. Light and dark themes were exercised.
+- Zoom, MOL projection, and dragging retained navigation and panel placement. Survey changes cleared incompatible charts, and switching only the mirror preserved scientific identity.
+- Controlled browser HTTP responses used delays of 900 ms (A), 550 ms (B), and 120 ms (C). After A→B→C, only C and its key appeared. Switching back to A showed its heading and placeholder while loading. Closure persisted when a response arrived, and reopening used the cache. HTTP 503 showed an error and retry recovered the data. Partial coverage was preserved.
+- Deliberately blocking GSAP left selection and charts usable.
 
-Roteiros e capturas locais, ignorados pelo Git: `output/playwright/animated-panel-check.js`, `panel-network-check.js`, `animation-mid.png`, `animated-desktop.png`, `animated-mobile.png`, `animated-landscape.png` e capturas `*-final.png`. As verificações com instrumentação expuseram apenas a instância real do Aladin para ler `world2pix` e câmera; não simularam o renderer.
+Git-ignored scripts and captures include `output/playwright/animated-panel-check.js`, `panel-network-check.js`, `animation-mid.png`, `animated-desktop.png`, `animated-mobile.png`, `animated-landscape.png`, and `*-final.png`. Instrumentation exposed the real Aladin instance only to read `world2pix` and camera values.
 
-## Limites observados
+## Observed limits
 
-Sem backend científico real, aparelho móvel físico ou leitor de tela nesta sessão. O celular foi validado por viewport; a preferência reduzida foi emulada e alternada ao vivo. A captura de vídeo foi tentada, mas o Playwright não encontrou `ffmpeg-win64.exe`; foram entregues capturas estáticas, incluindo momento intermediário da revelação.
+The session used mobile viewports and emulated reduced motion, changing the preference while the app ran. It did not exercise a real science backend, physical mobile device, or screen reader. Playwright could not find `ffmpeg-win64.exe` for video capture. Static screenshots include an intermediate reveal frame.
 
-As imagens HiPS externas apresentaram latência (um `Allsky.jpg` levou aproximadamente 26 s, terminando com HTTP 200). Algumas capturas mostram apenas fontes sobre fundo preto enquanto a imagem carregava. O logger remoto do Aladin falhou por DNS e o bundle opcional local Aladin estava ausente, com fallback oficial ativo. Não houve bloqueio de WebGL; isso não comprova qualidade científica nem disponibilidade permanente de HiPS. Uma navegação `waitUntil: load` do roteiro precisou ser substituída por `domcontentloaded` devido aos recursos externos. Não foi feita medição formal de FPS.
+External HiPS imagery could be slow. One `Allsky.jpg` took around 26 seconds and returned HTTP 200. Some screenshots show sources against a black background while imagery loaded. The remote Aladin logger failed DNS, and the official fallback supplied the absent optional local bundle. WebGL was available. Scientific quality and ongoing HiPS availability were outside the test scope. External resources required switching a navigation wait from `waitUntil: load` to `domcontentloaded`. No formal FPS measurement was made.
